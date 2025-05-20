@@ -59,6 +59,16 @@ public abstract class BaseActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 finish();
                 return true;
+            } else if (id == R.id.profile && getSelectedMenuItemId() != R.id.profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (id == R.id.wish_list && getSelectedMenuItemId() != R.id.wish_list) {
+                startActivity(new Intent(this, WishListActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
             }
             return false;
         });

@@ -1,4 +1,3 @@
-// SearchActivity.java
 package com.example.app.UI;
 
 import com.example.app.R;

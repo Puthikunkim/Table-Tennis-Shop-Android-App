@@ -12,4 +12,12 @@
         android:id="@+id/search"
         android:title="Search"/>
 
+    <item
+        android:id="@+id/profile"
+        android:title="Profile"/>
+
+    <item
+        android:id="@+id/wish_list"
+        android:title="Wish List"/>
+
 </menu>
