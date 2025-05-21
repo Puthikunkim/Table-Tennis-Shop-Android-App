@@ -2,14 +2,14 @@ package com.example.app.UI;
 
 import com.example.app.R;
 
-public class WishListActivity extends BaseActivity {
+public class SearchActivity extends BaseActivity {
     @Override
     protected int getLayoutResourceId() {
-        return R.layout.activity_wish_list;
+        return R.layout.activity_search;
     }
 
     @Override
     protected int getSelectedMenuItemId() {
-        return R.id.wish_list;
+        return R.id.search;
     }
 }
