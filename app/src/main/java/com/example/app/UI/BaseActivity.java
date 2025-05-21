@@ -9,29 +9,41 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewbinding.ViewBinding;
 
+import com.example.app.databinding.ActivityBaseBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public abstract class BaseActivity<B extends ViewBinding> extends AppCompatActivity {
-    protected B binding;
+public abstract class BaseActivity<ContentBinding extends ViewBinding>
+        extends AppCompatActivity {
 
-    /** Subclasses must inflate their binding here. */
-    protected abstract B inflateBinding();
+    private ActivityBaseBinding baseBinding;
+    protected ContentBinding binding;  // this will be the screen's binding
 
-    /** Which nav menu item should be highlighted */
+    /** Subclasses inflate their own content binding here. */
+    protected abstract ContentBinding inflateContentBinding();
+
+    /** Which nav item should be selected */
     protected abstract int getSelectedMenuItemId();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = inflateBinding();
-        setContentView(binding.getRoot());
-        setupBottomNavigation();
+
+        // inflate the base layout
+        baseBinding = ActivityBaseBinding.inflate(getLayoutInflater());
+        setContentView(baseBinding.getRoot());
+
+        // hook up the toolbar
+        setSupportActionBar(baseBinding.toolbar);
+
+        // inflate child content and stick it into the container
+        binding = inflateContentBinding();
+        baseBinding.contentContainer.addView(binding.getRoot());
+
+        // then do the bottom nav wiring
+        setupBottomNavigation(baseBinding.bottomNavigation);
     }
 
-    private void setupBottomNavigation() {
-        // cast binding to any generated subclass that has bottom_navigation
-        BottomNavigationView bottomNav = (BottomNavigationView) binding.getRoot().findViewById(R.id.bottom_navigation);
-
+    private void setupBottomNavigation(BottomNavigationView bottomNav) {
         bottomNav.setSelectedItemId(getSelectedMenuItemId());
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
