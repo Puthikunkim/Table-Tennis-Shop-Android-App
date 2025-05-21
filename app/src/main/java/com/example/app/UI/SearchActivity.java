@@ -2,10 +2,12 @@ package com.example.app.UI;
 
 import com.example.app.R;
 
-public class SearchActivity extends BaseActivity {
+import com.example.app.databinding.ActivitySearchBinding;
+
+public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
     @Override
-    protected int getLayoutResourceId() {
-        return R.layout.activity_search;
+    protected ActivitySearchBinding inflateBinding() {
+        return ActivitySearchBinding.inflate(getLayoutInflater());
     }
 
     @Override

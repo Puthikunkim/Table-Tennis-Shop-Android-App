@@ -2,10 +2,14 @@ package com.example.app.UI;
 
 import com.example.app.R;
 
-public class MainActivity extends BaseActivity {
+import android.os.Bundle;
+import com.example.app.databinding.ActivityMainBinding;
+
+public class MainActivity extends BaseActivity<ActivityMainBinding> {
     @Override
-    protected int getLayoutResourceId() {
-        return R.layout.activity_main;
+    protected ActivityMainBinding inflateBinding() {
+        // inflate the binding
+        return ActivityMainBinding.inflate(getLayoutInflater());
     }
 
     @Override

@@ -2,10 +2,12 @@ package com.example.app.UI;
 
 import com.example.app.R;
 
-public class ProfileActivity extends BaseActivity {
+import com.example.app.databinding.ActivityProfileBinding;
+
+public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     @Override
-    protected int getLayoutResourceId() {
-        return R.layout.activity_profile;
+    protected ActivityProfileBinding inflateBinding() {
+        return ActivityProfileBinding.inflate(getLayoutInflater());
     }
 
     @Override

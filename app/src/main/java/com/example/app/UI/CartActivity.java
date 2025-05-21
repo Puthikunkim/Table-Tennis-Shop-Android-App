@@ -2,10 +2,12 @@ package com.example.app.UI;
 
 import com.example.app.R;
 
-public class CartActivity extends BaseActivity {
+import com.example.app.databinding.ActivityCartBinding;
+
+public class CartActivity extends BaseActivity<ActivityCartBinding> {
     @Override
-    protected int getLayoutResourceId() {
-        return R.layout.activity_cart;
+    protected ActivityCartBinding inflateBinding() {
+        return ActivityCartBinding.inflate(getLayoutInflater());
     }
 
     @Override

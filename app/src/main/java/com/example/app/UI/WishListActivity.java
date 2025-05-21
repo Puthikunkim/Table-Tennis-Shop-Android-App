@@ -2,10 +2,12 @@ package com.example.app.UI;
 
 import com.example.app.R;
 
-public class WishListActivity extends BaseActivity {
+import com.example.app.databinding.ActivityWishListBinding;
+
+public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     @Override
-    protected int getLayoutResourceId() {
-        return R.layout.activity_wish_list;
+    protected ActivityWishListBinding inflateBinding() {
+        return ActivityWishListBinding.inflate(getLayoutInflater());
     }
 
     @Override
