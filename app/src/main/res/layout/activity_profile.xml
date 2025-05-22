@@ -3,10 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
-    android:background="#121212">
+    android:background="#121212"
+    android:padding="24dp">
 
+        <!-- Main content -->
         <LinearLayout
+            android:id="@+id/mainContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -33,41 +35,6 @@
                     android:text="Sign In"
                     android:layout_marginBottom="12dp" />
 
-                <!-- Sign In Form -->
-                <LinearLayout
-                    android:id="@+id/signInForm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    android:layout_marginBottom="24dp">
-
-                        <EditText
-                            android:id="@+id/inputUsername"
-                            android:hint="Username"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="#FFFFFF"
-                            android:textColor="#FFFFFF" />
-
-                        <EditText
-                            android:id="@+id/inputPassword"
-                            android:hint="Password"
-                            android:inputType="textPassword"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="#FFFFFF"
-                            android:textColor="#FFFFFF"
-                            android:layout_marginTop="8dp" />
-
-                        <Button
-                            android:id="@+id/submitSignIn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Submit"
-                            android:layout_marginTop="8dp" />
-                </LinearLayout>
-
                 <!-- Create Account Button -->
                 <Button
                     android:id="@+id/buttonCreateAccount"
@@ -77,42 +44,83 @@
                     android:backgroundTint="#000000"
                     android:textColor="#FFFFFF"
                     android:layout_marginBottom="12dp" />
+        </LinearLayout>
 
-                <!-- Create Account Form -->
-                <LinearLayout
-                    android:id="@+id/createAccountForm"
+        <!-- Sign In Form Popup -->
+        <LinearLayout
+            android:id="@+id/signInForm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:padding="24dp"
+            android:background="#1E1E1E"
+            android:elevation="8dp">
+
+                <EditText
+                    android:id="@+id/inputUsername"
+                    android:hint="Username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#FFFFFF" />
 
-                        <EditText
-                            android:id="@+id/inputEmail"
-                            android:hint="Email"
-                            android:inputType="textEmailAddress"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="#FFFFFF"
-                            android:textColor="#FFFFFF" />
+                <EditText
+                    android:id="@+id/inputPassword"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="8dp" />
 
-                        <EditText
-                            android:id="@+id/inputCreatePassword"
-                            android:hint="Password"
-                            android:inputType="textPassword"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="#FFFFFF"
-                            android:textColor="#FFFFFF"
-                            android:layout_marginTop="8dp" />
+                <Button
+                    android:id="@+id/submitSignIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Submit"
+                    android:layout_marginTop="8dp" />
+        </LinearLayout>
 
-                        <Button
-                            android:id="@+id/submitCreate"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Submit"
-                            android:layout_marginTop="8dp" />
-                </LinearLayout>
+        <!-- Create Account Form Popup -->
+        <LinearLayout
+            android:id="@+id/createAccountForm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:padding="24dp"
+            android:background="#1E1E1E"
+            android:elevation="8dp">
 
+                <EditText
+                    android:id="@+id/inputEmail"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#FFFFFF" />
+
+                <EditText
+                    android:id="@+id/inputCreatePassword"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="8dp" />
+
+                <Button
+                    android:id="@+id/submitCreate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Submit"
+                    android:layout_marginTop="8dp" />
         </LinearLayout>
 
 </FrameLayout>
