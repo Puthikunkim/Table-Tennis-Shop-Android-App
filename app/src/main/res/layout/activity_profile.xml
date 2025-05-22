@@ -25,6 +25,7 @@
                     android:textSize="16sp"
                     android:layout_marginBottom="24dp" />
 
+                <!-- Sign In Button -->
                 <Button
                     android:id="@+id/buttonSignIn"
                     android:layout_width="match_parent"
@@ -32,13 +33,85 @@
                     android:text="Sign In"
                     android:layout_marginBottom="12dp" />
 
+                <!-- Sign In Form -->
+                <LinearLayout
+                    android:id="@+id/signInForm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginBottom="24dp">
+
+                        <EditText
+                            android:id="@+id/inputUsername"
+                            android:hint="Username"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#FFFFFF"
+                            android:textColor="#FFFFFF" />
+
+                        <EditText
+                            android:id="@+id/inputPassword"
+                            android:hint="Password"
+                            android:inputType="textPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#FFFFFF"
+                            android:textColor="#FFFFFF"
+                            android:layout_marginTop="8dp" />
+
+                        <Button
+                            android:id="@+id/submitSignIn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Submit"
+                            android:layout_marginTop="8dp" />
+                </LinearLayout>
+
+                <!-- Create Account Button -->
                 <Button
                     android:id="@+id/buttonCreateAccount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Create Account"
                     android:backgroundTint="#000000"
-                    android:textColor="#FFFFFF" />
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Create Account Form -->
+                <LinearLayout
+                    android:id="@+id/createAccountForm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                        <EditText
+                            android:id="@+id/inputEmail"
+                            android:hint="Email"
+                            android:inputType="textEmailAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#FFFFFF"
+                            android:textColor="#FFFFFF" />
+
+                        <EditText
+                            android:id="@+id/inputCreatePassword"
+                            android:hint="Password"
+                            android:inputType="textPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#FFFFFF"
+                            android:textColor="#FFFFFF"
+                            android:layout_marginTop="8dp" />
+
+                        <Button
+                            android:id="@+id/submitCreate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Submit"
+                            android:layout_marginTop="8dp" />
+                </LinearLayout>
 
         </LinearLayout>
 
