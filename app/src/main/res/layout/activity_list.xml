@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.ListActivity">
+    android:padding="24dp">
 
+    <!-- Title -->
+    <TextView
+        android:id="@+id/textViewListTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Products"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="16dp" />
+
+    <!-- ListView -->
     <ListView
         android:id="@+id/list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="10sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
+</FrameLayout>
