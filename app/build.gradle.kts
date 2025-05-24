@@ -50,4 +50,9 @@ dependencies {
     // database stuff - josh
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-analytics")
+
+    // Firestore (required to access Firebase's database service)
+    implementation("com.google.firebase:firebase-firestore")
+
+
 }

@@ -26,4 +26,34 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
         mProducts = objects;
     }
 
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View itemView = convertView;
+        if (itemView == null) {
+            itemView = LayoutInflater.from(mContext).inflate(mResource, parent, false);
+        }
+
+        // Get the current product
+        TableTennisProduct product = mProducts.get(position);
+
+        // Bind views
+        TextView nameTextView = itemView.findViewById(R.id.textViewProductName);
+        TextView descTextView = itemView.findViewById(R.id.textViewProductDescription);
+        TextView priceTextView = itemView.findViewById(R.id.textViewProductPrice);
+        ImageView imageView = itemView.findViewById(R.id.imageViewProduct);
+
+        // Set text
+        nameTextView.setText(product.getName());
+        descTextView.setText(product.getDescription());
+        priceTextView.setText(String.format("$%.2f", product.getPrice()));
+
+        // Load image (first one from imageUrls) using Picasso
+        if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
+           
+        }
+
+        return itemView;
+    }
+
 }
