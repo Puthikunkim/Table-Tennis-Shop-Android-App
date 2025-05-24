@@ -49,9 +49,7 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
         priceTextView.setText(String.format("$%.2f", product.getPrice()));
 
         // Load image (first one from imageUrls) using Picasso
-        if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
-           
-        }
+        imageView.setImageResource(0); // sets image to blank
 
         return itemView;
     }
