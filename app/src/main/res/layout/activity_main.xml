@@ -12,5 +12,10 @@
         android:textSize="50sp"
         android:textStyle="bold"
         android:layout_gravity="center" />
+    <Button
+        android:id="@+id/detailsButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:text="Details"/>
 
 </FrameLayout>
