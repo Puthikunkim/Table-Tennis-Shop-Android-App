@@ -20,9 +20,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // To test details activity
+        // Existing button → DetailsActivity
         binding.detailsButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+            startActivity(intent);
+        });
+
+        // New button → ListActivity
+        binding.listButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ListActivity.class);
             startActivity(intent);
         });
     }

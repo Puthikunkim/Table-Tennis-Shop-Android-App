@@ -12,10 +12,22 @@
         android:textSize="50sp"
         android:textStyle="bold"
         android:layout_gravity="center" />
+
+    <!-- Existing button -->
     <Button
         android:id="@+id/detailsButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:text="Details"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Details"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="24dp" />
 
+    <!-- New button to go to ListActivity -->
+    <Button
+        android:id="@+id/listButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Products"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp" />
 </FrameLayout>
