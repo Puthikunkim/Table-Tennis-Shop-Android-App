@@ -1,26 +1,32 @@
 package com.example.app.UI;
 
+import android.content.Intent;
 import android.os.Bundle;
+import androidx.annotation.Nullable;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.app.R;
+import com.example.app.databinding.ActivityDetailsBinding;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
+    @Override
+    protected ActivityDetailsBinding inflateContentBinding() {
+        return ActivityDetailsBinding.inflate(getLayoutInflater());
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected int getSelectedMenuItemId() {
+        return R.id.home;
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_details);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // binding is inherited from BaseActivity and initialised there
+        binding.customDetailsBackButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
         });
     }
 }
