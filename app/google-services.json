@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "838908606183",
+    "project_id": "bouncebrostabletennis",
+    "storage_bucket": "bouncebrostabletennis.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:838908606183:android:5ab29f5a673d2e84a79442",
+        "android_client_info": {
+          "package_name": "com.example.tabletennisapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-JycwtJv9Xf-7wnr3NdMt5TyCGiXccKU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

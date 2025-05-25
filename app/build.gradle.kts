@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -7,7 +9,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.app"
+        applicationId = "com.example.tabletennisapp"
         minSdk = 31
         targetSdk = 36
         versionCode = 1
@@ -40,7 +42,18 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+
+    // database stuff - josh
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation("com.google.firebase:firebase-analytics")
+
+    // Firestore (required to access Firebase's database service)
+    implementation("com.google.firebase:firebase-firestore")
+
+
 }
