@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:background="@color/black">
 
     <Button
         android:id="@+id/detailsButton"
@@ -28,23 +28,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="#2C2C2C">
+                app:cardCornerRadius="24dp"
+                app:cardBackgroundColor="@color/card_background">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="24dp">
+                    android:padding="12dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="New Release"
                         android:textStyle="bold"
-                        android:textColor="@android:color/white"
-                        android:background="#666666"
+                        android:textColor="@color/text_primary"
+                        android:background="@color/label_background"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
                         android:paddingTop="6dp"
@@ -57,7 +56,7 @@
                         android:text="Pro Carbon Bat"
                         android:textSize="40sp"
                         android:textStyle="bold"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_primary"
                         android:layout_marginTop="16dp"/>
 
                     <TextView
@@ -65,7 +64,7 @@
                         android:layout_height="wrap_content"
                         android:text="The ultimate table tennis experience"
                         android:textSize="18sp"
-                        android:textColor="#CCCCCC"
+                        android:textColor="@color/text_secondary"
                         android:layout_marginTop="8dp"/>
 
                     <TextView
@@ -73,7 +72,7 @@
                         android:layout_height="wrap_content"
                         android:text="Powered by advanced carbon fiber technology"
                         android:textSize="16sp"
-                        android:textColor="#999999"
+                        android:textColor="@color/text_tertiary"
                         android:layout_marginTop="8dp"/>
 
                     <LinearLayout
@@ -89,18 +88,18 @@
                             android:layout_marginEnd="12dp"
                             android:paddingStart="24dp"
                             android:paddingEnd="24dp"
-                            android:textColor="@android:color/white"
-                            android:backgroundTint="#2196F3"/>
+                            android:textColor="@color/text_primary"
+                            android:backgroundTint="@color/button_primary"/>
 
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="View All"
                             style="?attr/materialButtonOutlinedStyle"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/text_primary"
                             android:paddingStart="24dp"
                             android:paddingEnd="24dp"
-                            app:strokeColor="@android:color/white"/>
+                            app:strokeColor="@color/text_primary"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -108,10 +107,122 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="TOP PICKS"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:src="@drawable/ic_launcher_background"
+                            android:scaleType="centerCrop"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pro"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:src="@drawable/ic_launcher_background"
+                            android:scaleType="centerCrop"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tournament"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:src="@drawable/ic_launcher_background"
+                            android:scaleType="centerCrop"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Training"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Browse Categories"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/white"
+                android:textColor="@color/text_primary"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"/>
 
@@ -123,7 +234,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 app:cardCornerRadius="12dp"
-                app:cardBackgroundColor="#2C2C2C">
+                app:cardBackgroundColor="@color/card_background">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -136,7 +247,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:src="@drawable/ic_launcher_background"
-                        android:background="@android:color/white"
+                        android:background="@color/white"
                         android:padding="8dp"/>
 
                     <LinearLayout
@@ -151,13 +262,13 @@
                             android:text="Bats"
                             android:textSize="20sp"
                             android:textStyle="bold"
-                            android:textColor="@android:color/white"/>
+                            android:textColor="@color/text_primary"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Premium quality"
-                            android:textColor="#999999"/>
+                            android:textColor="@color/text_tertiary"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -167,7 +278,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="12dp"
-                app:cardBackgroundColor="#2C2C2C">
+                app:cardBackgroundColor="@color/card_background">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -180,7 +291,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:src="@drawable/ic_launcher_background"
-                        android:background="@android:color/white"
+                        android:background="@color/white"
                         android:padding="8dp"/>
 
                     <LinearLayout
@@ -195,13 +306,13 @@
                             android:text="Balls"
                             android:textSize="20sp"
                             android:textStyle="bold"
-                            android:textColor="@android:color/white"/>
+                            android:textColor="@color/text_primary"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Premium quality"
-                            android:textColor="#999999"/>
+                            android:textColor="@color/text_tertiary"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -211,7 +322,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="12dp"
-                app:cardBackgroundColor="#2C2C2C">
+                app:cardBackgroundColor="@color/card_background">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -224,7 +335,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:src="@drawable/ic_launcher_background"
-                        android:background="@android:color/white"
+                        android:background="@color/white"
                         android:padding="8dp"/>
 
                     <LinearLayout
@@ -239,13 +350,13 @@
                             android:text="Tables"
                             android:textSize="20sp"
                             android:textStyle="bold"
-                            android:textColor="@android:color/white"/>
+                            android:textColor="@color/text_primary"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Premium quality"
-                            android:textColor="#999999"/>
+                            android:textColor="@color/text_tertiary"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
