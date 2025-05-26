@@ -118,7 +118,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
@@ -155,7 +156,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
                     app:cardCornerRadius="16dp"
                     app:cardBackgroundColor="@color/white">
 
@@ -175,6 +177,37 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Tournament"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:src="@drawable/ic_launcher_background"
+                            android:scaleType="centerCrop"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Training"
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             android:layout_marginTop="12dp"
