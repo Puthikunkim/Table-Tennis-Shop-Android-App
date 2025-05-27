@@ -24,6 +24,10 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final List<TableTennisProduct> productList = new LinkedList<>();
+    private final List<TableTennisProduct> tableList = new LinkedList<>();
+
+    private TableTennisAdapter productAdapter;
+    private TableTennisAdapter tableAdapter;
     private TableTennisAdapter adapter;
 
     @Override
@@ -143,8 +147,14 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
         table.put("price", price);
         table.put("description", description);
         table.put("tags", tags);
+        table.put("imageUrls", Collections.singletonList(""));
+        table.put("views", 0);
+        table.put("cartQuantity", 0);
+        table.put("categoryID", "tables");
+        table.put("isWishlisted", false);
         return table;
     }
+
 
 
 }
