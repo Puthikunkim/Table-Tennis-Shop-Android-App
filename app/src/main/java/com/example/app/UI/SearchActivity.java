@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -61,6 +62,9 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
             setupRecyclerView();
             setupClickListeners();
             loadRecentSearches();
+            setupRootClickListener();
+            // Hide recent searches initially
+            binding.recentSearchesContainer.setVisibility(View.GONE);
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate", e);
         }
@@ -82,6 +86,16 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         }
     }
 
+    private void setupRootClickListener() {
+        binding.getRoot().setOnClickListener(v -> {
+            binding.recentSearchesContainer.setVisibility(View.GONE);
+        });
+
+        binding.searchEditText.setOnClickListener(v -> {
+            binding.recentSearchesContainer.setVisibility(View.VISIBLE);
+        });
+    }
+
     private void setupClickListeners() {
         if (clearButton != null) {
             clearButton.setOnClickListener(v -> {
@@ -96,6 +110,16 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         }
 
         if (searchEditText != null) {
+            searchEditText.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus) {
+                    binding.recentSearchesContainer.setVisibility(View.VISIBLE);
+                    searchEditText.setEnabled(true);
+                } else {
+                    binding.recentSearchesContainer.setVisibility(View.GONE);
+                    searchEditText.setEnabled(false);
+                }
+            });
+
             searchEditText.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH ||
                         (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
@@ -103,6 +127,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
                     if (!query.isEmpty()) {
                         debounce(() -> addToRecentSearches(query));
                     }
+                    binding.recentSearchesContainer.setVisibility(View.GONE);
                     return true;
                 }
                 return false;
