@@ -43,9 +43,12 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
         
         holder.itemView.setOnClickListener(v -> listener.onSearchClick(search));
         holder.removeButton.setOnClickListener(v -> {
-            listener.onSearchRemove(search);
-            searches.remove(position);
-            notifyItemRemoved(position);
+            int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition != RecyclerView.NO_POSITION && adapterPosition < searches.size()) {
+                String toRemove = searches.get(adapterPosition);
+                listener.onSearchRemove(toRemove);
+                removeSearch(adapterPosition);
+            }
         });
     }
 
@@ -69,6 +72,13 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
         // Add to beginning
         searches.add(0, search);
         notifyDataSetChanged();
+    }
+
+    public void removeSearch(int position) {
+        if (position >= 0 && position < searches.size()) {
+            searches.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
