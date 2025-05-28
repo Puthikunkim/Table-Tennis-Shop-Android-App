@@ -134,7 +134,7 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
         );
 
         for (Map<String, Object> table : tables) {
-            db.collection("tables")
+            db.collection("products")
                     .add(table)
                     .addOnSuccessListener(doc -> Log.d("Firestore", "Table Added: " + doc.getId()))
                     .addOnFailureListener(e -> Log.e("Firestore", "Error adding table", e));
