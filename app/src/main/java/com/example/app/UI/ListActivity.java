@@ -26,8 +26,6 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     private final List<TableTennisProduct> productList = new LinkedList<>();
     private final List<TableTennisProduct> tableList = new LinkedList<>();
 
-    private TableTennisAdapter productAdapter;
-    private TableTennisAdapter tableAdapter;
     private TableTennisAdapter adapter;
 
     @Override
@@ -62,10 +60,13 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
         // this is for bats
         //        seedTestProducts(); // ← You can delete this after testing
 
-        seedTestTables();
+        //        deleteAllTables(); // ❗ call it once, then comment it out after it runs
+
+        //          seedTestBalls();
+        //        seedTestTables();
 
         // Fetch Firestore data
-        fetchProductData();
+        //        fetchProductData();
     }
 
     private void fetchProductData() {
@@ -103,6 +104,57 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
                     }
                 });
     }
+
+    private void deleteAllTables() {
+        db.collection("products")
+                .whereEqualTo("categoryID", "tables")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (var doc : task.getResult().getDocuments()) {
+                            doc.getReference().delete()
+                                    .addOnSuccessListener(v -> Log.d("Firestore", "Deleted: " + doc.getId()))
+                                    .addOnFailureListener(e -> Log.e("Firestore", "Failed to delete: " + doc.getId(), e));
+                        }
+                    } else {
+                        Log.e("Firestore", "Failed to fetch tables", task.getException());
+                    }
+                });
+    }
+
+    private void seedTestBalls() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        List<Map<String, Object>> balls = Arrays.asList(
+                createBall("Pro Spin Balls", 14.99, "ITTF-approved balls designed for pro-level spin and bounce.", Arrays.asList("ittf", "professional", "spin")),
+                createBall("Durable Practice Balls", 8.50, "Ideal for everyday training, long-lasting and reliable.", Arrays.asList("durable", "training")),
+                createBall("Kids Starter Pack", 6.99, "Colorful and soft balls perfect for beginners and kids.", Arrays.asList("beginner", "kids")),
+                createBall("Outdoor Weatherproof Balls", 12.00, "Engineered for outdoor play in all weather conditions.", Arrays.asList("outdoor", "weatherproof")),
+                createBall("Match Ready 3-Star Balls", 16.49, "Top-grade 3-star balls for tournament-level performance.", Arrays.asList("match", "3-star", "tournament"))
+        );
+
+        for (Map<String, Object> ball : balls) {
+            db.collection("products")
+                    .add(ball)
+                    .addOnSuccessListener(doc -> Log.d("Firestore", "Ball Added: " + doc.getId()))
+                    .addOnFailureListener(e -> Log.e("Firestore", "Error adding ball", e));
+        }
+    }
+
+    private Map<String, Object> createBall(String name, double price, String description, List<String> tags) {
+        Map<String, Object> ball = new HashMap<>();
+        ball.put("name", name);
+        ball.put("price", price);
+        ball.put("description", description);
+        ball.put("tags", tags);
+        ball.put("imageUrls", Collections.singletonList(""));
+        ball.put("views", 0);
+        ball.put("cartQuantity", 0);
+        ball.put("categoryID", "balls");
+        ball.put("isWishlisted", false);
+        return ball;
+    }
+
 
 
 //    private void seedTestProducts() {
