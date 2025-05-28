@@ -6,6 +6,7 @@ import com.example.app.R;
 import com.example.app.databinding.ActivityMainBinding;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
+
     @Override
     protected ActivityMainBinding inflateContentBinding() {
         return ActivityMainBinding.inflate(getLayoutInflater());
@@ -20,18 +21,21 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Existing "Details" button
+        // "Details" button
         binding.detailsButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
             startActivity(intent);
         });
 
-        // Bats Card → ListActivity with category = "Bats"
-        binding.cardBats.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ListActivity.class);
-            intent.putExtra("category", "Bats");
-            startActivity(intent);
-        });
+        // Category cards → ListActivity with selected category
+        binding.cardBats.setOnClickListener(v -> openListActivity("bats"));
+        binding.cardBalls.setOnClickListener(v -> openListActivity("balls"));
+        binding.cardTables.setOnClickListener(v -> openListActivity("tables"));
     }
 
+    private void openListActivity(String categoryID) {
+        Intent intent = new Intent(this, ListActivity.class);
+        intent.putExtra("categoryID", categoryID); // 🔥 pass category
+        startActivity(intent);
+    }
 }

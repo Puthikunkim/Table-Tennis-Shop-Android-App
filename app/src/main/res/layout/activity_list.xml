@@ -13,4 +13,9 @@
         android:layout_height="match_parent"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp" />
+
+    <ListView
+        android:id="@+id/tableList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </FrameLayout>
