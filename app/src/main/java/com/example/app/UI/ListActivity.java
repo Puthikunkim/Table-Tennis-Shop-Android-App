@@ -44,6 +44,15 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String categoryID = getIntent().getStringExtra("categoryID");
+        if (categoryID != null) {
+            fetchProductDataByCategory(categoryID);
+        } else {
+            Toast.makeText(this, "Category not specified", Toast.LENGTH_SHORT).show();
+        }
+
+
+
         // Init adapter and connect to list
         adapter = new TableTennisAdapter(this, R.layout.list_item_product, productList);
         ListView listView = binding.list;
@@ -78,6 +87,23 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
             }
         });
     }
+
+    private void fetchProductDataByCategory(String categoryID) {
+        db.collection("products")
+                .whereEqualTo("categoryID", categoryID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<TableTennisProduct> fetched = task.getResult().toObjects(TableTennisProduct.class);
+                        productList.clear();
+                        productList.addAll(fetched);
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(this, "Failed to load " + categoryID, Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
 
 //    private void seedTestProducts() {
 //        FirebaseFirestore db = FirebaseFirestore.getInstance();

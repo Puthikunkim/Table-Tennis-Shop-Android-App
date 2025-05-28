@@ -2,7 +2,6 @@ package com.example.app.UI;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.example.app.R;
 import com.example.app.databinding.ActivityMainBinding;
 
@@ -28,19 +27,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             startActivity(intent);
         });
 
-        // Bats Card → ListActivity with category = "bats"
+        // Category cards → ListActivity with selected category
         binding.cardBats.setOnClickListener(v -> openListActivity("bats"));
-
-        // Balls Card → ListActivity with category = "balls"
         binding.cardBalls.setOnClickListener(v -> openListActivity("balls"));
-
-        // Tables Card → ListActivity with category = "tables"
         binding.cardTables.setOnClickListener(v -> openListActivity("tables"));
     }
 
     private void openListActivity(String categoryID) {
         Intent intent = new Intent(this, ListActivity.class);
-        intent.putExtra("categoryID", categoryID);
+        intent.putExtra("categoryID", categoryID); // 🔥 pass category
         startActivity(intent);
     }
 }
