@@ -17,9 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
 import com.example.app.adapters.RecentSearchAdapter;
+import com.example.app.adapters.SearchResultAdapter;
+import com.example.app.Model.TableTennisProduct;
 import com.example.app.databinding.ActivitySearchBinding;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -38,6 +41,9 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
     private RecyclerView recentSearchesRecyclerView;
     private TextView clearHistoryButton;
     private RecentSearchAdapter recentSearchAdapter;
+    private RecyclerView searchResultsRecyclerView;
+    private SearchResultAdapter searchResultAdapter;
+    private final List<TableTennisProduct> searchResults = new ArrayList<>();
     private SharedPreferences prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final AtomicBoolean isProcessing = new AtomicBoolean(false);
@@ -60,6 +66,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         try {
             initializeViews();
             setupRecyclerView();
+            setupSearchResultsRecyclerView();
             setupClickListeners();
             loadRecentSearches();
             setupRootClickListener();
@@ -75,6 +82,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         clearButton = binding.clearButton;
         recentSearchesRecyclerView = binding.recentSearchesRecyclerView;
         clearHistoryButton = binding.clearHistoryButton;
+        searchResultsRecyclerView = binding.searchResultsRecyclerView;
         prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
     }
 
@@ -83,6 +91,14 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
             recentSearchAdapter = new RecentSearchAdapter(this);
             recentSearchesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             recentSearchesRecyclerView.setAdapter(recentSearchAdapter);
+        }
+    }
+
+    private void setupSearchResultsRecyclerView() {
+        if (searchResultsRecyclerView != null) {
+            searchResultAdapter = new SearchResultAdapter(this, searchResults);
+            searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            searchResultsRecyclerView.setAdapter(searchResultAdapter);
         }
     }
 
@@ -101,6 +117,10 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
             clearButton.setOnClickListener(v -> {
                 if (searchEditText != null) {
                     searchEditText.setText("");
+                    searchResults.clear();
+                    if (searchResultAdapter != null) searchResultAdapter.notifyDataSetChanged();
+                    searchResultsRecyclerView.setVisibility(View.GONE);
+                    binding.recentSearchesContainer.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -113,6 +133,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
             searchEditText.setOnFocusChangeListener((v, hasFocus) -> {
                 if (hasFocus) {
                     binding.recentSearchesContainer.setVisibility(View.VISIBLE);
+                    searchResultsRecyclerView.setVisibility(View.GONE);
                     searchEditText.setEnabled(true);
                 } else {
                     binding.recentSearchesContainer.setVisibility(View.GONE);
@@ -125,7 +146,10 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
                         (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     String query = searchEditText.getText().toString().trim();
                     if (!query.isEmpty()) {
-                        debounce(() -> addToRecentSearches(query));
+                        debounce(() -> {
+                            addToRecentSearches(query);
+                            searchProducts(query);
+                        });
                     }
                     binding.recentSearchesContainer.setVisibility(View.GONE);
                     return true;
@@ -202,6 +226,40 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         } catch (Exception e) {
             Log.e(TAG, "Error clearing search history", e);
         }
+    }
+
+    private void searchProducts(String query) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("products")
+            .get()
+            .addOnSuccessListener(snapshot -> {
+                List<TableTennisProduct> allProducts = snapshot.toObjects(TableTennisProduct.class);
+                List<TableTennisProduct> filtered = new ArrayList<>();
+                String lowerQuery = query.toLowerCase();
+                for (TableTennisProduct product : allProducts) {
+                    if (product.getName() != null && product.getName().toLowerCase().contains(lowerQuery)) {
+                        filtered.add(product);
+                    } else if (product.getDescription() != null && product.getDescription().toLowerCase().contains(lowerQuery)) {
+                        filtered.add(product);
+                    } else if (product.getTags() != null) {
+                        for (String tag : product.getTags()) {
+                            if (tag != null && tag.toLowerCase().contains(lowerQuery)) {
+                                filtered.add(product);
+                                break;
+                            }
+                        }
+                    }
+                }
+                Log.d(TAG, "Search found " + filtered.size() + " products for query: " + query);
+                searchResults.clear();
+                searchResults.addAll(filtered);
+                searchResultAdapter.notifyDataSetChanged();
+                searchResultsRecyclerView.setVisibility(View.VISIBLE);
+                binding.recentSearchesContainer.setVisibility(View.GONE);
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "Error searching products", e);
+            });
     }
 
     @Override
