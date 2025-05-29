@@ -29,6 +29,9 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
         this.products = products;
     }
 
+    public void setOnProductClickListener(OnProductClickListener listener) {
+        this.clickListener = listener;
+    }
 
     @NonNull
     @Override
