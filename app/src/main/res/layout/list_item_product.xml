@@ -16,5 +16,12 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
+        <ImageView
+            android:id="@+id/imageViewProduct"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:scaleType="centerCrop"
+            android:background="@color/white"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>
