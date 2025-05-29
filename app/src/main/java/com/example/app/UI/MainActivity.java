@@ -2,10 +2,19 @@ package com.example.app.UI;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
+import com.example.app.adapters.TopPicksAdapter;
 import com.example.app.databinding.ActivityMainBinding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
+
+    private TopPicksAdapter topAdapter;
+    private final List<TableTennisProduct> topList = new ArrayList<>();
 
     @Override
     protected ActivityMainBinding inflateContentBinding() {
@@ -32,4 +41,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         intent.putExtra("categoryID", categoryID); // 🔥 pass category
         startActivity(intent);
     }
+
+    private void setupTopPicks() {
+        topAdapter = new TopPicksAdapter(this, topList);
+        binding.topPicksRecyclerView.setAdapter(topAdapter);
+        topAdapter.setOnProductClickListener(product -> {
+            Intent intent = new Intent(this, DetailsActivity.class);
+            intent.putExtra("productId", product.getId());
+            startActivity(intent);
+        });
+    }
+
+
 }
