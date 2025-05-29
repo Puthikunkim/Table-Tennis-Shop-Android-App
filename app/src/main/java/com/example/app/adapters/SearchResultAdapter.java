@@ -31,6 +31,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         this.products = products;
     }
 
+    /** Setter so the Activity can register its callback */
+    public void setOnProductClickListener(OnProductClickListener listener) {
+        this.clickListener = listener;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
