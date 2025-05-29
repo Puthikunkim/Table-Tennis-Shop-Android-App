@@ -50,6 +50,13 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.productDescription.setText(product.getDescription());
         holder.productPrice.setText("$" + String.format("%.2f", product.getPrice()));
         // TODO: load image into holder.productImage
+
+        // Wire up the click to custom listener:
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onProductClick(product);
+            }
+        });
     }
 
     @Override
