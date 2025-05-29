@@ -1,10 +1,11 @@
-package com.example.app.data;
+package com.example.app.Data;
 
 import com.example.app.Model.TableTennisProduct;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FirestoreRepository {
@@ -39,12 +40,16 @@ public class FirestoreRepository {
                 .whereEqualTo("categoryID", categoryId)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    List<TableTennisProduct> list = querySnapshot.toObjects(TableTennisProduct.class);
-                    // set the document ID on each object
-                    for (int i = 0; i < list.size(); i++) {
-                        list.get(i).setId(querySnapshot.getDocuments().get(i).getId());
+                    List<TableTennisProduct> list = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        TableTennisProduct p = doc.toObject(TableTennisProduct.class);
+                        if (p != null) {
+                            p.setId(doc.getId());
+                            list.add(p);
+                        }
                     }
                     callback.onSuccess(list);
+
                 })
                 .addOnFailureListener(callback::onError);
     }
