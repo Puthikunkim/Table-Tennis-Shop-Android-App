@@ -78,4 +78,24 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /** Fetch one product by its document ID */
+    public void getProductById(String productId, ProductDetailCallback callback) {
+        db.collection("products")
+                .document(productId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        TableTennisProduct product = doc.toObject(TableTennisProduct.class);
+                        if (product != null) {
+                            product.setId(doc.getId());
+                            callback.onSuccess(product);
+                        } else {
+                            callback.onError(new NullPointerException("Product deserialized to null"));
+                        }
+                    } else {
+                        callback.onError(new IllegalArgumentException("No such product: " + productId));
+                    }
+                })
+                .addOnFailureListener(callback::onError);
+    }
 }
