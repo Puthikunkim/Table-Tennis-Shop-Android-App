@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
-import com.example.app.adaptors.TableTennisAdapter;
+import com.example.app.adapters.TableTennisAdapter;
 import com.example.app.databinding.ActivityListBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.example.app.Data.FirestoreRepository;
