@@ -33,5 +33,14 @@
             android:layout_marginTop="12dp"
             android:textColor="@color/black" />
 
+        <TextView
+            android:id="@+id/topPickViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1234 views"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/text_secondary" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>
