@@ -33,4 +33,20 @@ public class FirestoreRepository {
         void onError(Exception e);
     }
 
+    /** Fetch all products in a given category */
+    public void getProductsByCategory(String categoryId, ProductsCallback callback) {
+        db.collection("products")
+                .whereEqualTo("categoryID", categoryId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<TableTennisProduct> list = querySnapshot.toObjects(TableTennisProduct.class);
+                    // set the document ID on each object
+                    for (int i = 0; i < list.size(); i++) {
+                        list.get(i).setId(querySnapshot.getDocuments().get(i).getId());
+                    }
+                    callback.onSuccess(list);
+                })
+                .addOnFailureListener(callback::onError);
+    }
+
 }
