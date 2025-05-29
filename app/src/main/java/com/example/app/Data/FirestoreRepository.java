@@ -4,6 +4,7 @@ import com.example.app.Model.TableTennisProduct;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +101,23 @@ public class FirestoreRepository {
                     } else {
                         callback.onError(new IllegalArgumentException("No such product: " + productId));
                     }
+                })
+                .addOnFailureListener(callback::onError);
+    }
+
+    public void getTopViewedProducts(int limit, ProductsCallback callback) {
+        db.collection("products")
+                .orderBy("views", Query.Direction.DESCENDING)
+                .limit(limit)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<TableTennisProduct> results = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        TableTennisProduct p = doc.toObject(TableTennisProduct.class);
+                        p.setId(doc.getId());
+                        results.add(p);
+                    }
+                    callback.onSuccess(results);
                 })
                 .addOnFailureListener(callback::onError);
     }
