@@ -18,6 +18,11 @@ import java.util.List;
 public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHolder> {
     private final List<TableTennisProduct> products;
     private final Context context;
+    private OnProductClickListener clickListener;
+
+    public interface OnProductClickListener {
+        void onProductClick(TableTennisProduct product);
+    }
 
     public TopPicksAdapter(Context context, List<TableTennisProduct> products) {
         this.context = context;
