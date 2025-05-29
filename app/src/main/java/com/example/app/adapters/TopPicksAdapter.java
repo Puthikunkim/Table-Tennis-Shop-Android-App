@@ -48,6 +48,11 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
         holder.views.setText(product.getViews() + " views");
         // TODO: load image into holder.image
 
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onProductClick(product);
+            }
+        });
     }
 
     @Override
