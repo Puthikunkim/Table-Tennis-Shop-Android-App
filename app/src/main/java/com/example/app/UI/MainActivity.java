@@ -28,9 +28,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         });
 
         // Category cards → ListActivity with selected category
-        binding.cardBats.setOnClickListener(v -> openListActivity("Bats"));
-        binding.cardBalls.setOnClickListener(v -> openListActivity("Balls"));
-        binding.cardTables.setOnClickListener(v -> openListActivity("Tables"));
+        binding.cardBats.setOnClickListener(v -> openListActivity("bats"));
+        binding.cardBalls.setOnClickListener(v -> openListActivity("balls"));
+        binding.cardTables.setOnClickListener(v -> openListActivity("tables"));
     }
 
     private void openListActivity(String categoryID) {
