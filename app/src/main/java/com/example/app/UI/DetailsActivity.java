@@ -9,6 +9,7 @@ import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.databinding.ActivityDetailsBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.app.Data.FirestoreRepository;
 
 public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
 
@@ -36,27 +37,21 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
             return;
         }
 
-        FirebaseFirestore.getInstance()
-                .collection("products")
-                .document(productId)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists()) {
-                        TableTennisProduct product = doc.toObject(TableTennisProduct.class);
-                        if (product != null) {
-                            binding.textTitle.setText(product.getName());
-                            binding.textDesc.setText(product.getDescription());
-                            binding.textCategory.setText(product.getCategoryID());
-                            binding.textPrice.setText(String.format("$%.2f", product.getPrice()));
-                        }
-                    } else {
-                        Toast.makeText(this, "Product not found", Toast.LENGTH_SHORT).show();
+        FirestoreRepository.getInstance()
+                .getProductById(productId, new FirestoreRepository.ProductDetailCallback() {
+                    @Override
+                    public void onSuccess(TableTennisProduct product) {
+                        binding.textTitle.setText(product.getName());
+                        binding.textDesc.setText(product.getDescription());
+                        binding.textCategory.setText(product.getCategoryID());
+                        binding.textPrice.setText(String.format("$%.2f", product.getPrice()));
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(DetailsActivity.this, "Failed to load product", Toast.LENGTH_SHORT).show();
                         finish();
                     }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to load product", Toast.LENGTH_SHORT).show();
-                    finish();
                 });
+
     }
 }

@@ -25,6 +25,7 @@ import com.example.app.databinding.ActivitySearchBinding;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.app.Data.FirestoreRepository;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -253,37 +254,21 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
     }
 
     private void searchProducts(String query) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("products")
-            .get()
-            .addOnSuccessListener(snapshot -> {
-                List<TableTennisProduct> allProducts = snapshot.toObjects(TableTennisProduct.class);
-                List<TableTennisProduct> filtered = new ArrayList<>();
-                String lowerQuery = query.toLowerCase();
-                for (TableTennisProduct product : allProducts) {
-                    if (product.getName() != null && product.getName().toLowerCase().contains(lowerQuery)) {
-                        filtered.add(product);
-                    } else if (product.getDescription() != null && product.getDescription().toLowerCase().contains(lowerQuery)) {
-                        filtered.add(product);
-                    } else if (product.getTags() != null) {
-                        for (String tag : product.getTags()) {
-                            if (tag != null && tag.toLowerCase().contains(lowerQuery)) {
-                                filtered.add(product);
-                                break;
-                            }
-                        }
+        FirestoreRepository.getInstance()
+                .searchProducts(query, new FirestoreRepository.ProductsCallback() {
+                    @Override
+                    public void onSuccess(List<TableTennisProduct> products) {
+                        searchResults.clear();
+                        searchResults.addAll(products);
+                        searchResultAdapter.notifyDataSetChanged();
+                        searchResultsRecyclerView.setVisibility(View.VISIBLE);
+                        binding.recentSearchesContainer.setVisibility(View.GONE);
                     }
-                }
-                Log.d(TAG, "Search found " + filtered.size() + " products for query: " + query);
-                searchResults.clear();
-                searchResults.addAll(filtered);
-                searchResultAdapter.notifyDataSetChanged();
-                searchResultsRecyclerView.setVisibility(View.VISIBLE);
-                binding.recentSearchesContainer.setVisibility(View.GONE);
-            })
-            .addOnFailureListener(e -> {
-                Log.e(TAG, "Error searching products", e);
-            });
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e(TAG, "Error searching products", e);
+                    }
+                });
     }
 
     @Override
