@@ -1,4 +1,4 @@
-package com.example.app.Data;
+package com.example.app.data;
 
 import com.example.app.Model.TableTennisProduct;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -45,6 +45,35 @@ public class FirestoreRepository {
                         list.get(i).setId(querySnapshot.getDocuments().get(i).getId());
                     }
                     callback.onSuccess(list);
+                })
+                .addOnFailureListener(callback::onError);
+    }
+
+    /** Search products by name, description or tags (client‐side filtering) */
+    public void searchProducts(String query, ProductsCallback callback) {
+        db.collection("products")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    String lower = query.toLowerCase();
+                    List<TableTennisProduct> all = snapshot.toObjects(TableTennisProduct.class);
+                    List<TableTennisProduct> filtered = new java.util.ArrayList<>();
+                    for (int i = 0; i < all.size(); i++) {
+                        TableTennisProduct p = all.get(i);
+                        // set ID
+                        p.setId(snapshot.getDocuments().get(i).getId());
+                        boolean matches = (p.getName() != null && p.getName().toLowerCase().contains(lower))
+                                || (p.getDescription() != null && p.getDescription().toLowerCase().contains(lower));
+                        if (!matches && p.getTags() != null) {
+                            for (String tag : p.getTags()) {
+                                if (tag != null && tag.toLowerCase().contains(lower)) {
+                                    matches = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (matches) filtered.add(p);
+                    }
+                    callback.onSuccess(filtered);
                 })
                 .addOnFailureListener(callback::onError);
     }
