@@ -55,5 +55,7 @@ dependencies {
     // Firestore (required to access Firebase's database service)
     implementation("com.google.firebase:firebase-firestore")
 
+    // Gson for JSON - Rhett
+    implementation("com.google.code.gson:gson:2.10.1")
 
 }
