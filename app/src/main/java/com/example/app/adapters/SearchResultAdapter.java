@@ -16,8 +16,15 @@ import com.example.app.R;
 import java.util.List;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
+
+    // Declare custom listener interface here:
+    public interface OnProductClickListener {
+        void onProductClick(TableTennisProduct product);
+    }
+
     private final List<TableTennisProduct> products;
     private final Context context;
+    private OnProductClickListener clickListener;  // Uses the interface declared above
 
     public SearchResultAdapter(Context context, List<TableTennisProduct> products) {
         this.context = context;
@@ -37,7 +44,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.productName.setText(product.getName());
         holder.productDescription.setText(product.getDescription());
         holder.productPrice.setText("$" + String.format("%.2f", product.getPrice()));
-        // TODO: Load image into holder.productImage if you have image URLs
+        // TODO: load image into holder.productImage
     }
 
     @Override
@@ -45,6 +52,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         return products.size();
     }
 
+    /** If you ever need to swap the list out */
     public void setProducts(List<TableTennisProduct> newProducts) {
         products.clear();
         products.addAll(newProducts);
@@ -63,4 +71,4 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             productPrice = itemView.findViewById(R.id.productPrice);
         }
     }
-} 
+}
