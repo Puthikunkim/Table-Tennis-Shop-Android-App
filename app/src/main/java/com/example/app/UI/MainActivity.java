@@ -2,6 +2,7 @@ package com.example.app.UI;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
@@ -10,6 +11,8 @@ import com.example.app.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.app.Data.FirestoreRepository;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
@@ -52,5 +55,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         });
     }
 
-
+    private void loadTopPicks() {
+        FirestoreRepository.getInstance()
+                .getTopViewedProducts(10, new FirestoreRepository.ProductsCallback() {
+                    @Override
+                    public void onSuccess(List<TableTennisProduct> products) {
+                        topList.clear();
+                        topList.addAll(products);
+                        topAdapter.notifyDataSetChanged();
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(MainActivity.this,
+                                "Failed to load top picks", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 }
