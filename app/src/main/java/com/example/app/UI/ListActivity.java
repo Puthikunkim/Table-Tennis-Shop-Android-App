@@ -35,6 +35,8 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        binding.customListTitle.setText(getIntent().getStringExtra("categoryID"));
+
         binding.customListBackButton.setOnClickListener(v -> finish());
 
         adapter = new TableTennisAdapter(this, R.layout.list_item_product, productList);
