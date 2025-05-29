@@ -11,6 +11,7 @@ import com.example.app.R;
 import com.example.app.adaptors.TableTennisAdapter;
 import com.example.app.databinding.ActivityListBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.app.Data.FirestoreRepository;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -59,23 +60,20 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     }
 
     private void fetchProductDataByCategory(String categoryID) {
-        db.collection("products")
-                .whereEqualTo("categoryID", categoryID)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    productList.clear();
-                    for (var doc : querySnapshot.getDocuments()) {
-                        TableTennisProduct product = doc.toObject(TableTennisProduct.class);
-                        if (product != null) {
-                            product.setId(doc.getId());  // ✅ Set Firestore ID manually
-                            productList.add(product);
-                        }
+        FirestoreRepository.getInstance()
+                .getProductsByCategory(categoryID, new FirestoreRepository.ProductsCallback() {
+                    @Override
+                    public void onSuccess(List<TableTennisProduct> products) {
+                        productList.clear();
+                        productList.addAll(products);
+                        adapter.notifyDataSetChanged();
                     }
-                    adapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Failed to load " + categoryID, e);
-                    Toast.makeText(this, "Failed to load products", Toast.LENGTH_LONG).show();
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e("Firestore", "Failed to load " + categoryID, e);
+                        Toast.makeText(ListActivity.this, "Failed to load products", Toast.LENGTH_LONG).show();
+                    }
                 });
+
     }
 }
