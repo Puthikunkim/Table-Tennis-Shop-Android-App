@@ -58,4 +58,11 @@ dependencies {
     // Gson for JSON - Rhett
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // User Auth - Jerry
+    implementation("com.google.firebase:firebase-auth")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
 }
