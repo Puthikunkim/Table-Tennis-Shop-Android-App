@@ -132,4 +132,24 @@ public class FirestoreRepository {
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(callback::onError);
     }
+
+    /**
+     * Adds a product to a user's wishlist.
+     * The product is stored as a document in the 'wishlist' subcollection under the user's document.
+     * We're storing the product's ID as the document ID in the wishlist for easy lookup.
+     * The whole product object is stored in the subcollection.
+     */
+    public void addProductToWishlist(String userId, TableTennisProduct product, WishlistOperationCallback callback) {
+        if (product.getId() == null) {
+            callback.onError(new IllegalArgumentException("Product ID cannot be null when adding to wishlist."));
+            return;
+        }
+
+        db.collection("users").document(userId)
+                .collection("wishlist")
+                .document(product.getId()) // Use product ID as document ID for wishlist item
+                .set(product) // Store the entire product object
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(callback::onError);
+    }
 }
