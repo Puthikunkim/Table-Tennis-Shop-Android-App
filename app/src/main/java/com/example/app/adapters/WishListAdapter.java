@@ -1,3 +1,4 @@
+// Commit 2: Implement Image Loading with Glide
 package com.example.app.adapters;
 
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide; // Added Glide import
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.databinding.ItemWishlistProductBinding;
@@ -65,7 +67,18 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.Wishli
             binding.productName.setText(product.getName());
             binding.productDescription.setText(product.getDescription());
             binding.productPrice.setText(String.format("$%.2f", product.getPrice()));
-            // Image loading and button listeners will be added in subsequent commits
+
+            // Load image using Glide
+            if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
+                Glide.with(context)
+                        .load(product.getImageUrls().get(0))
+                        .placeholder(R.drawable.ic_launcher_foreground) // Placeholder
+                        .error(R.drawable.ic_launcher_background) // Error drawable
+                        .into(binding.productImage);
+            } else {
+                binding.productImage.setImageResource(R.drawable.ic_launcher_background); // Default image
+            }
+            // Button listeners will be added in the next commit
         }
     }
 }
