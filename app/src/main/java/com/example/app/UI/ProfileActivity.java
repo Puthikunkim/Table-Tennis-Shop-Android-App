@@ -7,6 +7,7 @@ import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.databinding.ActivityProfileBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
@@ -39,6 +40,33 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.submitCreate.setOnClickListener(submitCreateClickListener);
         binding.buttonSignOut.setOnClickListener(signOutButtonClickListener);
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser user = mAuth.getCurrentUser();
+        updateUI(user);
+    }
+
+    private void updateUI(FirebaseUser user) {
+        if (user != null) {
+            binding.mainContentLoggedOut.setVisibility(View.GONE);
+            binding.signInForm.setVisibility(View.GONE);
+            binding.createAccountForm.setVisibility(View.GONE);
+            binding.mainContentLoggedIn.setVisibility(View.VISIBLE);
+
+            binding.textWelcome.setText(
+                    "Welcome, " + (user.getDisplayName() != null ? user.getDisplayName() : "User") + "!"
+            );
+            binding.textEmail.setText("Email: " + user.getEmail());
+        } else {
+            binding.mainContentLoggedOut.setVisibility(View.VISIBLE);
+            binding.mainContentLoggedIn.setVisibility(View.GONE);
+            binding.signInForm.setVisibility(View.GONE);
+            binding.createAccountForm.setVisibility(View.GONE);
+        }
+    }
+
 
     private final View.OnClickListener signInButtonClickListener = v -> { /* TODO */ };
     private final View.OnClickListener createAccountButtonClickListener = v -> { /* TODO */ };
