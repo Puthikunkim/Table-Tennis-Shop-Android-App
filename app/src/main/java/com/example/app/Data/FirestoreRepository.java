@@ -2,10 +2,12 @@ package com.example.app.Data;
 
 import com.example.app.Model.TableTennisProduct;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +36,24 @@ public class FirestoreRepository {
         void onSuccess(TableTennisProduct product);
         void onError(Exception e);
     }
+
+    public interface UserProfileCallback {
+        void onSuccess();
+        void onError(Exception e);
+    }
+
+    // New: Callback for wishlist operations
+    public interface WishlistOperationCallback {
+        void onSuccess();
+        void onError(Exception e);
+    }
+
+    // New: Callback for fetching wishlist items
+    public interface WishlistProductsCallback {
+        void onSuccess(List<TableTennisProduct> products);
+        void onError(Exception e);
+    }
+
 
     /** Fetch all products in a given category */
     public void getProductsByCategory(String categoryId, ProductsCallback callback) {
@@ -103,12 +123,6 @@ public class FirestoreRepository {
                     }
                 })
                 .addOnFailureListener(callback::onError);
-    }
-
-    // Add a callback for user profile operations
-    public interface UserProfileCallback {
-        void onSuccess();
-        void onError(Exception e);
     }
 
     public void createUserProfile(String userId, Map<String, Object> userProfileData, UserProfileCallback callback) {
