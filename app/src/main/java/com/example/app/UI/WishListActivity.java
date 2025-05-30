@@ -74,12 +74,28 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     @Override
     public void onStart() {
         super.onStart();
-        // TODO: implement
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        updateUI(currentUser);
     }
 
     private void updateUI(FirebaseUser user) {
-        // TODO: implement
+        if (user != null) {
+            // signed in
+            binding.loggedOutWishlist.getRoot().setVisibility(View.GONE);
+            binding.recyclerViewWishlist.setVisibility(View.VISIBLE);
+            binding.emptyWishlist.getRoot().setVisibility(View.GONE);
+            loadWishlist(user.getUid());
+        } else {
+            // signed out
+            binding.loggedOutWishlist.getRoot().setVisibility(View.VISIBLE);
+            binding.recyclerViewWishlist.setVisibility(View.GONE);
+            binding.emptyWishlist.getRoot().setVisibility(View.GONE);
+            wishlistItems.clear();
+            wishlistAdapter.notifyDataSetChanged();
+            Log.d(TAG, "User not signed in. Showing logged out message.");
+        }
     }
+
 
     private void loadWishlist(String userId) {
         // TODO: implement
