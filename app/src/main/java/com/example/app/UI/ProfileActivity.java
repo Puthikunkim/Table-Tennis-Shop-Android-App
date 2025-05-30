@@ -163,7 +163,6 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     private final View.OnClickListener createAccountButtonClickListener = v -> { /* TODO */ };
     private final View.OnClickListener closeSignInClickListener = v -> { /* TODO */ };
     private final View.OnClickListener closeCreateClickListener = v -> { /* TODO */ };
-    private final View.OnClickListener signOutButtonClickListener = v -> { /* TODO */ };
 
     private void clearSignInForm() {
         binding.inputSignInEmail.setText("");
@@ -174,4 +173,10 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.inputEmail.setText("");
         binding.inputCreatePassword.setText("");
     }
+
+    private final View.OnClickListener signOutButtonClickListener = view -> {
+        mAuth.signOut();
+        updateUI(null);
+        Toast.makeText(this, "Signed out successfully", Toast.LENGTH_SHORT).show();
+    };
 }
