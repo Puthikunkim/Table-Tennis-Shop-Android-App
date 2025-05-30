@@ -9,15 +9,17 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/ic_launcher_background" /> <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Your Wishlist is Empty!"
-    android:textColor="@color/text_primary"
-    android:textSize="22sp"
-    android:textStyle="bold"
-    android:layout_marginTop="16dp"
-    android:gravity="center" />
+        android:src="@drawable/ic_launcher_background" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Wishlist is Empty!"
+        android:textColor="@color/text_primary"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:gravity="center" />
 
     <TextView
         android:layout_width="wrap_content"
