@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,6 +126,7 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+
     public void createUserProfile(String userId, Map<String, Object> userProfileData, UserProfileCallback callback) {
         db.collection("users")
                 .document(userId)
@@ -205,3 +207,22 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 }
+
+    public void getTopViewedProducts(int limit, ProductsCallback callback) {
+        db.collection("products")
+                .orderBy("views", Query.Direction.DESCENDING)
+                .limit(limit)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<TableTennisProduct> results = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        TableTennisProduct p = doc.toObject(TableTennisProduct.class);
+                        p.setId(doc.getId());
+                        results.add(p);
+                    }
+                    callback.onSuccess(results);
+                })
+                .addOnFailureListener(callback::onError);
+    }
+}
+

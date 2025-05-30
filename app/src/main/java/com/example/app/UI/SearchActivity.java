@@ -1,5 +1,6 @@
 package com.example.app.UI;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -100,6 +102,20 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
     private void setupSearchResultsRecyclerView() {
         if (searchResultsRecyclerView != null) {
             searchResultAdapter = new SearchResultAdapter(this, searchResults);
+
+            searchResultAdapter.setOnProductClickListener(product -> {
+                if (product.getId() != null) {
+                    Intent intent = new Intent(SearchActivity.this, DetailsActivity.class);
+                    intent.putExtra("productId", product.getId());
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(SearchActivity.this,
+                            "Missing product ID",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
             searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             searchResultsRecyclerView.setAdapter(searchResultAdapter);
         }
