@@ -7,6 +7,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FirestoreRepository {
     private static FirestoreRepository instance;
@@ -101,6 +102,20 @@ public class FirestoreRepository {
                         callback.onError(new IllegalArgumentException("No such product: " + productId));
                     }
                 })
+                .addOnFailureListener(callback::onError);
+    }
+
+    // Add a callback for user profile operations
+    public interface UserProfileCallback {
+        void onSuccess(); // No data returned, just success confirmation
+        void onError(Exception e);
+    }
+
+    public void createUserProfile(String userId, Map<String, Object> userProfileData, UserProfileCallback callback) {
+        db.collection("users")
+                .document(userId)
+                .set(userProfileData)
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(callback::onError);
     }
 }
