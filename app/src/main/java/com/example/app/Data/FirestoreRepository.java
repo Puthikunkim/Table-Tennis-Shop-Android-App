@@ -165,4 +165,25 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Fetches all products from a user's wishlist.
+     */
+    public void getWishlistProducts(String userId, WishlistProductsCallback callback) {
+        db.collection("users").document(userId)
+                .collection("wishlist")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<TableTennisProduct> wishlist = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        TableTennisProduct product = doc.toObject(TableTennisProduct.class);
+                        if (product != null) {
+                            product.setId(doc.getId()); // Ensure the ID is set from the document ID
+                            wishlist.add(product);
+                        }
+                    }
+                    callback.onSuccess(wishlist);
+                })
+                .addOnFailureListener(callback::onError);
+    }
+
 }
