@@ -152,4 +152,17 @@ public class FirestoreRepository {
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(callback::onError);
     }
+
+    /**
+     * Removes a product from a user's wishlist.
+     */
+    public void removeProductFromWishlist(String userId, String productId, WishlistOperationCallback callback) {
+        db.collection("users").document(userId)
+                .collection("wishlist")
+                .document(productId)
+                .delete()
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(callback::onError);
+    }
+
 }
