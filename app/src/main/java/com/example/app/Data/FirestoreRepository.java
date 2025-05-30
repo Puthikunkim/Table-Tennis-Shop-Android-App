@@ -107,7 +107,7 @@ public class FirestoreRepository {
 
     // Add a callback for user profile operations
     public interface UserProfileCallback {
-        void onSuccess(); // No data returned, just success confirmation
+        void onSuccess();
         void onError(Exception e);
     }
 
