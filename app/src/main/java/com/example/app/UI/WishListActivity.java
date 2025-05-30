@@ -31,15 +31,14 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
 
     @Override
     protected ActivityWishListBinding inflateContentBinding() {
-        // TODO: implement
-        return null;
+        return ActivityWishListBinding.inflate(getLayoutInflater());
     }
 
     @Override
     protected int getSelectedMenuItemId() {
-        // TODO: implement
-        return 0;
+        return R.id.wish_list;
     }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
