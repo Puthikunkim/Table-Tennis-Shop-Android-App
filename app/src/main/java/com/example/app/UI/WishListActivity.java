@@ -43,8 +43,33 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: implement
+
+        mAuth = FirebaseAuth.getInstance();
+        firestoreRepository = FirestoreRepository.getInstance();
+        wishlistItems = new ArrayList<>();
+
+        // Initialize RecyclerView
+        binding.recyclerViewWishlist.setLayoutManager(new LinearLayoutManager(this));
+        wishlistAdapter = new WishListAdapter(this, wishlistItems, new WishListAdapter.OnWishlistItemActionListener() {
+            @Override
+            public void onDeleteClick(TableTennisProduct product) {
+                removeProductFromWishlist(product);
+            }
+
+            @Override
+            public void onAddToCartClick(TableTennisProduct product) {
+                Toast.makeText(WishListActivity.this, "Added " + product.getName() + " to cart!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.recyclerViewWishlist.setAdapter(wishlistAdapter);
+
+        // "Sign In" button when logged out
+        binding.loggedOutWishlist.signInButtonWishlist.setOnClickListener(v -> {
+            Intent intent = new Intent(WishListActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
     }
+
 
     @Override
     public void onStart() {
