@@ -6,6 +6,7 @@
     android:background="#121212"
     android:padding="24dp">
 
+        <!--User not logged in welcome screen-->
         <LinearLayout
             android:id="@+id/mainContentLoggedOut"
             android:layout_width="match_parent"
@@ -42,6 +43,7 @@
                     android:layout_marginBottom="12dp" />
         </LinearLayout>
 
+        <!--User logged in welcome screen-->
         <LinearLayout
             android:id="@+id/mainContentLoggedIn"
             android:layout_width="match_parent"
@@ -80,7 +82,7 @@
                     android:textColor="#FFFFFF" />
         </LinearLayout>
 
-
+        <!--Sign in screen-->
         <LinearLayout
             android:id="@+id/signInForm"
             android:layout_width="match_parent"
@@ -150,6 +152,7 @@
                     android:textColor="#FFFFFF" />
         </LinearLayout>
 
+        <!--Create account screen-->
         <LinearLayout
             android:id="@+id/createAccountForm"
             android:layout_width="match_parent"
