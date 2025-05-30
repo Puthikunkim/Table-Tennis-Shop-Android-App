@@ -58,4 +58,7 @@ dependencies {
     // Gson for JSON - Rhett
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // User Auth - Jerry
+    implementation("com.google.firebase:firebase-auth")
+
 }
