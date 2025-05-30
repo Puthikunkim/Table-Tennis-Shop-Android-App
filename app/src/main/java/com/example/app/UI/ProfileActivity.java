@@ -11,6 +11,10 @@ import com.example.app.Data.FirestoreRepository;
 import com.example.app.databinding.ActivityProfileBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
@@ -87,11 +91,67 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
                         FirebaseUser user = mAuth.getCurrentUser();
                         updateUI(user);
                         Toast.makeText(this, "Signed in as: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                        clearSignInForm();
                     } else {
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
                         Toast.makeText(this,
                                 "Authentication failed: " + task.getException().getMessage(),
+                                Toast.LENGTH_LONG).show();
+                        updateUI(null);
+                    }
+                });
+    };
+
+    private final View.OnClickListener submitCreateClickListener = view -> {
+        String email = binding.inputEmail.getText().toString().trim();
+        String password = binding.inputCreatePassword.getText().toString().trim();
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (password.length() < 6) {
+            Toast.makeText(this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "createUserWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            Map<String, Object> userProfile = new HashMap<>();
+                            userProfile.put("email", user.getEmail());
+                            userProfile.put("createdAt", FieldValue.serverTimestamp());
+
+                            firestoreRepository.createUserProfile(
+                                    user.getUid(),
+                                    userProfile,
+                                    new FirestoreRepository.UserProfileCallback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Log.d(TAG, "User profile created");
+                                            updateUI(user);
+                                            Toast.makeText(ProfileActivity.this,
+                                                    "Account created and signed in as: " + user.getEmail(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        @Override
+                                        public void onError(Exception e) {
+                                            Log.w(TAG, "Profile save failed", e);
+                                            updateUI(user);
+                                            Toast.makeText(ProfileActivity.this,
+                                                    "Created but profile save failed: " + e.getMessage(),
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                            );
+                        }
+                    } else {
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        Toast.makeText(this,
+                                "Account creation failed: " + task.getException().getMessage(),
                                 Toast.LENGTH_LONG).show();
                         updateUI(null);
                     }
@@ -103,7 +163,5 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     private final View.OnClickListener createAccountButtonClickListener = v -> { /* TODO */ };
     private final View.OnClickListener closeSignInClickListener = v -> { /* TODO */ };
     private final View.OnClickListener closeCreateClickListener = v -> { /* TODO */ };
-    private final View.OnClickListener submitSignInClickListener = v -> { /* TODO */ };
-    private final View.OnClickListener submitCreateClickListener = v -> { /* TODO */ };
     private final View.OnClickListener signOutButtonClickListener = v -> { /* TODO */ };
 }
