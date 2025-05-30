@@ -164,4 +164,14 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     private final View.OnClickListener closeSignInClickListener = v -> { /* TODO */ };
     private final View.OnClickListener closeCreateClickListener = v -> { /* TODO */ };
     private final View.OnClickListener signOutButtonClickListener = v -> { /* TODO */ };
+
+    private void clearSignInForm() {
+        binding.inputSignInEmail.setText("");
+        binding.inputSignInPassword.setText("");
+    }
+
+    private void clearCreateAccountForm() {
+        binding.inputEmail.setText("");
+        binding.inputCreatePassword.setText("");
+    }
 }
