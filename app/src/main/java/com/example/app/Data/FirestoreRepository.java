@@ -186,4 +186,22 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Checks if a specific product is in a user's wishlist.
+     * This is useful for updating the UI of product detail pages.
+     */
+    public void checkIfProductInWishlist(String userId, String productId, WishlistOperationCallback callback) {
+        db.collection("users").document(userId)
+                .collection("wishlist")
+                .document(productId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        callback.onSuccess(); // Product is in wishlist
+                    } else {
+                        callback.onError(new Exception("Product not in wishlist")); // Product is not in wishlist
+                    }
+                })
+                .addOnFailureListener(callback::onError);
+    }
 }
