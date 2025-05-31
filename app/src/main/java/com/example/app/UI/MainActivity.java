@@ -41,8 +41,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
         // 2) Setup Top Picks RecyclerView
         setupTopPicks();
+
         // 3) Load data from Firestore
         loadTopPicks();
+
+        // 4) Show featured product
+        loadFeaturedProduct();
     }
 
     private void openListActivity(String categoryID) {
@@ -88,5 +92,33 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                         ).show();
                     }
                 });
+    }
+
+    private void loadFeaturedProduct() {
+        FirestoreRepository.getInstance().getRandomProduct(new FirestoreRepository.ProductDetailCallback() {
+            @Override
+            public void onSuccess(TableTennisProduct featured) {
+                binding.featuredTitle.setText(featured.getName());
+                binding.featuredSubtitle.setText("The ultimate table tennis experience.");
+                binding.featuredDescription.setText(featured.getDescription());
+
+                binding.btnShopNow.setOnClickListener(v -> {
+                    Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                    intent.putExtra("productId", featured.getId());
+                    startActivity(intent);
+                });
+
+                binding.btnViewAll.setOnClickListener(v -> {
+                    Intent intent = new Intent(MainActivity.this, ListActivity.class);
+                    intent.putExtra("categoryID", featured.getCategoryID()); // Adjust field name if needed
+                    startActivity(intent);
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(MainActivity.this, "Failed to load featured product", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
