@@ -168,7 +168,7 @@
 
                 <Button
                     android:id="@+id/btnAddToCart"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Add to Cart"
                     android:textColor="@color/text_primary"
@@ -180,8 +180,8 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Favorite"
-                    app:tint="@color/text_primary"/>
+                    android:contentDescription="WishList" />
+
             </LinearLayout>
 
             <!-- You Might Like -->
