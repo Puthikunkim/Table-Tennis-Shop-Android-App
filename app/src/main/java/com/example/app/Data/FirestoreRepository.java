@@ -206,7 +206,6 @@ public class FirestoreRepository {
                 })
                 .addOnFailureListener(callback::onError);
     }
-}
 
     public void getTopViewedProducts(int limit, ProductsCallback callback) {
         db.collection("products")
