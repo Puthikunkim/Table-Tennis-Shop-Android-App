@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="@color/background_dark"
     tools:context=".UI.ListActivity">
 
     <!-- This ListView is what binding.list accesses -->
@@ -12,7 +12,7 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@android:color/black"
+        android:divider="@color/card_background"
         android:dividerHeight="12dp"
         android:paddingTop="64dp"
         android:paddingStart="16dp"
@@ -30,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="back"
+        android:textColor="@color/text_primary"
         android:layout_margin="16dp"
         android:layout_gravity="top|start" />
 
