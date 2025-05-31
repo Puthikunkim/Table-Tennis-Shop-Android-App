@@ -12,8 +12,6 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/card_background"
-        android:dividerHeight="12dp"
         android:paddingTop="64dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
