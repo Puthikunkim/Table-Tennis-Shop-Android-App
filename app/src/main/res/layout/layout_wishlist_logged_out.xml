@@ -37,5 +37,7 @@
         android:layout_height="wrap_content"
         android:text="Sign In Now"
         android:paddingHorizontal="32dp"
-        android:paddingVertical="12dp"/>
+        android:paddingVertical="12dp"
+        android:backgroundTint="@color/purple_500"
+        android:textColor="@color/text_primary"/>
 </LinearLayout>

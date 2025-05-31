@@ -168,12 +168,12 @@
 
                 <Button
                     android:id="@+id/btnAddToCart"
-                    android:layout_marginStart="16dp"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Add to Cart"
-                    android:textColor="@color/text_primary"/>
+                    android:textColor="@color/text_primary"
+                    android:backgroundTint="@color/purple_500"
+                    android:layout_marginTop="8dp"/>
 
                 <ImageButton
                     android:id="@+id/btnFavorite"
