@@ -61,7 +61,7 @@
                         android:id="@+id/featuredSubtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Short product tagline"
+                        android:text="The ultimate table tennis experience."
                         android:textSize="18sp"
                         android:textColor="@color/text_secondary"
                         android:layout_marginTop="8dp" />
