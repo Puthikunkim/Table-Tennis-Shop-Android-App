@@ -4,16 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background_dark">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/purple_500"
         app:title="BounceBros"
         app:titleCentered="true"
-        app:titleTextColor="@android:color/white" />
+        app:titleTextColor="@color/text_primary" />
 
     <FrameLayout
         android:id="@+id/content_container"
@@ -28,7 +29,8 @@
         android:layout_height="wrap_content"
         app:menu="@menu/menu_navigation"
         app:labelVisibilityMode="unlabeled"
-        app:itemIconTint="@drawable/selector"
-        app:itemBackground="@color/teal_700" />
+        app:itemIconTint="@color/text_primary"
+        app:itemBackground="@color/card_background"
+        android:background="@color/card_background" />
 
 </LinearLayout>

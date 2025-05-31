@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_dark"
     tools:context=".UI.DetailsActivity">
 
     <ScrollView
@@ -23,7 +24,8 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="back" />
+                android:text="back"
+                android:textColor="@color/text_primary" />
             <!-- Image slider -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -42,7 +44,8 @@
                     android:layout_height="40dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:tint="@color/text_primary"/>
 
                 <ImageButton
                     android:id="@+id/btnNext"
@@ -50,7 +53,8 @@
                     android:layout_height="40dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:tint="@color/text_primary"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Category & Price -->
@@ -65,7 +69,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="Bats Category"/>
+                    android:text="Bats Category"
+                    android:textColor="@color/text_primary"/>
 
                 <TextView
                     android:id="@+id/textPrice"
@@ -73,7 +78,8 @@
                     android:layout_height="wrap_content"
                     android:text="$89.99"
                     android:textSize="20sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"/>
             </LinearLayout>
 
             <!-- Title & Description -->
@@ -84,14 +90,16 @@
                 android:layout_height="wrap_content"
                 android:text="Pro Carbon Bat"
                 android:textSize="24sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"/>
 
             <TextView
                 android:id="@+id/textDesc"
                 android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Professional-grade carbon fiber table tennis bat designed for advanced players."/>
+                android:text="Professional-grade carbon fiber table tennis bat designed for advanced players."
+                android:textColor="@color/text_secondary"/>
 
             <!-- Quantity + Add to Cart + Favorite -->
             <LinearLayout
@@ -105,6 +113,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Quantity:"
+                    android:textColor="@color/text_primary"
                     android:layout_marginEnd="8dp"/>
 
                 <androidx.cardview.widget.CardView
@@ -112,7 +121,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     app:cardElevation="4dp"
-                    app:cardCornerRadius="8dp">
+                    app:cardCornerRadius="8dp"
+                    app:cardBackgroundColor="@color/card_background">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -125,7 +135,8 @@
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="–" />
+                            android:text="–"
+                            android:textColor="@color/text_primary" />
 
                         <TextView
                             android:id="@+id/textQuantity"
@@ -133,6 +144,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:text="1"
+                            android:textColor="@color/text_primary"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"/>
 
@@ -141,7 +153,8 @@
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="+" />
+                            android:text="+"
+                            android:textColor="@color/text_primary" />
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -155,18 +168,20 @@
 
                 <Button
                     android:id="@+id/btnAddToCart"
-                    android:layout_marginStart="16dp"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Add to Cart"/>
+                    android:text="Add to Cart"
+                    android:textColor="@color/text_primary"
+                    android:backgroundTint="@color/purple_500"
+                    android:layout_marginTop="8dp"/>
 
                 <ImageButton
                     android:id="@+id/btnFavorite"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Favorite"/>
+                    android:contentDescription="Favorite"
+                    app:tint="@color/text_primary"/>
             </LinearLayout>
 
             <!-- You Might Like -->
@@ -176,7 +191,8 @@
                 android:layout_height="wrap_content"
                 android:text="You Might Like"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRecommendations"

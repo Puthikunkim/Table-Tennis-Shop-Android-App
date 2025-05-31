@@ -36,7 +36,12 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding.customListTitle.setText(getIntent().getStringExtra("categoryID"));
+        String rawCategory = getIntent().getStringExtra("categoryID");
+        String category = rawCategory;
+        if (category != null && category.length() > 0) {
+            category = category.substring(0, 1).toUpperCase() + category.substring(1);
+        }
+        binding.customListTitle.setText(category);
 
         binding.customListBackButton.setOnClickListener(v -> finish());
 

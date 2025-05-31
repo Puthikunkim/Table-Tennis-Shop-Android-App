@@ -31,7 +31,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Sign In"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="12dp"
+                    android:backgroundTint="@color/purple_500"
+                    android:textColor="@color/text_primary" />
 
                 <Button
                     android:id="@+id/buttonCreateAccount"
@@ -140,7 +142,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Submit"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/purple_500"
+                    android:textColor="@color/text_primary" />
 
                 <Button
                     android:id="@+id/closeSignIn"
@@ -213,7 +217,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Submit"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/purple_500"
+                    android:textColor="@color/text_primary" />
 
                 <Button
                     android:id="@+id/closeCreate"
