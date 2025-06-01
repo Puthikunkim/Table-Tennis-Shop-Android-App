@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.view.View;
 import android.widget.Toast;
@@ -84,6 +85,8 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate", e);
         }
+
+        binding.btnSort.setOnClickListener(v -> showSortMenu(v));
     }
 
     private void initializeViews() {
@@ -105,7 +108,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
 
     private void setupSearchResultsRecyclerView() {
         if (searchResultsRecyclerView != null) {
-            searchResultAdapter = new SearchResultAdapter(this, searchResults);
+            searchResultAdapter = new SearchResultAdapter(this, filteredResults);
 
             searchResultAdapter.setOnProductClickListener(product -> {
                 if (product.getId() != null) {
@@ -278,11 +281,14 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
                 .searchProducts(query, new FirestoreRepository.ProductsCallback() {
                     @Override
                     public void onSuccess(List<TableTennisProduct> products) {
-                        searchResults.clear();
-                        searchResults.addAll(products);
+                        fullResults.clear();
+                        fullResults.addAll(products);
+                        filteredResults.clear();
+                        filteredResults.addAll(products); // default: no filter
                         searchResultAdapter.notifyDataSetChanged();
-                        searchResultsRecyclerView.setVisibility(View.VISIBLE);
-                        binding.recentSearchesContainer.setVisibility(View.GONE);
+
+                        binding.sortFilterContainer.setVisibility(View.VISIBLE); // shows Sort/Filter row
+
                     }
                     @Override
                     public void onError(Exception e) {
@@ -338,4 +344,21 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         filteredResults.sort(comparator);
         searchResultAdapter.notifyDataSetChanged();
     }
+
+    private void showSortMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.sort_price_asc) sortList("price", true);
+            else if (id == R.id.sort_price_desc) sortList("price", false);
+            else if (id == R.id.sort_name_asc) sortList("name", true);
+            else if (id == R.id.sort_name_desc) sortList("name", false);
+            return true;
+        });
+
+        popup.show();
+    }
+
 }
