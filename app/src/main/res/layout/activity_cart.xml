@@ -59,7 +59,7 @@
                     android:id="@+id/subtotalText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$129.99"
+                    android:text="$0.00"
                     android:textColor="@color/text_primary"
                     android:textSize="16sp"/>
             </LinearLayout>
@@ -112,7 +112,7 @@
                     android:id="@+id/totalText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$129.99"
+                    android:text="$0.00"
                     android:textColor="@color/text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
