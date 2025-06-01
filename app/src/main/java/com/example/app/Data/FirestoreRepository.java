@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class FirestoreRepository {
     private static FirestoreRepository instance;
@@ -223,5 +224,35 @@ public class FirestoreRepository {
                 })
                 .addOnFailureListener(callback::onError);
     }
+
+    /**
+     * Fetches a single random product from the "products" collection.
+     * Useful for dynamically showcasing a featured item on the home screen.
+     *
+     * @param callback A callback interface to handle success or failure.
+     *                 On success, returns a randomly selected TableTennisProduct.
+     */
+    public void getRandomProduct(ProductDetailCallback callback) {
+        db.collection("products")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    List<DocumentSnapshot> docs = snapshot.getDocuments();
+                    if (docs.isEmpty()) {
+                        callback.onError(new Exception("No products found"));
+                        return;
+                    }
+
+                    DocumentSnapshot randomDoc = docs.get(new Random().nextInt(docs.size()));
+                    TableTennisProduct product = randomDoc.toObject(TableTennisProduct.class);
+                    if (product != null) {
+                        product.setId(randomDoc.getId());
+                        callback.onSuccess(product);
+                    } else {
+                        callback.onError(new Exception("Failed to deserialize product"));
+                    }
+                })
+                .addOnFailureListener(callback::onError);
+    }
+
 }
 
