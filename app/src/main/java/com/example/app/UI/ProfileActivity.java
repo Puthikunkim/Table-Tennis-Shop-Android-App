@@ -78,20 +78,6 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             // Ensure the UI updates properly
             fetchCartSummary(user.getUid());
 
-            // You can fetch more user data from Firestore here if needed
-            // For example, if you stored their full name in a 'users' collection
-            // You would use firestoreRepository to get user data:
-            // firestoreRepository.getUserProfile(user.getUid(), new FirestoreRepository.UserProfileCallback() {
-            //     @Override
-            //     public void onSuccess(Map<String, Object> userProfileData) {
-            //         // Update UI with userProfileData
-            //     }
-            //     @Override
-            //     public void onError(Exception e) {
-            //         Log.e(TAG, "Error fetching user profile", e);
-            //     }
-            // });
-
         } else {
             // User is signed out
             binding.mainContentLoggedOut.setVisibility(View.VISIBLE);
