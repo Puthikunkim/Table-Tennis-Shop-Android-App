@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:background="@color/background_dark">
 
+    <!-- Title bar -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,6 +19,7 @@
         android:paddingHorizontal="16dp"
         android:paddingBottom="24dp"/>
 
+    <!-- The ListView for cart items (gone when user is logged out or when cart is empty) -->
     <ListView
         android:id="@+id/cartListView"
         android:layout_width="match_parent"
@@ -25,20 +27,32 @@
         android:layout_weight="1"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
-        android:paddingHorizontal="16dp"/>
+        android:paddingHorizontal="16dp"
+        android:visibility="gone"/>
 
+    <!-- NEW: Include the “logged‐out” cart layout -->
+    <include
+        android:id="@+id/loggedOutCart"
+        layout="@layout/layout_cart_logged_out"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
+
+    <!-- “Empty Cart” placeholder (shown if user is signed in but cartItems.isEmpty()) -->
     <include
         android:id="@+id/emptyCart"
         layout="@layout/layout_empty_cart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
 
+    <!-- Checkout total / button bar (shown if user signed in AND cartItems not empty) -->
     <include
         android:id="@+id/checkoutTotal"
         layout="@layout/layout_checkout_total"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
-
 </LinearLayout>
