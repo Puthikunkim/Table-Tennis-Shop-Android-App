@@ -292,4 +292,50 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             }
         });
     }
+
+    private void setupWishlistButtons() {
+        binding.btnViewWishlist.setOnClickListener(v -> {
+            Toast.makeText(ProfileActivity.this, "Wishlist view tapped", Toast.LENGTH_SHORT).show();
+            // You can navigate if needed later
+        });
+
+        binding.btnClearWishlist.setOnClickListener(v -> {
+            FirebaseUser user = mAuth.getCurrentUser();
+            if (user != null) {
+                firestoreRepository.clearWishlist(user.getUid(), new FirestoreRepository.OperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(ProfileActivity.this, "Wishlist cleared!", Toast.LENGTH_SHORT).show();
+                        binding.wishlistItemCount.setText("You have 0 items in your wishlist.");
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(ProfileActivity.this, "Failed to clear wishlist: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    private void fetchWishlistSummary(String userId) {
+        firestoreRepository.getWishlistProducts(userId, new FirestoreRepository.WishlistProductsCallback() {
+            @Override
+            public void onSuccess(List<TableTennisProduct> products) {
+                int totalItems = products.size();
+                String summary = totalItems == 1
+                        ? "You have 1 item in your wishlist."
+                        : "You have " + totalItems + " items in your wishlist.";
+
+                binding.wishlistItemCount.setText(summary);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                binding.wishlistItemCount.setText("Failed to load wishlist.");
+            }
+        });
+    }
+
+
 }
