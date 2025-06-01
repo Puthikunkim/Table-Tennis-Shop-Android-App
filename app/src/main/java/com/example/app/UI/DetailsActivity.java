@@ -119,7 +119,15 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                     }
                 });
 
-                // TODO: Check wishlist status
+                // 3) After loading, check wishlist status if user is signed in
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null) {
+                    checkIfInWishlist(user, product.getId());
+                } else {
+                    // If user is not signed in, show “not wishlisted”
+                    binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
+                    isWishlisted = false;
+                }
             }
 
             @Override
@@ -132,7 +140,26 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     }
 
     private void checkIfInWishlist(FirebaseUser user, String productId) {
-        // TODO: Implement Firestore wishlist check
+        firestoreRepository.checkIfProductInWishlist(
+                user.getUid(),
+                productId,
+                new FirestoreRepository.WishlistOperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        // Document exists in wishlist ⇒ already wishlisted
+                        isWishlisted = true;
+                        binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_filled);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        // If the document doesn’t exist, we get an error ⇒ not wishlisted
+                        isWishlisted = false;
+                        binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
+                        // Note: We are not “logging” here because permission errors would be unexpected.
+                    }
+                }
+        );
     }
 
     private void onFavoriteClicked() {
