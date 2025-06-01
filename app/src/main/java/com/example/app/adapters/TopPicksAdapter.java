@@ -89,7 +89,44 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
                 }
             });
         }
+        // 3) Heart‐icon click → toggle wishlist
+        holder.heartIcon.setOnClickListener(v -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Toast.makeText(context, "Please log in to add items to your wishlist", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
+            String uid = user.getUid();
+            Boolean isCurrentlyWishlisted = (Boolean) holder.heartIcon.getTag();
+            if (isCurrentlyWishlisted != null && isCurrentlyWishlisted) {
+                // → remove from wishlist
+                firestoreRepository.removeProductFromWishlist(uid, product.getId(), new FirestoreRepository.WishlistOperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        // UI update and Toast for success will be in the next commit
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        // UI update and Toast for error will be in the next commit
+                    }
+                });
+            } else {
+                // → add to wishlist
+                firestoreRepository.addProductToWishlist(uid, product, new FirestoreRepository.WishlistOperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        // UI update and Toast for success will be in the next commit
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        // UI update and Toast for error will be in the next commit
+                    }
+                });
+            }
+        });
     }
 
     @Override
