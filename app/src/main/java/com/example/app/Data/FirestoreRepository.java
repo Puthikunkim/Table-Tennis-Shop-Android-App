@@ -278,4 +278,20 @@ public class FirestoreRepository {
                 })
                 .addOnFailureListener(callback::onError);
     }
+
+    public void clearCart(String userId, OperationCallback callback) {
+        db.collection("users").document(userId)
+                .collection("cart")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        doc.getReference().delete();
+                    }
+                    if (callback != null) callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) callback.onError(e);
+                });
+    }
+
 }
