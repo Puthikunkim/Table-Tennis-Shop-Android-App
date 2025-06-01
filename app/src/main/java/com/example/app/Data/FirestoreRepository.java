@@ -227,7 +227,18 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
-
+    public void removeFromCart(String userId, String productId, OperationCallback callback) {
+        db.collection("users").document(userId)
+                .collection("cart")
+                .document(productId)
+                .delete()
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) callback.onError(e);
+                });
+    }
 
     public void getTopViewedProducts(int limit, ProductsCallback callback) {
         db.collection("products")
