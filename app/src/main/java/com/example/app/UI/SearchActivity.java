@@ -297,4 +297,23 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         super.onDestroy();
         handler.removeCallbacks(pendingAction);
     }
+
+    private void showFilterMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        popup.getMenuInflater().inflate(R.menu.menu_filter, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.filter_all) selectedCategory = "all";
+            else if (id == R.id.filter_bats) selectedCategory = "bats";
+            else if (id == R.id.filter_balls) selectedCategory = "balls";
+            else if (id == R.id.filter_tables) selectedCategory = "tables";
+
+            applyFilterAndSort(); // Refresh filtered list
+            return true;
+        });
+
+        popup.show();
+    }
+
 }
