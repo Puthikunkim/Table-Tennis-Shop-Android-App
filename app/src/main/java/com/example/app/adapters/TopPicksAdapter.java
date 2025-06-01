@@ -68,7 +68,28 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
             holder.heartIcon.setImageResource(R.drawable.ic_wishlist);
             holder.heartIcon.setTag(false);
         }
-// ... (rest of the code for authenticated users and click listener will be in subsequent commits)
+
+        else {
+            // Check Firestore: is this product already in the user's wishlist?
+            String uid = currentUser.getUid();
+            firestoreRepository.checkIfProductInWishlist(uid, product.getId(), new FirestoreRepository.WishlistOperationCallback() {
+                @Override
+                public void onSuccess() {
+                    // Document exists → product is wishlisted
+                    holder.heartIcon.setImageResource(R.drawable.ic_wishlist_filled);
+                    holder.heartIcon.setTag(true);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    // Either "Product not in wishlist" or real Firestore error
+                    // In either case, default to outline + tag=false
+                    holder.heartIcon.setImageResource(R.drawable.ic_wishlist);
+                    holder.heartIcon.setTag(false);
+                }
+            });
+        }
+
     }
 
     @Override
