@@ -28,7 +28,6 @@ public class FirestoreRepository {
         return instance;
     }
 
-    // Callback interfaces
     public interface ProductsCallback {
         void onSuccess(List<TableTennisProduct> products);
         void onError(Exception e);
@@ -44,20 +43,21 @@ public class FirestoreRepository {
         void onError(Exception e);
     }
 
-    // New: Callback for wishlist operations
     public interface WishlistOperationCallback {
         void onSuccess();
         void onError(Exception e);
     }
 
-    // New: Callback for fetching wishlist items
     public interface WishlistProductsCallback {
         void onSuccess(List<TableTennisProduct> products);
         void onError(Exception e);
     }
 
+    public interface OperationCallback {
+        void onSuccess();
+        void onError(Exception e);
+    }
 
-    /** Fetch all products in a given category */
     public void getProductsByCategory(String categoryId, ProductsCallback callback) {
         db.collection("products")
                 .whereEqualTo("categoryID", categoryId)
@@ -72,22 +72,19 @@ public class FirestoreRepository {
                         }
                     }
                     callback.onSuccess(list);
-
                 })
                 .addOnFailureListener(callback::onError);
     }
 
-    /** Search products by name, description or tags (client‐side filtering) */
     public void searchProducts(String query, ProductsCallback callback) {
         db.collection("products")
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     String lower = query.toLowerCase();
                     List<TableTennisProduct> all = snapshot.toObjects(TableTennisProduct.class);
-                    List<TableTennisProduct> filtered = new java.util.ArrayList<>();
+                    List<TableTennisProduct> filtered = new ArrayList<>();
                     for (int i = 0; i < all.size(); i++) {
                         TableTennisProduct p = all.get(i);
-                        // set ID
                         p.setId(snapshot.getDocuments().get(i).getId());
                         boolean matches = (p.getName() != null && p.getName().toLowerCase().contains(lower))
                                 || (p.getDescription() != null && p.getDescription().toLowerCase().contains(lower));
@@ -106,7 +103,6 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
-    /** Fetch one product by its document ID */
     public void getProductById(String productId, ProductDetailCallback callback) {
         db.collection("products")
                 .document(productId)
@@ -127,7 +123,6 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
-
     public void createUserProfile(String userId, Map<String, Object> userProfileData, UserProfileCallback callback) {
         db.collection("users")
                 .document(userId)
@@ -136,29 +131,19 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
-    /**
-     * Adds a product to a user's wishlist.
-     * The product is stored as a document in the 'wishlist' subcollection under the user's document.
-     * We're storing the product's ID as the document ID in the wishlist for easy lookup.
-     * The whole product object is stored in the subcollection.
-     */
     public void addProductToWishlist(String userId, TableTennisProduct product, WishlistOperationCallback callback) {
         if (product.getId() == null) {
             callback.onError(new IllegalArgumentException("Product ID cannot be null when adding to wishlist."));
             return;
         }
-
         db.collection("users").document(userId)
                 .collection("wishlist")
-                .document(product.getId()) // Use product ID as document ID for wishlist item
-                .set(product) // Store the entire product object
+                .document(product.getId())
+                .set(product)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(callback::onError);
     }
 
-    /**
-     * Removes a product from a user's wishlist.
-     */
     public void removeProductFromWishlist(String userId, String productId, WishlistOperationCallback callback) {
         db.collection("users").document(userId)
                 .collection("wishlist")
@@ -168,9 +153,6 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
-    /**
-     * Fetches all products from a user's wishlist.
-     */
     public void getWishlistProducts(String userId, WishlistProductsCallback callback) {
         db.collection("users").document(userId)
                 .collection("wishlist")
@@ -180,7 +162,7 @@ public class FirestoreRepository {
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
                         TableTennisProduct product = doc.toObject(TableTennisProduct.class);
                         if (product != null) {
-                            product.setId(doc.getId()); // Ensure the ID is set from the document ID
+                            product.setId(doc.getId());
                             wishlist.add(product);
                         }
                     }
@@ -189,10 +171,6 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
-    /**
-     * Checks if a specific product is in a user's wishlist.
-     * This is useful for updating the UI of product detail pages.
-     */
     public void checkIfProductInWishlist(String userId, String productId, WishlistOperationCallback callback) {
         db.collection("users").document(userId)
                 .collection("wishlist")
@@ -200,11 +178,29 @@ public class FirestoreRepository {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        callback.onSuccess(); // Product is in wishlist
+                        callback.onSuccess();
                     } else {
-                        callback.onError(new Exception("Product not in wishlist")); // Product is not in wishlist
+                        callback.onError(new Exception("Product not in wishlist"));
                     }
                 })
+                .addOnFailureListener(callback::onError);
+    }
+
+    public void addToCart(String userId, TableTennisProduct product, int quantity, WishlistOperationCallback callback) {
+        if (product.getId() == null) {
+            callback.onError(new IllegalArgumentException("Product ID cannot be null when adding to cart."));
+            return;
+        }
+
+        Map<String, Object> cartItem = new HashMap<>();
+        cartItem.put("quantity", quantity);
+        cartItem.put("product", product);
+
+        db.collection("users").document(userId)
+                .collection("cart")
+                .document(product.getId()) // Use product ID as document ID
+                .set(cartItem)
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(callback::onError);
     }
 
@@ -225,13 +221,6 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
-    /**
-     * Fetches a single random product from the "products" collection.
-     * Useful for dynamically showcasing a featured item on the home screen.
-     *
-     * @param callback A callback interface to handle success or failure.
-     *                 On success, returns a randomly selected TableTennisProduct.
-     */
     public void getRandomProduct(ProductDetailCallback callback) {
         db.collection("products")
                 .get()
@@ -253,6 +242,4 @@ public class FirestoreRepository {
                 })
                 .addOnFailureListener(callback::onError);
     }
-
 }
-
