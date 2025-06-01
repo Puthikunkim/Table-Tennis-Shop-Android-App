@@ -121,6 +121,12 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
 
         // 7) Load product details from Firestore
         loadProductDetails();
+
+        // Now that currentProduct is loaded, load “You Might Like”
+        String categoryId = currentProduct.getCategoryID();
+        if (categoryId != null) {
+            setupRecommendations(categoryId);
+        }
     }
 
     @Override
@@ -304,4 +310,43 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
             );
         }
     }
+
+    private void setupRecommendations(String categoryId) {
+        // 1) Ask FirestoreRepository for all products with this categoryId
+        firestoreRepository.getProductsByCategory(categoryId, new FirestoreRepository.ProductsCallback() {
+            @Override
+            public void onSuccess(List<TableTennisProduct> products) {
+                // 2) Remove the current product from the list (so it doesn’t show itself)
+                List<TableTennisProduct> filtered = new ArrayList<>();
+                for (TableTennisProduct p : products) {
+                    if (currentProduct != null && !p.getId().equals(currentProduct.getId())) {
+                        filtered.add(p);
+                    }
+                }
+
+                // 3) If there are no other products, you can hide the RecyclerView or leave it empty
+                if (filtered.isEmpty()) {
+                    binding.rvRecommendations.setVisibility(View.GONE);
+                    return;
+                }
+
+                // 4) Otherwise, set up the RecyclerView (horizontal layout)
+                binding.rvRecommendations.setVisibility(View.VISIBLE);
+                LinearLayoutManager llm = new LinearLayoutManager(
+                        DetailsActivity.this,
+                        LinearLayoutManager.HORIZONTAL,
+                        false
+                );
+                binding.rvRecommendations.setLayoutManager(llm);
+
+                // ... (rest of the code would be in subsequent commits or added later)
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e(TAG, "Failed to load recommendations: " + e.getMessage(), e);
+            }
+        });
+    }
+
 }
