@@ -22,7 +22,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
     private static final String TAG = "ProfileActivity";
     private FirebaseAuth mAuth;
-    private FirestoreRepository firestoreRepository; // Changed from FirebaseFirestore db;
+    private FirestoreRepository firestoreRepository;
 
     @Override
     protected ActivityProfileBinding inflateContentBinding() {
@@ -40,9 +40,9 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
         // Initialize Firebase Auth and FirestoreRepository
         mAuth = FirebaseAuth.getInstance();
-        firestoreRepository = FirestoreRepository.getInstance(); // Get the singleton instance
+        firestoreRepository = FirestoreRepository.getInstance();
 
-        // Assign listeners
+        // Assign button listeners
         binding.buttonSignIn.setOnClickListener(signInButtonClickListener);
         binding.buttonCreateAccount.setOnClickListener(createAccountButtonClickListener);
         binding.closeSignIn.setOnClickListener(closeSignInClickListener);
@@ -55,14 +55,15 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
+        // Check if user is already signed in and update the UI
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
     }
 
+    // Updates the UI based on whether the user is signed in
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            // User is signed in
+            // Show the logged-in UI and populate user info
             binding.mainContentLoggedOut.setVisibility(View.GONE);
             binding.signInForm.setVisibility(View.GONE);
             binding.createAccountForm.setVisibility(View.GONE);
@@ -71,22 +72,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             binding.textWelcome.setText("Welcome, " + (user.getDisplayName() != null ? user.getDisplayName() : "User") + "!");
             binding.textEmail.setText("Email: " + user.getEmail());
 
-            // You can fetch more user data from Firestore here if needed
-            // For example, if you stored their full name in a 'users' collection
-            // You would use firestoreRepository to get user data:
-            // firestoreRepository.getUserProfile(user.getUid(), new FirestoreRepository.UserProfileCallback() {
-            //     @Override
-            //     public void onSuccess(Map<String, Object> userProfileData) {
-            //         // Update UI with userProfileData
-            //     }
-            //     @Override
-            //     public void onError(Exception e) {
-            //         Log.e(TAG, "Error fetching user profile", e);
-            //     }
-            // });
-
         } else {
-            // User is signed out
+            // Show the logged-out UI
             binding.mainContentLoggedOut.setVisibility(View.VISIBLE);
             binding.mainContentLoggedIn.setVisibility(View.GONE);
             binding.signInForm.setVisibility(View.GONE);
@@ -94,173 +81,158 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         }
     }
 
-    private final View.OnClickListener signInButtonClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            binding.signInForm.setVisibility(View.VISIBLE);
-            binding.createAccountForm.setVisibility(View.GONE);
-            binding.mainContentLoggedOut.setVisibility(View.GONE);
-        }
+    // Opens the sign-in form
+    private final View.OnClickListener signInButtonClickListener = view -> {
+        binding.signInForm.setVisibility(View.VISIBLE);
+        binding.createAccountForm.setVisibility(View.GONE);
+        binding.mainContentLoggedOut.setVisibility(View.GONE);
     };
 
-    private final View.OnClickListener createAccountButtonClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            binding.createAccountForm.setVisibility(View.VISIBLE);
-            binding.signInForm.setVisibility(View.GONE);
-            binding.mainContentLoggedOut.setVisibility(View.GONE);
-        }
+    // Opens the create-account form
+    private final View.OnClickListener createAccountButtonClickListener = view -> {
+        binding.createAccountForm.setVisibility(View.VISIBLE);
+        binding.signInForm.setVisibility(View.GONE);
+        binding.mainContentLoggedOut.setVisibility(View.GONE);
     };
 
-    private final View.OnClickListener closeSignInClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            binding.signInForm.setVisibility(View.GONE);
-            binding.mainContentLoggedOut.setVisibility(View.VISIBLE); // Show logged out options again
-            clearSignInForm();
-        }
+    // Closes the sign-in form and resets to logged-out state
+    private final View.OnClickListener closeSignInClickListener = view -> {
+        binding.signInForm.setVisibility(View.GONE);
+        binding.mainContentLoggedOut.setVisibility(View.VISIBLE);
+        clearSignInForm();
     };
 
-    private final View.OnClickListener closeCreateClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            binding.createAccountForm.setVisibility(View.GONE);
-            binding.mainContentLoggedOut.setVisibility(View.VISIBLE); // Show logged out options again
-            clearCreateAccountForm();
-        }
+    // Closes the create-account form and resets to logged-out state
+    private final View.OnClickListener closeCreateClickListener = view -> {
+        binding.createAccountForm.setVisibility(View.GONE);
+        binding.mainContentLoggedOut.setVisibility(View.VISIBLE);
+        clearCreateAccountForm();
     };
 
-    private final View.OnClickListener submitSignInClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            String email = binding.inputSignInEmail.getText().toString().trim();
-            String password = binding.inputSignInPassword.getText().toString().trim();
+    // Handles sign-in logic
+    private final View.OnClickListener submitSignInClickListener = view -> {
+        String email = binding.inputSignInEmail.getText().toString().trim();
+        String password = binding.inputSignInPassword.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(ProfileActivity.this, "Please enter email and password", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(ProfileActivity.this, task -> {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                            Toast.makeText(ProfileActivity.this, "Signed in as: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                            clearSignInForm();
-                        } else {
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(ProfileActivity.this, "Authentication failed: " + task.getException().getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                            updateUI(null);
-                        }
-                    });
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(ProfileActivity.this, "Please enter email and password", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(ProfileActivity.this, task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "signInWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        updateUI(user);
+                        Toast.makeText(ProfileActivity.this, "Signed in as: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                        clearSignInForm();
+                    } else {
+                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                        Toast.makeText(ProfileActivity.this, "Authentication failed: " + task.getException().getMessage(),
+                                Toast.LENGTH_LONG).show();
+                        updateUI(null);
+                    }
+                });
     };
 
-    private final View.OnClickListener submitCreateClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            String email = binding.inputEmail.getText().toString().trim();
-            String password = binding.inputCreatePassword.getText().toString().trim();
-            String name = binding.inputName.getText().toString().trim(); // ✅ Get name
+    // Handles account creation logic
+    private final View.OnClickListener submitCreateClickListener = view -> {
+        String email = binding.inputEmail.getText().toString().trim();
+        String password = binding.inputCreatePassword.getText().toString().trim();
+        String name = binding.inputName.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
-                Toast.makeText(ProfileActivity.this, "Please enter name, email and password", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (password.length() < 6) {
-                Toast.makeText(ProfileActivity.this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
+            Toast.makeText(ProfileActivity.this, "Please enter name, email and password", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (password.length() < 6) {
+            Toast.makeText(ProfileActivity.this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-            mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(ProfileActivity.this, task -> {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(ProfileActivity.this, task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "createUserWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
 
-                            if (user != null) {
-                                // ✅ Update Firebase Auth display name
-                                user.updateProfile(new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(name)
-                                        .build()).addOnCompleteListener(profileTask -> {
-                                    if (profileTask.isSuccessful()) {
-                                        Log.d(TAG, "User display name updated.");
+                        if (user != null) {
+                            // Set the display name in Firebase Authentication
+                            user.updateProfile(new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(name)
+                                    .build()).addOnCompleteListener(profileTask -> {
+                                if (profileTask.isSuccessful()) {
+                                    Log.d(TAG, "User display name updated.");
 
-                                        // 🔄 Force refresh to get the updated name right away
-                                        user.reload().addOnCompleteListener(reloadTask -> {
-                                            FirebaseUser refreshedUser = mAuth.getCurrentUser();
-                                            updateUI(refreshedUser); // will now show "Welcome, [name]!"
-                                        });
+                                    // Reload user to get updated display name immediately
+                                    user.reload().addOnCompleteListener(reloadTask -> {
+                                        FirebaseUser refreshedUser = mAuth.getCurrentUser();
+                                        updateUI(refreshedUser);
+                                    });
 
-                                    } else {
-                                        Log.w(TAG, "Failed to update display name", profileTask.getException());
-                                        updateUI(user); // fallback UI
-                                    }
-                                });
+                                } else {
+                                    Log.w(TAG, "Failed to update display name", profileTask.getException());
+                                    updateUI(user);
+                                }
+                            });
 
+                            // Store additional user data in Firestore
+                            Map<String, Object> userProfile = new HashMap<>();
+                            userProfile.put("email", user.getEmail());
+                            userProfile.put("name", name);
+                            userProfile.put("createdAt", com.google.firebase.firestore.FieldValue.serverTimestamp());
 
-                                // ✅ Save user profile in Firestore
-                                Map<String, Object> userProfile = new HashMap<>();
-                                userProfile.put("email", user.getEmail());
-                                userProfile.put("name", name); // Save name
-                                userProfile.put("createdAt", com.google.firebase.firestore.FieldValue.serverTimestamp());
+                            firestoreRepository.createUserProfile(user.getUid(), userProfile, new FirestoreRepository.UserProfileCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Log.d(TAG, "User profile created in Firestore via repository");
+                                    updateUI(user);
+                                    Toast.makeText(ProfileActivity.this, "Account created and signed in as: " + name, Toast.LENGTH_SHORT).show();
+                                    clearCreateAccountForm();
+                                }
 
-                                firestoreRepository.createUserProfile(user.getUid(), userProfile, new FirestoreRepository.UserProfileCallback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        Log.d(TAG, "User profile created in Firestore via repository");
-                                        updateUI(user);
-                                        Toast.makeText(ProfileActivity.this, "Account created and signed in as: " + name, Toast.LENGTH_SHORT).show();
-                                        clearCreateAccountForm();
-                                    }
-
-                                    @Override
-                                    public void onError(Exception e) {
-                                        Log.w(TAG, "Error creating user profile in Firestore via repository", e);
-                                        updateUI(user);
-                                        Toast.makeText(ProfileActivity.this, "Account created, but profile data save failed: " + e.getMessage(),
-                                                Toast.LENGTH_LONG).show();
-                                        clearCreateAccountForm();
-                                    }
-                                });
-
-                            } else {
-                                Log.e(TAG, "User was null after successful createUserWithEmailAndPassword");
-                                updateUI(null);
-                                Toast.makeText(ProfileActivity.this, "Error: User data missing after account creation.", Toast.LENGTH_LONG).show();
-                            }
+                                @Override
+                                public void onError(Exception e) {
+                                    Log.w(TAG, "Error creating user profile in Firestore via repository", e);
+                                    updateUI(user);
+                                    Toast.makeText(ProfileActivity.this, "Account created, but profile data save failed: " + e.getMessage(),
+                                            Toast.LENGTH_LONG).show();
+                                    clearCreateAccountForm();
+                                }
+                            });
 
                         } else {
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(ProfileActivity.this, "Account creation failed: " + task.getException().getMessage(),
-                                    Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "User was null after successful createUserWithEmailAndPassword");
                             updateUI(null);
+                            Toast.makeText(ProfileActivity.this, "Error: User data missing after account creation.", Toast.LENGTH_LONG).show();
                         }
-                    });
-        }
+
+                    } else {
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        Toast.makeText(ProfileActivity.this, "Account creation failed: " + task.getException().getMessage(),
+                                Toast.LENGTH_LONG).show();
+                        updateUI(null);
+                    }
+                });
     };
 
-    // Sign Out
-    private final View.OnClickListener signOutButtonClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            mAuth.signOut();
-            updateUI(null); // Update UI to logged-out state
-            Toast.makeText(ProfileActivity.this, "Signed out successfully", Toast.LENGTH_SHORT).show();
-        }
+    // Handles sign out logic
+    private final View.OnClickListener signOutButtonClickListener = view -> {
+        mAuth.signOut();
+        updateUI(null);
+        Toast.makeText(ProfileActivity.this, "Signed out successfully", Toast.LENGTH_SHORT).show();
     };
 
-    // Helper methods to clear forms
+    // Clears the sign-in form inputs
     private void clearSignInForm() {
         binding.inputSignInEmail.setText("");
         binding.inputSignInPassword.setText("");
     }
 
+    // Clears the create-account form inputs
     private void clearCreateAccountForm() {
-        binding.inputName.setText(""); // 👈 Clear name field too
+        binding.inputName.setText("");
         binding.inputEmail.setText("");
         binding.inputCreatePassword.setText("");
     }
