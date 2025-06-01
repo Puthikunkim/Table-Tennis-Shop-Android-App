@@ -3,6 +3,7 @@ package com.example.app.UI;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.Button;
 
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
@@ -59,6 +60,9 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
                 updateCartViews();
             }
         });
+
+        setupCheckoutButton();
+
     }
 
     private void updateTotals() {
@@ -94,6 +98,16 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
     private void updateCartUI() {
         updateTotals();
         updateCartViews();
+    }
+
+    private void setupCheckoutButton() {
+        View checkoutTotalView = findViewById(R.id.checkoutTotal);
+        if (checkoutTotalView != null) {
+            Button checkoutButton = checkoutTotalView.findViewById(R.id.checkoutButton);
+            if (checkoutButton != null) {
+                checkoutButton.setOnClickListener(v -> handleCheckout());
+            }
+        }
     }
 
     private void handleCheckout() {
