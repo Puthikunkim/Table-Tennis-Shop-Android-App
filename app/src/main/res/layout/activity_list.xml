@@ -7,39 +7,53 @@
     android:background="@color/background_dark"
     tools:context=".UI.ListActivity">
 
-    <!-- This ListView is what binding.list accesses -->
+    <!-- Header Row -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        android:paddingHorizontal="16dp">
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/customListBackButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:textColor="@color/text_primary"
+            android:layout_alignParentStart="true" />
+
+        <!-- Sort Button -->
+        <Button
+            android:id="@+id/btnSort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sort"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/label_background"
+            android:background="@drawable/rounded_button_background"
+            android:layout_alignParentEnd="true" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/customListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+    <!-- Main ListView -->
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="64dp"
+        android:layout_marginTop="72dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:clipToPadding="false"/>
-
-    <ListView
-        android:id="@+id/tableList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/customListBackButton"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="back"
-        android:textColor="@color/text_primary"
-        android:layout_margin="16dp"
-        android:layout_gravity="top|start" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/customListTitle"
-        android:textColor="@color/text_primary"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="24dp"/>
+        android:clipToPadding="false" />
 </FrameLayout>
