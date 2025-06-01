@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/filter_all" android:title="All" />
+    <item android:id="@+id/filter_bats" android:title="Bats" />
+    <item android:id="@+id/filter_balls" android:title="Balls" />
+    <item android:id="@+id/filter_tables" android:title="Tables" />
+</menu>
