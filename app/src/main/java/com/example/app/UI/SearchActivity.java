@@ -31,6 +31,7 @@ import com.example.app.Data.FirestoreRepository;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -53,6 +54,9 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final AtomicBoolean isProcessing = new AtomicBoolean(false);
     private Runnable pendingAction;
+
+    private final List<TableTennisProduct> fullResults = new ArrayList<>();
+    private final List<TableTennisProduct> filteredResults = new ArrayList<>();
 
     @Override
     protected ActivitySearchBinding inflateContentBinding() {
@@ -314,5 +318,24 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacks(pendingAction);
+    }
+
+    private void sortList(String field, boolean ascending) {
+        Comparator<TableTennisProduct> comparator;
+
+        if ("price".equals(field)) {
+            comparator = Comparator.comparingDouble(TableTennisProduct::getPrice);
+        } else if ("name".equals(field)) {
+            comparator = Comparator.comparing(TableTennisProduct::getName, String.CASE_INSENSITIVE_ORDER);
+        } else {
+            return;
+        }
+
+        if (!ascending) {
+            comparator = comparator.reversed();
+        }
+
+        filteredResults.sort(comparator);
+        searchResultAdapter.notifyDataSetChanged();
     }
 }
