@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.databinding.ActivityProfileBinding;
@@ -16,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
@@ -50,6 +52,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.submitSignIn.setOnClickListener(submitSignInClickListener);
         binding.submitCreate.setOnClickListener(submitCreateClickListener);
         binding.buttonSignOut.setOnClickListener(signOutButtonClickListener);
+
+        setupCartButtons();
     }
 
     @Override
@@ -71,6 +75,10 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             binding.textWelcome.setText("Welcome, " + (user.getDisplayName() != null ? user.getDisplayName() : "User") + "!");
             binding.textEmail.setText("Email: " + user.getEmail());
+
+
+            // Ensure the UI updates properly
+            fetchCartSummary(user.getUid());
 
         } else {
             // Show the logged-out UI
