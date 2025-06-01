@@ -342,11 +342,20 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 // 5) Create the adapter and give it the filtered list
                 recommendationsAdapter = new TopPicksAdapter(DetailsActivity.this, filtered);
 
+                // 6) Wire up click listener so that tapping on a “recommendation” launches a new DetailsActivity
+                recommendationsAdapter.setOnProductClickListener(new TopPicksAdapter.OnProductClickListener() {
+                    @Override
+                    public void onProductClick(TableTennisProduct clickedProduct) {
+                        Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
+                        intent.putExtra("productId", clickedProduct.getId());
+                        startActivity(intent);
+                        // Optional: finish() if you don’t want the back stack to keep piling up
+                        // finish();
+                    }
+                });
+
                 // 7) Finally, attach the adapter
                 binding.rvRecommendations.setAdapter(recommendationsAdapter);
-
-
-                // ... (rest of the code would be in subsequent commits or added later)
             }
 
             @Override
