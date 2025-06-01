@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide; // If you use Glide (add dependency in Gradle)
 import com.example.app.R;
 
 import java.util.List;
@@ -30,8 +31,12 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-        // For now, bind a placeholder image only
-        holder.imageView.setImageResource(R.drawable.ic_launcher_background);
+        String url = imageUrls.get(position);
+        // Use your favorite image-loading library (Glide, Picasso). Example uses Glide:
+        Glide.with(holder.itemView.getContext())
+                .load(url)
+                .placeholder(R.drawable.ic_launcher_background) // optional
+                .into(holder.imageView);
     }
 
     @Override
@@ -41,7 +46,6 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
 
     static class ImageViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-
         ImageViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.sliderImageView);
