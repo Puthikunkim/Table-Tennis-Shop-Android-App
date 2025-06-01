@@ -206,6 +206,28 @@ public class FirestoreRepository {
                 });
     }
 
+    public void getCartItems(String userId, ProductsCallback callback) {
+        db.collection("users").document(userId)
+                .collection("cart")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<TableTennisProduct> cartItems = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        TableTennisProduct product = doc.get("product", TableTennisProduct.class);
+                        Long qty = doc.getLong("quantity");
+
+                        if (product != null) {
+                            product.setId(doc.getId()); // Optional: use Firestore doc ID
+                            product.setCartQuantity(qty != null ? qty.intValue() : 1);
+                            cartItems.add(product);
+                        }
+                    }
+                    callback.onSuccess(cartItems);
+                })
+                .addOnFailureListener(callback::onError);
+    }
+
+
 
     public void getTopViewedProducts(int limit, ProductsCallback callback) {
         db.collection("products")
