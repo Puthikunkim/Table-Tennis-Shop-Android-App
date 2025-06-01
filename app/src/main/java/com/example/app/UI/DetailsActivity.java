@@ -56,13 +56,17 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         // 2) Get the productId from Intent extras
         productId = getIntent().getStringExtra("productId");
         if (productId == null) {
-            // If somehow no ID was passed, just finish
             Toast.makeText(this, "Product not specified.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // TODO: Set up Back button and Favorite button listeners
+        // 3) Set up the Back button
+        binding.customDetailsBackButton.setOnClickListener(v -> finish());
+
+        // 4) Set up “Favorite” (wishlist) button listener
+        binding.btnFavorite.setOnClickListener(v -> onFavoriteClicked());
+
         // TODO: Load product details
     }
 
