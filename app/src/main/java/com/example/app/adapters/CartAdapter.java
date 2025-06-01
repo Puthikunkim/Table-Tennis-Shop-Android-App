@@ -105,17 +105,19 @@ public class CartAdapter extends BaseAdapter {
 
         // Delete item
         holder.deleteButton.setOnClickListener(v -> {
-            repo.db.collection("users")
-                    .document(userId)
-                    .collection("cart")
-                    .document(product.getId())
-                    .delete()
-                    .addOnSuccessListener(unused -> {
-                        cartItems.remove(position);
-                        notifyDataSetChanged();
-                        onCartChanged.run();
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(context, "Failed to delete item", Toast.LENGTH_SHORT).show());
+            repo.removeFromCart(userId, product.getId(), new FirestoreRepository.OperationCallback() {
+                @Override
+                public void onSuccess() {
+                    cartItems.remove(position);
+                    notifyDataSetChanged();
+                    onCartChanged.run();
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(context, "Failed to delete item", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         return convertView;
