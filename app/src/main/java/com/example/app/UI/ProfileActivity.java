@@ -54,6 +54,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.buttonSignOut.setOnClickListener(signOutButtonClickListener);
 
         setupCartButtons();
+        setupWishlistButtons();
     }
 
     @Override
@@ -79,6 +80,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             // Ensure the UI updates properly
             fetchCartSummary(user.getUid());
+            fetchWishlistSummary(user.getUid());
 
         } else {
             // Show the logged-out UI
