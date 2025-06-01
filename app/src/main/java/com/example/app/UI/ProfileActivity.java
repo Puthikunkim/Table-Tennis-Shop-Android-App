@@ -258,6 +258,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
                     @Override
                     public void onSuccess() {
                         Toast.makeText(ProfileActivity.this, "Cart cleared!", Toast.LENGTH_SHORT).show();
+                        binding.cartItemCount.setText("You have 0 items in your cart.");
                     }
 
                     @Override
