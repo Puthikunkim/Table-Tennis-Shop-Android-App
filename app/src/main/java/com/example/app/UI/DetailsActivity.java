@@ -46,7 +46,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     @Override
     protected int getSelectedMenuItemId() {
         // If you have a bottom navigation or drawer, make sure this returns the correct menu item ID
-        return R.id.home; // or whichever item corresponds to “Details”
+        return R.id.home; // or whichever item corresponds to "Details"
     }
 
     @Override
@@ -69,7 +69,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         // 3) Set up the Back button
         binding.customDetailsBackButton.setOnClickListener(v -> finish());
 
-        // 4) Set up “Favorite” (wishlist) button listener
+        // 4) Set up "Favorite" (wishlist) button listener
         binding.btnFavorite.setOnClickListener(v -> onFavoriteClicked());
 
         // 5) Set up quantity increase/decrease listeners
@@ -84,7 +84,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
             }
         });
 
-        // 6) Set up “Add to Cart” button listener
+        // 6) Set up "Add to Cart" button listener
         binding.btnAddToCart.setOnClickListener(v -> {
             if (currentProduct == null) {
                 Toast.makeText(this, "Product not loaded yet", Toast.LENGTH_SHORT).show();
@@ -116,13 +116,13 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     @Override
     public void onStart() {
         super.onStart();
-        // Every time this screen comes into view, re‐check whether the user is logged in,
+        // Every time this screen comes into view, re-check whether the user is logged in,
         // and if so, whether this product is already in their wishlist.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null && currentProduct != null) {
             checkIfInWishlist(currentUser, currentProduct.getId());
         } else {
-            // If user is not logged in, always show the “not wishlisted” icon
+            // If user is not logged in, always show the "not wishlisted" icon
             binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
             isWishlisted = false;
         }
@@ -131,7 +131,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     /**
      * Fetch product details from Firestore (by productId),
      * populate all UI widgets (title, description, image slider, price, etc.),
-     * and then check if it’s in the wishlist (if user is already signed in).
+     * and then check if it's in the wishlist (if user is already signed in).
      */
     private void loadProductDetails() {
         firestoreRepository.getProductById(productId, new FirestoreRepository.ProductDetailCallback() {
@@ -148,7 +148,11 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 binding.textTitle.setText(product.getName());
                 binding.textDesc.setText(product.getDescription());
                 binding.textPrice.setText(String.format("$%.2f", product.getPrice()));
-                binding.textCategory.setText(product.getCategoryID());
+                String category = product.getCategoryID();
+                if (category != null && !category.isEmpty()) {
+                    category = category.substring(0, 1).toUpperCase() + category.substring(1);
+                }
+                binding.textCategory.setText(category);
 
                 // 2) Set up image slider (ViewPager2)
                 List<String> imageUrls = product.getImageUrls();
@@ -177,12 +181,12 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 if (user != null) {
                     checkIfInWishlist(user, product.getId());
                 } else {
-                    // If user is not signed in, show “not wishlisted”
+                    // If user is not signed in, show "not wishlisted"
                     binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
                     isWishlisted = false;
                 }
 
-                // (Optional) You might also load “You Might Like” recommendations here.
+                // (Optional) You might also load "You Might Like" recommendations here.
             }
 
             @Override
@@ -195,9 +199,9 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     }
 
     /**
-     * Checks if the given productId exists in the user’s wishlist subcollection.
-     * If it exists, we set isWishlisted = true and use the “filled heart” icon.
-     * If it does NOT exist, we set isWishlisted = false and use the “outline heart” icon.
+     * Checks if the given productId exists in the user's wishlist subcollection.
+     * If it exists, we set isWishlisted = true and use the "filled heart" icon.
+     * If it does NOT exist, we set isWishlisted = false and use the "outline heart" icon.
      */
     private void checkIfInWishlist(FirebaseUser user, String productId) {
         firestoreRepository.checkIfProductInWishlist(
@@ -212,7 +216,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 }
                 @Override
                 public void onError(Exception e) {
-                    // If the document doesn’t exist or there's an error ⇒ not wishlisted
+                    // If the document doesn't exist or there's an error ⇒ not wishlisted
                     isWishlisted = false;
                     binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
                 }
@@ -221,7 +225,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     }
 
     /**
-     * Called when the user taps the “favorite” (wishlist) button.
+     * Called when the user taps the "favorite" (wishlist) button.
      *  - If not logged in ⇒ show a Toast & optionally redirect to sign-in screen.
      *  - If logged in and not already wishlisted ⇒ add to wishlist.
      *  - If logged in and already wishlisted ⇒ remove from wishlist.
