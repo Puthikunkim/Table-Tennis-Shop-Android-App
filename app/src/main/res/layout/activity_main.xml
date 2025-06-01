@@ -19,11 +19,13 @@
             android:padding="16dp">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/featuredCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="24dp"
-                app:cardBackgroundColor="@color/card_background">
+                app:cardBackgroundColor="@color/card_background"
+                app:cardElevation="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -32,9 +34,10 @@
                     android:padding="12dp">
 
                     <TextView
+                        android:id="@+id/featuredLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="New Release"
+                        android:text="FEATURED ITEM"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary"
                         android:background="@color/label_background"
@@ -42,32 +45,35 @@
                         android:paddingEnd="12dp"
                         android:paddingTop="6dp"
                         android:paddingBottom="6dp"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/featuredTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pro Carbon Bat"
+                        android:text="Product Name"
                         android:textSize="40sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary"
-                        android:layout_marginTop="16dp"/>
+                        android:layout_marginTop="16dp" />
 
                     <TextView
+                        android:id="@+id/featuredSubtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="The ultimate table tennis experience"
+                        android:text="The ultimate table tennis experience."
                         android:textSize="18sp"
                         android:textColor="@color/text_secondary"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp" />
 
                     <TextView
+                        android:id="@+id/featuredDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Powered by advanced carbon fiber technology"
+                        android:text="Longer description or tech info"
                         android:textSize="16sp"
                         android:textColor="@color/text_tertiary"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -76,6 +82,7 @@
                         android:layout_marginTop="24dp">
 
                         <Button
+                            android:id="@+id/btnShopNow"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Shop Now"
@@ -83,9 +90,10 @@
                             android:paddingStart="24dp"
                             android:paddingEnd="24dp"
                             android:textColor="@color/text_primary"
-                            android:backgroundTint="@color/purple_500"/>
+                            android:backgroundTint="@color/purple_500" />
 
                         <Button
+                            android:id="@+id/btnViewAll"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="View All"
@@ -93,10 +101,11 @@
                             android:textColor="@color/text_primary"
                             android:paddingStart="24dp"
                             android:paddingEnd="24dp"
-                            app:strokeColor="@color/text_primary"/>
+                            app:strokeColor="@color/text_primary" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
 
             <TextView
                 android:layout_width="match_parent"
