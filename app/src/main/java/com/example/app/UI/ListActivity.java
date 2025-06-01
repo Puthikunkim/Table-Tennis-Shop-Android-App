@@ -66,6 +66,8 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
         } else {
             Toast.makeText(this, "Category not specified", Toast.LENGTH_SHORT).show();
         }
+
+        binding.btnSort.setOnClickListener(v -> showSortMenu(v));
     }
 
     private void fetchProductDataByCategory(String categoryID) {
