@@ -58,7 +58,7 @@ public class CartAdapter extends BaseAdapter {
         TableTennisProduct product = cartItems.get(position);
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.item_cart, parent, false);
+            convertView = inflater.inflate(R.layout.item_cart_product, parent, false);
             holder = new ViewHolder();
             holder.productImage = convertView.findViewById(R.id.productImage);
             holder.productName = convertView.findViewById(R.id.productName);
