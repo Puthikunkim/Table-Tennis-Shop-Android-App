@@ -10,22 +10,51 @@ import android.widget.TextView;
 
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
+import com.example.app.Data.FirestoreRepository;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
 
     private int mResource;
     private Context mContext;
     private List<TableTennisProduct> mProducts;
+    private Set<String> wishlistIds = new HashSet<>();
+
+    private FirebaseUser user;
+    private FirestoreRepository firestoreRepository;
 
     public TableTennisAdapter(Context context, int resource, List<TableTennisProduct> objects) {
         super(context, resource, objects);
         mResource = resource;
         mContext = context;
         mProducts = objects;
-    }
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        firestoreRepository = FirestoreRepository.getInstance();
+
+        // Preload wishlist item IDs if logged in
+        if (user != null) {
+            firestoreRepository.getWishlistProducts(user.getUid(), new FirestoreRepository.WishlistProductsCallback() {
+                @Override
+                public void onSuccess(List<TableTennisProduct> wishlistItems) {
+                    for (TableTennisProduct item : wishlistItems) {
+                        wishlistIds.add(item.getId());
+                    }
+                    notifyDataSetChanged(); // Refresh views
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    // Handle error
+                }
+            });
+        }
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -34,24 +63,52 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
             itemView = LayoutInflater.from(mContext).inflate(mResource, parent, false);
         }
 
-        // Get the current product
         TableTennisProduct product = mProducts.get(position);
 
-        // Bind views
         TextView nameTextView = itemView.findViewById(R.id.textViewProductName);
         TextView descTextView = itemView.findViewById(R.id.textViewProductDescription);
         TextView priceTextView = itemView.findViewById(R.id.textViewProductPrice);
         ImageView imageView = itemView.findViewById(R.id.imageViewProduct);
+        ImageView heartButton = itemView.findViewById(R.id.btnWishlist); // You need this in XML
 
-        // Set text
         nameTextView.setText(product.getName());
         descTextView.setText(product.getDescription());
         priceTextView.setText(String.format("$%.2f", product.getPrice()));
+        imageView.setImageResource(0); // placeholder
 
-        // Load image (first one from imageUrls) using Picasso
-        imageView.setImageResource(0); // sets image to blank
+        if (heartButton != null) {
+            boolean isInWishlist = wishlistIds.contains(product.getId());
+            heartButton.setImageResource(isInWishlist ? R.drawable.ic_filledheart : R.drawable.ic_unfilledheart);
+
+            heartButton.setOnClickListener(v -> {
+                if (user == null) return;
+
+                if (isInWishlist) {
+                    firestoreRepository.removeProductFromWishlist(user.getUid(), product.getId(), new FirestoreRepository.WishlistOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            wishlistIds.remove(product.getId());
+                            notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onError(Exception e) { }
+                    });
+                } else {
+                    firestoreRepository.addProductToWishlist(user.getUid(), product, new FirestoreRepository.WishlistOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            wishlistIds.add(product.getId());
+                            notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onError(Exception e) { }
+                    });
+                }
+            });
+        }
 
         return itemView;
     }
-
 }
