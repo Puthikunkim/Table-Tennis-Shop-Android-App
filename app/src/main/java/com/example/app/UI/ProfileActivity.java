@@ -297,8 +297,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
     private void setupWishlistButtons() {
         binding.btnViewWishlist.setOnClickListener(v -> {
-            Toast.makeText(ProfileActivity.this, "Wishlist view tapped", Toast.LENGTH_SHORT).show();
-            // You can navigate if needed later
+            Intent intent = new Intent(ProfileActivity.this, WishListActivity.class);
+            startActivity(intent);
         });
 
         binding.btnClearWishlist.setOnClickListener(v -> {
