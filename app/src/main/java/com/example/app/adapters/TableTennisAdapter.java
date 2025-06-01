@@ -37,7 +37,6 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
         user = FirebaseAuth.getInstance().getCurrentUser();
         firestoreRepository = FirestoreRepository.getInstance();
 
-        // Preload wishlist item IDs if logged in
         if (user != null) {
             firestoreRepository.getWishlistProducts(user.getUid(), new FirestoreRepository.WishlistProductsCallback() {
                 @Override
@@ -45,7 +44,7 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
                     for (TableTennisProduct item : wishlistItems) {
                         wishlistIds.add(item.getId());
                     }
-                    notifyDataSetChanged(); // Refresh views
+                    notifyDataSetChanged();
                 }
 
                 @Override
@@ -69,7 +68,7 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
         TextView descTextView = itemView.findViewById(R.id.textViewProductDescription);
         TextView priceTextView = itemView.findViewById(R.id.textViewProductPrice);
         ImageView imageView = itemView.findViewById(R.id.imageViewProduct);
-        ImageView heartButton = itemView.findViewById(R.id.btnWishlist); // You need this in XML
+        ImageView heartButton = itemView.findViewById(R.id.btnWishlist);
 
         nameTextView.setText(product.getName());
         descTextView.setText(product.getDescription());
@@ -77,6 +76,10 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
         imageView.setImageResource(0); // placeholder
 
         if (heartButton != null) {
+            // Prevent the heart button from consuming clicks
+            heartButton.setFocusable(false);
+            heartButton.setFocusableInTouchMode(false);
+
             boolean isInWishlist = wishlistIds.contains(product.getId());
             heartButton.setImageResource(isInWishlist ? R.drawable.ic_filledheart : R.drawable.ic_unfilledheart);
 

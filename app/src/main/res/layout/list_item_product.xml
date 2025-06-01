@@ -74,6 +74,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_unfilledheart"
             app:tint="@color/text_secondary"
-            android:contentDescription="Toggle Wishlist" />
+            android:contentDescription="Toggle Wishlist"
+            android:focusable="false"
+            android:clickable="false"/>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
