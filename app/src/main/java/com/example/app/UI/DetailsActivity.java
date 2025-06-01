@@ -24,6 +24,7 @@ import com.example.app.adapters.TopPicksAdapter;
 import com.example.app.Model.TableTennisProduct;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
@@ -312,11 +313,10 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     }
 
     private void setupRecommendations(String categoryId) {
-        // 1) Ask FirestoreRepository for all products with this categoryId
         firestoreRepository.getProductsByCategory(categoryId, new FirestoreRepository.ProductsCallback() {
             @Override
             public void onSuccess(List<TableTennisProduct> products) {
-                // 2) Remove the current product from the list (so it doesn’t show itself)
+                // 1) Remove the current product from the list
                 List<TableTennisProduct> filtered = new ArrayList<>();
                 for (TableTennisProduct p : products) {
                     if (currentProduct != null && !p.getId().equals(currentProduct.getId())) {
@@ -324,13 +324,18 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                     }
                 }
 
-                // 3) If there are no other products, you can hide the RecyclerView or leave it empty
+                // ▶️ 2) Trim to at most 4 items
+                if (filtered.size() > 4) {
+                    filtered = filtered.subList(0, 4);
+                }
+
+                // 3) If there are no recommendations, hide the RecyclerView
                 if (filtered.isEmpty()) {
                     binding.rvRecommendations.setVisibility(View.GONE);
                     return;
                 }
 
-                // 4) Otherwise, set up the RecyclerView (horizontal layout)
+                // 4) Otherwise, show the RecyclerView and set a horizontal layout
                 binding.rvRecommendations.setVisibility(View.VISIBLE);
                 LinearLayoutManager llm = new LinearLayoutManager(
                         DetailsActivity.this,
@@ -339,22 +344,20 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 );
                 binding.rvRecommendations.setLayoutManager(llm);
 
-                // 5) Create the adapter and give it the filtered list
+                // 5) Plug the (max-4) list into TopPicksAdapter
                 recommendationsAdapter = new TopPicksAdapter(DetailsActivity.this, filtered);
 
-                // 6) Wire up click listener so that tapping on a “recommendation” launches a new DetailsActivity
                 recommendationsAdapter.setOnProductClickListener(new TopPicksAdapter.OnProductClickListener() {
                     @Override
                     public void onProductClick(TableTennisProduct clickedProduct) {
                         Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
                         intent.putExtra("productId", clickedProduct.getId());
                         startActivity(intent);
-                        // Optional: finish() if you don’t want the back stack to keep piling up
-                        // finish();
+                        // finish(); // if you’d like to replace rather than stack
                     }
                 });
 
-                // 7) Finally, attach the adapter
+                // 6) Attach the adapter
                 binding.rvRecommendations.setAdapter(recommendationsAdapter);
             }
 
@@ -364,5 +367,6 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
             }
         });
     }
+
 
 }
