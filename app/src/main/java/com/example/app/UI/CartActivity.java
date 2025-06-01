@@ -46,11 +46,10 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
                 cartItems.clear();
                 cartItems.addAll(products);
 
-                adapter = new CartAdapter(CartActivity.this, cartItems, user.getUid(), CartActivity.this::updateTotals);
+                adapter = new CartAdapter(CartActivity.this, cartItems, user.getUid(), CartActivity.this::updateCartUI);
                 binding.cartListView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-                updateTotals();
-                updateCartViews();
+                updateCartUI();
             }
 
             @Override
@@ -90,5 +89,10 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
             if (emptyCartView != null) emptyCartView.setVisibility(View.GONE);
             if (checkoutTotalView != null) checkoutTotalView.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void updateCartUI() {
+        updateTotals();
+        updateCartViews();
     }
 }
