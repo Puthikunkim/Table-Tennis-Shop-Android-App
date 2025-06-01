@@ -339,6 +339,13 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 );
                 binding.rvRecommendations.setLayoutManager(llm);
 
+                // 5) Create the adapter and give it the filtered list
+                recommendationsAdapter = new TopPicksAdapter(DetailsActivity.this, filtered);
+
+                // 7) Finally, attach the adapter
+                binding.rvRecommendations.setAdapter(recommendationsAdapter);
+
+
                 // ... (rest of the code would be in subsequent commits or added later)
             }
 
