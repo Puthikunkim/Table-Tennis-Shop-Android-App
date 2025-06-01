@@ -67,7 +67,8 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         // 4) Set up “Favorite” (wishlist) button listener
         binding.btnFavorite.setOnClickListener(v -> onFavoriteClicked());
 
-        // TODO: Load product details
+        // 5) Load product details from Firestore
+        loadProductDetails();
     }
 
     @Override
