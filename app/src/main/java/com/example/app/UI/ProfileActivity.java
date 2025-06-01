@@ -244,4 +244,51 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.inputEmail.setText("");
         binding.inputCreatePassword.setText("");
     }
+
+    private void setupCartButtons() {
+        binding.btnViewCart.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, CartActivity.class);
+            startActivity(intent);
+        });
+
+        binding.btnClearCart.setOnClickListener(v -> {
+            FirebaseUser user = mAuth.getCurrentUser();
+            if (user != null) {
+                firestoreRepository.clearCart(user.getUid(), new FirestoreRepository.OperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(ProfileActivity.this, "Cart cleared!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(ProfileActivity.this, "Failed to clear cart: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    private void fetchCartSummary(String userId) {
+        firestoreRepository.getCartItems(userId, new FirestoreRepository.ProductsCallback() {
+            @Override
+            public void onSuccess(List<TableTennisProduct> products) {
+                int totalItems = 0;
+                for (TableTennisProduct product : products) {
+                    totalItems += product.getCartQuantity(); // use your setCartQuantity() from FirestoreRepository
+                }
+
+                String summary = totalItems == 1
+                        ? "You have 1 item in your cart."
+                        : "You have " + totalItems + " items in your cart.";
+
+                binding.cartItemCount.setText(summary);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                binding.cartItemCount.setText("Failed to load cart.");
+            }
+        });
+    }
 }
