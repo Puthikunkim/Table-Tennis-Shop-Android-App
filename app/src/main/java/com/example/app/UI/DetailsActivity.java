@@ -42,7 +42,8 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
 
     @Override
     protected int getSelectedMenuItemId() {
-        return R.id.home;
+        // If you have a bottom navigation or drawer, make sure this returns the correct menu item ID
+        return R.id.home; // or whichever item corresponds to “Details”
     }
 
     @Override
@@ -56,6 +57,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         // 2) Get the productId from Intent extras
         productId = getIntent().getStringExtra("productId");
         if (productId == null) {
+            // If somehow no ID was passed, just finish
             Toast.makeText(this, "Product not specified.", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -69,20 +71,33 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
 
         // 5) Load product details from Firestore
         loadProductDetails();
+
+        // 6) (Optional) Set up other UI elements here, e.g. “Add to Cart” button,
+        //    quantity increase/decrease, recommendations RecyclerView, etc.
+        //    That code is not repeated here since your question focuses on wishlist,
+        //    but you can add your existing logic below if needed.
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        // Every time this screen comes into view, re‐check whether the user is logged in,
+        // and if so, whether this product is already in their wishlist.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null && currentProduct != null) {
             checkIfInWishlist(currentUser, currentProduct.getId());
         } else {
+            // If user is not logged in, always show the “not wishlisted” icon
             binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
             isWishlisted = false;
         }
     }
 
+    /**
+     * Fetch product details from Firestore (by productId),
+     * populate all UI widgets (title, description, image slider, price, etc.),
+     * and then check if it’s in the wishlist (if user is already signed in).
+     */
     private void loadProductDetails() {
         firestoreRepository.getProductById(productId, new FirestoreRepository.ProductDetailCallback() {
             @Override
@@ -94,7 +109,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                     return;
                 }
 
-                // 1) Populate title, description, price, category
+                // 1) Populate title, description, price, category, etc.
                 binding.textTitle.setText(product.getName());
                 binding.textDesc.setText(product.getDescription());
                 binding.textPrice.setText(String.format("$%.2f", product.getPrice()));
@@ -128,6 +143,14 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                     binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
                     isWishlisted = false;
                 }
+
+                // 4) (Optional) You might also load “You Might Like” recommendations here:
+                //     - firestoreRepository.getTopViewedProducts(...) or
+                //     - some category-based recommendations. Then set RecyclerView adapter.
+                //
+                // Example:
+                //   setupRecommendationsRecyclerView();
+                //   loadRecommendationsBasedOnCategory(product.getCategoryID());
             }
 
             @Override
@@ -139,6 +162,11 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         });
     }
 
+    /**
+     * Checks if the given productId exists in the user’s wishlist subcollection.
+     * If it exists, we set isWishlisted = true and use the “filled heart” icon.
+     * If it does NOT exist, we set isWishlisted = false and use the “outline heart” icon.
+     */
     private void checkIfInWishlist(FirebaseUser user, String productId) {
         firestoreRepository.checkIfProductInWishlist(
                 user.getUid(),
@@ -157,12 +185,83 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                         isWishlisted = false;
                         binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
                         // Note: We are not “logging” here because permission errors would be unexpected.
+                        // This callback’s “onError” can be either “no document” or real failure.
+                        // In production, you might want to check exception type.
                     }
                 }
         );
     }
 
+    /**
+     * Called when the user taps the “favorite” (wishlist) button.
+     *  - If not logged in ⇒ show a Toast & optionally redirect to sign-in screen.
+     *  - If logged in and not already wishlisted ⇒ add to wishlist.
+     *  - If logged in and already wishlisted ⇒ remove from wishlist.
+     */
     private void onFavoriteClicked() {
-        // TODO: Implement add/remove wishlist logic
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            // 1) User is not signed in ⇒ prompt to log in
+            Toast.makeText(DetailsActivity.this, "Please sign in to add items to your wishlist.", Toast.LENGTH_LONG).show();
+
+            // OPTIONAL: If you want to navigate them directly to ProfileActivity to sign in:
+            Intent intent = new Intent(DetailsActivity.this, ProfileActivity.class);
+            startActivity(intent);
+            return;
+        }
+
+        if (currentProduct == null) {
+            Toast.makeText(DetailsActivity.this, "Product data not loaded yet.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String uid = user.getUid();
+        String pid = currentProduct.getId();
+
+        if (!isWishlisted) {
+            // 2) Not in wishlist ⇒ add it
+            firestoreRepository.addProductToWishlist(uid, currentProduct,
+                    new FirestoreRepository.WishlistOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            isWishlisted = true;
+                            binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_filled);
+                            Toast.makeText(DetailsActivity.this,
+                                    currentProduct.getName() + " added to wishlist.",
+                                    Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "Product added to wishlist: " + pid);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Log.e(TAG, "Error adding to wishlist: " + e.getMessage(), e);
+                            Toast.makeText(DetailsActivity.this,
+                                    "Failed to add to wishlist: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+        } else {
+            // 3) Already in wishlist ⇒ remove it
+            firestoreRepository.removeProductFromWishlist(uid, pid,
+                    new FirestoreRepository.WishlistOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            isWishlisted = false;
+                            binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_filled);
+                            Toast.makeText(DetailsActivity.this,
+                                    currentProduct.getName() + " removed from wishlist.",
+                                    Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "Product removed from wishlist: " + pid);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Log.e(TAG, "Error removing from wishlist: " + e.getMessage(), e);
+                            Toast.makeText(DetailsActivity.this,
+                                    "Failed to remove from wishlist: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+        }
     }
 }
