@@ -1,6 +1,7 @@
 package com.example.app.UI;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.app.Data.FirestoreRepository;
@@ -45,15 +46,17 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
                 cartItems.clear();
                 cartItems.addAll(products);
 
-                adapter = new CartAdapter(CartActivity.this, cartItems, user.getUid(), CartActivity.this::updateTotals);
+                adapter = new CartAdapter(CartActivity.this, cartItems, user.getUid(), CartActivity.this::updateCartUI);
                 binding.cartListView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-                updateTotals();
+                updateCartUI();
             }
 
             @Override
             public void onError(Exception e) {
                 Toast.makeText(CartActivity.this, "Failed to load cart", Toast.LENGTH_SHORT).show();
+                cartItems.clear();
+                updateCartViews();
             }
         });
     }
@@ -64,7 +67,32 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
             subtotal += item.getPrice() * item.getCartQuantity();
         }
 
-        binding.subtotalText.setText(String.format("$%.2f", subtotal));
-        binding.totalText.setText(String.format("$%.2f", subtotal)); // Assuming shipping is free
+        View checkoutTotalView = findViewById(R.id.checkoutTotal);
+        if (checkoutTotalView != null) {
+            android.widget.TextView subtotalText = checkoutTotalView.findViewById(R.id.subtotalText);
+            android.widget.TextView totalText = checkoutTotalView.findViewById(R.id.totalText);
+            if (subtotalText != null && totalText != null) {
+                subtotalText.setText(String.format("$%.2f", subtotal));
+                totalText.setText(String.format("$%.2f", subtotal));
+            }
+        }
+    }
+
+    private void updateCartViews() {
+        View emptyCartView = findViewById(R.id.emptyCart);
+        View checkoutTotalView = findViewById(R.id.checkoutTotal);
+
+        if (cartItems.isEmpty()) {
+            if (emptyCartView != null) emptyCartView.setVisibility(View.VISIBLE);
+            if (checkoutTotalView != null) checkoutTotalView.setVisibility(View.GONE);
+        } else {
+            if (emptyCartView != null) emptyCartView.setVisibility(View.GONE);
+            if (checkoutTotalView != null) checkoutTotalView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void updateCartUI() {
+        updateTotals();
+        updateCartViews();
     }
 }

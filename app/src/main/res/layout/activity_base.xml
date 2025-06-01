@@ -11,10 +11,17 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/purple_500"
-        app:title="BounceBros"
-        app:titleCentered="true"
-        app:titleTextColor="@color/text_primary" />
+        android:background="@color/card_background">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:contentDescription="BounceBros Logo"
+            android:scaleType="fitCenter"
+            android:src="@drawable/bouncebro3" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <FrameLayout
         android:id="@+id/content_container"

@@ -34,6 +34,9 @@ public abstract class BaseActivity<ContentBinding extends ViewBinding>
 
         // hook up the toolbar
         setSupportActionBar(baseBinding.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("");
+        }
 
         // inflate child content and stick it into the container
         binding = inflateContentBinding();
