@@ -89,6 +89,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         }
 
         binding.btnSort.setOnClickListener(v -> showSortMenu(v));
+        binding.btnFilter.setOnClickListener(v -> showFilterMenu(v));
     }
 
     private void initializeViews() {
@@ -237,7 +238,8 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
 
         filteredResults.clear();
         for (TableTennisProduct product : fullResults) {
-            if ("all".equals(selectedCategory) || product.getCategoryID().equalsIgnoreCase(selectedCategory)) {
+            String category = product.getCategoryID();
+            if ("all".equals(selectedCategory) || (category != null && category.equalsIgnoreCase(selectedCategory))) {
                 filteredResults.add(product);
             }
         }
