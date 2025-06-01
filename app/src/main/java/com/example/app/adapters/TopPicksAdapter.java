@@ -67,9 +67,7 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
             // Not signed in → always show outline, tag = false
             holder.heartIcon.setImageResource(R.drawable.ic_wishlist);
             holder.heartIcon.setTag(false);
-        }
-
-        else {
+        } else {
             // Check Firestore: is this product already in the user's wishlist?
             String uid = currentUser.getUid();
             firestoreRepository.checkIfProductInWishlist(uid, product.getId(), new FirestoreRepository.WishlistOperationCallback() {
@@ -89,6 +87,7 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
                 }
             });
         }
+
         // 3) Heart‐icon click → toggle wishlist
         holder.heartIcon.setOnClickListener(v -> {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -104,12 +103,14 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
                 firestoreRepository.removeProductFromWishlist(uid, product.getId(), new FirestoreRepository.WishlistOperationCallback() {
                     @Override
                     public void onSuccess() {
-                        // UI update and Toast for success will be in the next commit
+                        holder.heartIcon.setImageResource(R.drawable.ic_wishlist);
+                        holder.heartIcon.setTag(false);
+                        Toast.makeText(context, product.getName() + " removed from wishlist", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        // UI update and Toast for error will be in the next commit
+                        Toast.makeText(context, "Failed to remove from wishlist: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
             } else {
@@ -117,12 +118,14 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
                 firestoreRepository.addProductToWishlist(uid, product, new FirestoreRepository.WishlistOperationCallback() {
                     @Override
                     public void onSuccess() {
-                        // UI update and Toast for success will be in the next commit
+                        holder.heartIcon.setImageResource(R.drawable.ic_wishlist_filled);
+                        holder.heartIcon.setTag(true);
+                        Toast.makeText(context, product.getName() + " added to wishlist!", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        // UI update and Toast for error will be in the next commit
+                        Toast.makeText(context, "Failed to add to wishlist: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
             }
