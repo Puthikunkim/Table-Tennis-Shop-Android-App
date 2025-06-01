@@ -28,6 +28,14 @@
         android:paddingHorizontal="16dp"/>
 
     <include
+        android:id="@+id/emptyCart"
+        layout="@layout/layout_empty_cart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone"/>
+
+    <include
         android:id="@+id/checkoutTotal"
         layout="@layout/layout_checkout_total"
         android:layout_width="match_parent"

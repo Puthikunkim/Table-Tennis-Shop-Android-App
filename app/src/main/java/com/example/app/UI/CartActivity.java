@@ -50,11 +50,14 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
                 binding.cartListView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
                 updateTotals();
+                updateCartViews();
             }
 
             @Override
             public void onError(Exception e) {
                 Toast.makeText(CartActivity.this, "Failed to load cart", Toast.LENGTH_SHORT).show();
+                cartItems.clear();
+                updateCartViews();
             }
         });
     }
@@ -73,6 +76,19 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
                 subtotalText.setText(String.format("$%.2f", subtotal));
                 totalText.setText(String.format("$%.2f", subtotal));
             }
+        }
+    }
+
+    private void updateCartViews() {
+        View emptyCartView = findViewById(R.id.emptyCart);
+        View checkoutTotalView = findViewById(R.id.checkoutTotal);
+
+        if (cartItems.isEmpty()) {
+            if (emptyCartView != null) emptyCartView.setVisibility(View.VISIBLE);
+            if (checkoutTotalView != null) checkoutTotalView.setVisibility(View.GONE);
+        } else {
+            if (emptyCartView != null) emptyCartView.setVisibility(View.GONE);
+            if (checkoutTotalView != null) checkoutTotalView.setVisibility(View.VISIBLE);
         }
     }
 }
