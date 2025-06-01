@@ -27,7 +27,6 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
     private final List<TableTennisProduct> mProducts;
     private final Set<String> wishlistIds = new HashSet<>();
 
-    // We’ll fill these in later
     private FirebaseUser user;
     private FirestoreRepository firestoreRepository;
 
@@ -37,11 +36,9 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
         mResource = resource;
         mProducts = objects;
 
-        // Initialize FirebaseAuth user and FirestoreRepository
         user = FirebaseAuth.getInstance().getCurrentUser();
         firestoreRepository = FirestoreRepository.getInstance();
 
-        // If the user is logged in, preload their wishlist IDs into our set
         if (user != null) {
             firestoreRepository.getWishlistProducts(user.getUid(), new FirestoreRepository.WishlistProductsCallback() {
                 @Override
@@ -52,13 +49,12 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
                             wishlistIds.add(item.getId());
                         }
                     }
-                    // Notify so we can update hearts later (but in this commit, hearts stay unfilled)
                     notifyDataSetChanged();
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    // In this commit, we simply ignore errors
+                    // Ignore errors for now
                 }
             });
         }
@@ -79,12 +75,10 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
         ImageView imageView = itemView.findViewById(R.id.imageViewProduct);
         ImageButton heartButton = itemView.findViewById(R.id.btnWishlist);
 
-        // Populate name, description, and price
         nameTextView.setText(product.getName());
         descTextView.setText(product.getDescription());
         priceTextView.setText(String.format("$%.2f", product.getPrice()));
 
-        // Load image (if available) or placeholder
         if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
             Glide.with(mContext)
                     .load(product.getImageUrls().get(0))
@@ -95,9 +89,24 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
             imageView.setImageResource(R.drawable.ic_launcher_background);
         }
 
-        // In this first commit, we do NOT yet vary the heart icon.
-        // Always show it as unfilled, and do not attach any click listener.
-        heartButton.setImageResource(R.drawable.ic_unfilledheart);
+        // Re‐fetch the user each time in case they logged in/out
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Determine if this product is in the wishlist
+        boolean isInWishlist = false;
+        if (product.getId() != null) {
+            isInWishlist = wishlistIds.contains(product.getId());
+        }
+
+        // Set heart icon based on presence in wishlist
+        heartButton.setImageResource(
+                isInWishlist
+                        ? R.drawable.ic_filledheart
+                        : R.drawable.ic_unfilledheart
+        );
+
+        // No click listener yet (commit 3 will add toggling behavior)
+        heartButton.setOnClickListener(null);
 
         return itemView;
     }
