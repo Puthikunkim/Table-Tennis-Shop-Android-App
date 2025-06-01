@@ -1,6 +1,7 @@
 package com.example.app.UI;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.app.Data.FirestoreRepository;
@@ -64,7 +65,14 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
             subtotal += item.getPrice() * item.getCartQuantity();
         }
 
-        binding.subtotalText.setText(String.format("$%.2f", subtotal));
-        binding.totalText.setText(String.format("$%.2f", subtotal)); // Assuming shipping is free
+        View checkoutTotalView = findViewById(R.id.checkoutTotal);
+        if (checkoutTotalView != null) {
+            android.widget.TextView subtotalText = checkoutTotalView.findViewById(R.id.subtotalText);
+            android.widget.TextView totalText = checkoutTotalView.findViewById(R.id.totalText);
+            if (subtotalText != null && totalText != null) {
+                subtotalText.setText(String.format("$%.2f", subtotal));
+                totalText.setText(String.format("$%.2f", subtotal));
+            }
+        }
     }
 }
