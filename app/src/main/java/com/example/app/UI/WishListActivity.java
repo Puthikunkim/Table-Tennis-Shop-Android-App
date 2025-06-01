@@ -55,7 +55,6 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
 
             @Override
             public void onAddToCartClick(TableTennisProduct product) {
-                // For now, just call the stub
                 addToCartFromWishlist(product);
             }
         });
@@ -152,10 +151,40 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     }
 
     /**
-     * Stub for “Add to Cart” – for now it just shows a Toast.
-     * Will implement real Firestore logic in a later commit.
+     * Now actually add the product to Firestore cart (quantity = 1), but we do NOT remove from wishlist yet.
      */
     private void addToCartFromWishlist(TableTennisProduct product) {
-        Toast.makeText(this, "Add to Cart clicked for " + product.getName(), Toast.LENGTH_SHORT).show();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, "Please sign in to add to cart.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        firestoreRepository.addToCart(
+                currentUser.getUid(),
+                product,
+                1,
+                new FirestoreRepository.OperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(
+                                WishListActivity.this,
+                                product.getName() + " added to cart!",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        Log.d(TAG, "Added to cart: " + product.getName());
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e(TAG, "Error adding to cart: " + e.getMessage(), e);
+                        Toast.makeText(
+                                WishListActivity.this,
+                                "Failed to add to cart: " + e.getMessage(),
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+                }
+        );
     }
 }
