@@ -95,4 +95,28 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         updateTotals();
         updateCartViews();
     }
+
+    private void handleCheckout() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Please sign in to checkout", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirestoreRepository.getInstance().clearCart(user.getUid(), new FirestoreRepository.OperationCallback() {
+            @Override
+            public void onSuccess() {
+                cartItems.clear();
+                if (adapter != null) adapter.notifyDataSetChanged();
+                updateCartUI();
+                Toast.makeText(CartActivity.this, "Cart checked out", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(CartActivity.this, "Failed to checkout", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }
