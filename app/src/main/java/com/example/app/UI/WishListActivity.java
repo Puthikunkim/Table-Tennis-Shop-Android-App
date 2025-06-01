@@ -151,7 +151,8 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     }
 
     /**
-     * Now actually add the product to Firestore cart (quantity = 1), but we do NOT remove from wishlist yet.
+     * Now: after adding to cart in Firestore, immediately remove that same product from wishlist in Firestore.
+     * We do NOT update the local list here yet—that will come in Commit 4.
      */
     private void addToCartFromWishlist(TableTennisProduct product) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -160,19 +161,40 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
             return;
         }
 
+        String userId = currentUser.getUid();
         firestoreRepository.addToCart(
-                currentUser.getUid(),
+                userId,
                 product,
                 1,
                 new FirestoreRepository.OperationCallback() {
                     @Override
                     public void onSuccess() {
-                        Toast.makeText(
-                                WishListActivity.this,
-                                product.getName() + " added to cart!",
-                                Toast.LENGTH_SHORT
-                        ).show();
                         Log.d(TAG, "Added to cart: " + product.getName());
+                        // Now remove from wishlist
+                        firestoreRepository.removeProductFromWishlist(
+                                userId,
+                                product.getId(),
+                                new FirestoreRepository.WishlistOperationCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Log.d(TAG, "Removed from wishlist after adding to cart: " + product.getName());
+                                        Toast.makeText(
+                                                WishListActivity.this,
+                                                product.getName() + " moved to cart.",
+                                                Toast.LENGTH_SHORT
+                                        ).show();
+                                    }
+                                    @Override
+                                    public void onError(Exception e) {
+                                        Log.e(TAG, "Failed to remove from wishlist after adding to cart: " + e.getMessage(), e);
+                                        Toast.makeText(
+                                                WishListActivity.this,
+                                                "Added to cart but couldn't remove from wishlist.",
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
+                                }
+                        );
                     }
 
                     @Override
