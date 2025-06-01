@@ -17,6 +17,13 @@ import com.example.app.databinding.ActivityDetailsBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.app.adapters.TopPicksAdapter;
+import com.example.app.Model.TableTennisProduct;
+
+
 import java.util.List;
 
 public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
@@ -37,6 +44,9 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
 
     // Holds current quantity selected by user (for Add to Cart)
     private int quantity = 1;
+
+    private TopPicksAdapter recommendationsAdapter;
+
 
     @Override
     protected ActivityDetailsBinding inflateContentBinding() {
