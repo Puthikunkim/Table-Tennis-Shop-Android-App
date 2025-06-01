@@ -294,4 +294,20 @@ public class FirestoreRepository {
                 });
     }
 
+    public void clearWishlist(String userId, OperationCallback callback) {
+        db.collection("users").document(userId)
+                .collection("wishlist")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        doc.getReference().delete();
+                    }
+                    if (callback != null) callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) callback.onError(e);
+                });
+    }
+
+
 }
