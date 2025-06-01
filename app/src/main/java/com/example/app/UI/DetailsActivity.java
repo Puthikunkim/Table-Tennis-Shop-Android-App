@@ -14,8 +14,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
 
-    private int quantity = 1;
-    private TableTennisProduct currentProduct;
+    private int quantity = 1; // Holds current quantity selected by user
+    private TableTennisProduct currentProduct; // Holds the product being viewed
 
     @Override
     protected ActivityDetailsBinding inflateContentBinding() {
@@ -31,10 +31,10 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Back button
+        // Handle back button press
         binding.customDetailsBackButton.setOnClickListener(v -> finish());
 
-        // Retrieve product ID from intent
+        // Retrieve the product ID passed via intent
         String productId = getIntent().getStringExtra("productId");
         if (productId == null) {
             Toast.makeText(this, "No product ID", Toast.LENGTH_SHORT).show();
@@ -42,7 +42,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
             return;
         }
 
-        // Load product details
+        // Fetch product details using the repository
         FirestoreRepository.getInstance().getProductById(productId, new FirestoreRepository.ProductDetailCallback() {
             @Override
             public void onSuccess(TableTennisProduct product) {
@@ -60,13 +60,13 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
             }
         });
 
-        // Handle quantity increase
+        // Increase quantity button handler
         binding.btnIncrease.setOnClickListener(v -> {
             quantity++;
             binding.textQuantity.setText(String.valueOf(quantity));
         });
 
-        // Handle quantity decrease
+        // Decrease quantity button handler
         binding.btnDecrease.setOnClickListener(v -> {
             if (quantity > 1) {
                 quantity--;
@@ -74,7 +74,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
             }
         });
 
-        // Handle "Add to Cart"
+        // Add to Cart button handler
         binding.btnAddToCart.setOnClickListener(v -> {
             if (currentProduct == null) {
                 Toast.makeText(this, "Product not loaded yet", Toast.LENGTH_SHORT).show();
@@ -83,15 +83,14 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
 
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
-                Toast.makeText(this, "Please sign in first", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please sign in to add to cart", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            FirestoreRepository.getInstance().addToCart(
-                    user.getUid(),
-                    currentProduct,
-                    quantity,
-                    new FirestoreRepository.WishlistOperationCallback() {
+            String userId = user.getUid();
+
+            FirestoreRepository.getInstance().addToCart(userId, currentProduct, quantity,
+                    new FirestoreRepository.OperationCallback() {
                         @Override
                         public void onSuccess() {
                             Toast.makeText(DetailsActivity.this, "Added to cart", Toast.LENGTH_SHORT).show();

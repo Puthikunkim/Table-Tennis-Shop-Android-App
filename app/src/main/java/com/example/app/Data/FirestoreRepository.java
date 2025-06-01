@@ -2,8 +2,6 @@ package com.example.app.Data;
 
 import com.example.app.Model.TableTennisProduct;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 
@@ -186,23 +184,28 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
-    public void addToCart(String userId, TableTennisProduct product, int quantity, WishlistOperationCallback callback) {
+    public void addToCart(String userId, TableTennisProduct product, int quantity, OperationCallback callback) {
         if (product.getId() == null) {
             callback.onError(new IllegalArgumentException("Product ID cannot be null when adding to cart."));
             return;
         }
-
+        
         Map<String, Object> cartItem = new HashMap<>();
-        cartItem.put("quantity", quantity);
-        cartItem.put("product", product);
+        cartItem.put("product", product);  // full object
+        cartItem.put("quantity", quantity);  // redundant, but helpful
 
         db.collection("users").document(userId)
                 .collection("cart")
-                .document(product.getId()) // Use product ID as document ID
+                .document(product.getId())
                 .set(cartItem)
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(callback::onError);
+                .addOnSuccessListener(aVoid -> {
+                    if (callback != null) callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) callback.onError(e);
+                });
     }
+
 
     public void getTopViewedProducts(int limit, ProductsCallback callback) {
         db.collection("products")
