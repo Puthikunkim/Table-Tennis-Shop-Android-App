@@ -19,4 +19,6 @@
 
     <color name="pill_background">#2C2C2C</color>
     <color name="text_on_pill">#FFFFFF</color>
+
+    <color name="purple_accent">#5200FF</color>
 </resources>

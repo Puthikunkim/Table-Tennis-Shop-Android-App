@@ -119,7 +119,7 @@
                 android:text="Professional-grade carbon fiber table tennis bat designed for advanced players."
                 android:textColor="@color/text_secondary"/>
 
-            <!-- Quantity + Add to Cart + Favorite -->
+            <!-- Quantity Selector Row -->
             <LinearLayout
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal"
@@ -128,16 +128,17 @@
                 android:gravity="center_vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Quantity:"
                     android:textColor="@color/text_primary"
+                    android:textSize="18sp"
                     android:layout_marginEnd="8dp"/>
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
                     app:cardElevation="4dp"
                     app:cardCornerRadius="8dp"
                     app:cardBackgroundColor="@color/card_background">
@@ -146,31 +147,35 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="4dp">
+                        android:padding="0dp">
 
                         <Button
                             android:id="@+id/btnDecrease"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
                             android:text="–"
                             android:textColor="@color/text_primary" />
 
                         <TextView
                             android:id="@+id/textQuantity"
                             android:layout_width="32dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="32dp"
                             android:gravity="center"
                             android:text="1"
                             android:textColor="@color/text_primary"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginEnd="8dp"/>
+                            android:layout_marginStart="4dp"
+                            android:layout_marginEnd="4dp"/>
 
                         <Button
                             android:id="@+id/btnIncrease"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
                             android:text="+"
                             android:textColor="@color/text_primary" />
 
@@ -178,27 +183,31 @@
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
+            <!-- Add to Cart + Wishlist Row -->
             <LinearLayout
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <Button
                     android:id="@+id/btnAddToCart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
                     android:text="Add to Cart"
                     android:textColor="@color/text_primary"
                     android:backgroundTint="@color/purple_500"
-                    android:layout_marginTop="8dp"/>
+                    android:background="@drawable/bg_cart_left_rounded"/>
 
                 <ImageButton
                     android:id="@+id/btnFavorite"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="WishList" />
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_cart_right_rounded"
+                    android:contentDescription="WishList"
+                    android:padding="8dp" />
 
             </LinearLayout>
 
