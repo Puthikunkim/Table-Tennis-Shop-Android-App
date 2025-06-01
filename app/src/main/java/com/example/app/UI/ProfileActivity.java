@@ -13,6 +13,7 @@ import com.example.app.Data.FirestoreRepository;
 import com.example.app.databinding.ActivityProfileBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -182,15 +183,24 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
                             if (user != null) {
                                 // ✅ Update Firebase Auth display name
-                                user.updateProfile(new com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                                user.updateProfile(new UserProfileChangeRequest.Builder()
                                         .setDisplayName(name)
                                         .build()).addOnCompleteListener(profileTask -> {
                                     if (profileTask.isSuccessful()) {
                                         Log.d(TAG, "User display name updated.");
+
+                                        // 🔄 Force refresh to get the updated name right away
+                                        user.reload().addOnCompleteListener(reloadTask -> {
+                                            FirebaseUser refreshedUser = mAuth.getCurrentUser();
+                                            updateUI(refreshedUser); // will now show "Welcome, [name]!"
+                                        });
+
                                     } else {
                                         Log.w(TAG, "Failed to update display name", profileTask.getException());
+                                        updateUI(user); // fallback UI
                                     }
                                 });
+
 
                                 // ✅ Save user profile in Firestore
                                 Map<String, Object> userProfile = new HashMap<>();
