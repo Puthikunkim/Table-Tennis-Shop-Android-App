@@ -42,19 +42,24 @@
                     android:id="@+id/btnPrev"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:src="@drawable/leftarrow2"
+                    android:scaleType="centerInside"
+                    android:background="@android:color/transparent"
+                    android:rotationY="180"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:tint="@color/text_primary"/>
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <ImageButton
                     android:id="@+id/btnNext"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:src="@drawable/rightarrow2"
+                    android:scaleType="centerInside"
+                    android:background="@android:color/transparent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:tint="@color/text_primary"/>
+                    app:layout_constraintBottom_toBottomOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Category & Price -->
