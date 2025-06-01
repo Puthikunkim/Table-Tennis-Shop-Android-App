@@ -49,6 +49,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.submitSignIn.setOnClickListener(submitSignInClickListener);
         binding.submitCreate.setOnClickListener(submitCreateClickListener);
         binding.buttonSignOut.setOnClickListener(signOutButtonClickListener);
+
+        setupCartButtons();
     }
 
     @Override
@@ -245,4 +247,29 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.inputEmail.setText("");
         binding.inputCreatePassword.setText("");
     }
+
+    private void setupCartButtons() {
+        binding.btnViewCart.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, CartActivity.class);
+            startActivity(intent);
+        });
+
+        binding.btnClearCart.setOnClickListener(v -> {
+            FirebaseUser user = mAuth.getCurrentUser();
+            if (user != null) {
+                firestoreRepository.clearCart(user.getUid(), new FirestoreRepository.OperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(ProfileActivity.this, "Cart cleared!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(ProfileActivity.this, "Failed to clear cart: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
 }
