@@ -100,7 +100,25 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 binding.textPrice.setText(String.format("$%.2f", product.getPrice()));
                 binding.textCategory.setText(product.getCategoryID());
 
-                // TODO: Set up image slider
+                // 2) Set up image slider (ViewPager2)
+                List<String> imageUrls = product.getImageUrls();
+                ImageSliderAdapter sliderAdapter = new ImageSliderAdapter(imageUrls);
+                binding.viewPagerImages.setAdapter(sliderAdapter);
+
+                // (Optional) Hook up Prev/Next arrows for the ViewPager2:
+                binding.btnPrev.setOnClickListener(v -> {
+                    int prevIndex = binding.viewPagerImages.getCurrentItem() - 1;
+                    if (prevIndex >= 0) {
+                        binding.viewPagerImages.setCurrentItem(prevIndex, true);
+                    }
+                });
+                binding.btnNext.setOnClickListener(v -> {
+                    int nextIndex = binding.viewPagerImages.getCurrentItem() + 1;
+                    if (nextIndex < imageUrls.size()) {
+                        binding.viewPagerImages.setCurrentItem(nextIndex, true);
+                    }
+                });
+
                 // TODO: Check wishlist status
             }
 
