@@ -18,10 +18,26 @@
         android:paddingHorizontal="16dp"
         android:paddingBottom="24dp"/>
 
-    <Space
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your Cart"
+        android:textColor="@color/text_primary"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="24dp"/>
+
+    <ListView
+        android:id="@+id/cartListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:paddingHorizontal="16dp"/>
+
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
