@@ -2,6 +2,7 @@ package com.example.app.UI;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
+
+    private static final String TAG = "MainActivity";
 
     private TopPicksAdapter topAdapter;
     private final List<TableTennisProduct> topList = new ArrayList<>();
@@ -66,10 +69,25 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.topPicksRecyclerView.setAdapter(topAdapter);
 
         topAdapter.setOnProductClickListener(product -> {
-            Intent intent = new Intent(this, DetailsActivity.class);
-            intent.putExtra("productId", product.getId());
+            String clickedId = product.getId();
+            Log.d("MainActivity", "▶ TopPick tapped; product.getId() = [" + clickedId + "]");
+            Toast.makeText(this, "Tapped TopPick with ID = " + clickedId, Toast.LENGTH_SHORT).show();
+
+            if (clickedId == null || clickedId.isEmpty()) {
+                Toast.makeText(
+                        MainActivity.this,
+                        "⚠️ clickedId was null/empty—cannot open Details.",
+                        Toast.LENGTH_LONG
+                ).show();
+                return;
+            }
+
+
+            Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+            intent.putExtra("productId", clickedId);
             startActivity(intent);
         });
+
     }
 
     private void loadTopPicks() {
