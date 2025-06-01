@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.databinding.ActivityProfileBinding;
@@ -15,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
@@ -71,6 +73,10 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             binding.textWelcome.setText("Welcome, " + (user.getDisplayName() != null ? user.getDisplayName() : "User") + "!");
             binding.textEmail.setText("Email: " + user.getEmail());
+
+
+            // Ensure the UI updates properly
+            fetchCartSummary(user.getUid());
 
             // You can fetch more user data from Firestore here if needed
             // For example, if you stored their full name in a 'users' collection
@@ -271,5 +277,29 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             }
         });
     }
+
+    private void fetchCartSummary(String userId) {
+        firestoreRepository.getCartItems(userId, new FirestoreRepository.ProductsCallback() {
+            @Override
+            public void onSuccess(List<TableTennisProduct> products) {
+                int totalItems = 0;
+                for (TableTennisProduct product : products) {
+                    totalItems += product.getCartQuantity(); // use your setCartQuantity() from FirestoreRepository
+                }
+
+                String summary = totalItems == 1
+                        ? "You have 1 item in your cart."
+                        : "You have " + totalItems + " items in your cart.";
+
+                binding.cartItemCount.setText(summary);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                binding.cartItemCount.setText("Failed to load cart.");
+            }
+        });
+    }
+
 
 }
