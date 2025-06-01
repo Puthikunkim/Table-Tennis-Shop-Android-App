@@ -74,11 +74,29 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     @Override
     public void onStart() {
         super.onStart();
-        // TODO: Re‐check whether the user is logged in and wishlist status
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null && currentProduct != null) {
+            checkIfInWishlist(currentUser, currentProduct.getId());
+        } else {
+            binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
+            isWishlisted = false;
+        }
     }
 
     private void loadProductDetails() {
-        // TODO: Implement Firestore fetch and UI population
+        firestoreRepository.getProductById(productId, new FirestoreRepository.ProductDetailCallback() {
+            @Override
+            public void onSuccess(TableTennisProduct product) {
+                // TODO: Populate UI with product data
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e(TAG, "Error fetching product details: " + e.getMessage(), e);
+                Toast.makeText(DetailsActivity.this, "Failed to load product details.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 
     private void checkIfInWishlist(FirebaseUser user, String productId) {
