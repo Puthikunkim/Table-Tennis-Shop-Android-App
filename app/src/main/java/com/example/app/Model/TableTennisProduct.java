@@ -11,7 +11,6 @@ public class TableTennisProduct {
     private double price;
     private String categoryID;
     private List<String> tags;
-    private boolean isWishlisted;
     private int cartQuantity;
     private int views;
     private List<String> imageUrls;
@@ -25,7 +24,6 @@ public class TableTennisProduct {
                               double price,
                               String categoryID,
                               List<String> tags,
-                              boolean isWishlisted,
                               int cartQuantity,
                               int views,
                               List<String> imageUrls) {
@@ -35,7 +33,6 @@ public class TableTennisProduct {
         this.price = price;
         this.categoryID = categoryID;
         this.tags = tags;
-        this.isWishlisted = isWishlisted;
         this.cartQuantity = cartQuantity;
         this.views = views;
         this.imageUrls = imageUrls;
@@ -77,12 +74,6 @@ public class TableTennisProduct {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
-    public boolean isWishlisted() {
-        return isWishlisted;
-    }
-    public void setWishlisted(boolean wishlisted) {
-        isWishlisted = wishlisted;
-    }
     public int getCartQuantity() {
         return cartQuantity;
     }
@@ -112,7 +103,6 @@ public class TableTennisProduct {
                 ", price=" + price +
                 ", categoryID='" + categoryID + '\'' +
                 ", tags=" + tags +
-                ", isWishlisted=" + isWishlisted +
                 ", cartQuantity=" + cartQuantity +
                 ", views=" + views +
                 ", imageUrls=" + imageUrls +
