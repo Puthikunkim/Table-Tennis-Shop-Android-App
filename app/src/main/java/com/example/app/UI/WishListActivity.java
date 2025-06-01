@@ -3,12 +3,10 @@ package com.example.app.UI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView; // Import RecyclerView
 
 import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
@@ -57,16 +55,13 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
 
             @Override
             public void onAddToCartClick(TableTennisProduct product) {
-                // Handle add to cart logic here
-                // You'll likely need a separate method for cart operations in FirestoreRepository
-                // For now, just a toast
-                Toast.makeText(WishListActivity.this, "Added " + product.getName() + " to cart!", Toast.LENGTH_SHORT).show();
+                // For now, just call the stub
+                addToCartFromWishlist(product);
             }
         });
         binding.recyclerViewWishlist.setAdapter(wishlistAdapter);
 
         // Set listener for the "Sign In" button in the logged-out state
-        // Make sure `layout_wishlist_logged_out` is included and its button has the correct ID
         binding.loggedOutWishlist.signInButtonWishlist.setOnClickListener(v -> {
             // Navigate to ProfileActivity for sign in
             Intent intent = new Intent(WishListActivity.this, ProfileActivity.class);
@@ -84,16 +79,16 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             // User is signed in
-            binding.loggedOutWishlist.getRoot().setVisibility(View.GONE);
-            binding.recyclerViewWishlist.setVisibility(View.VISIBLE);
-            binding.emptyWishlist.getRoot().setVisibility(View.GONE); // Hide empty wishlist initially
+            binding.loggedOutWishlist.getRoot().setVisibility(android.view.View.GONE);
+            binding.recyclerViewWishlist.setVisibility(android.view.View.VISIBLE);
+            binding.emptyWishlist.getRoot().setVisibility(android.view.View.GONE); // Hide empty wishlist initially
 
             loadWishlist(user.getUid());
         } else {
             // User is signed out
-            binding.loggedOutWishlist.getRoot().setVisibility(View.VISIBLE);
-            binding.recyclerViewWishlist.setVisibility(View.GONE);
-            binding.emptyWishlist.getRoot().setVisibility(View.GONE); // Also hide empty wishlist if logged out
+            binding.loggedOutWishlist.getRoot().setVisibility(android.view.View.VISIBLE);
+            binding.recyclerViewWishlist.setVisibility(android.view.View.GONE);
+            binding.emptyWishlist.getRoot().setVisibility(android.view.View.GONE); // Also hide empty wishlist if logged out
             wishlistItems.clear(); // Clear local list if user signs out
             wishlistAdapter.notifyDataSetChanged();
             Log.d(TAG, "User not signed in. Showing logged out message.");
@@ -108,11 +103,11 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
                 wishlistItems.addAll(products);
                 wishlistAdapter.notifyDataSetChanged();
                 if (products.isEmpty()) {
-                    binding.emptyWishlist.getRoot().setVisibility(View.VISIBLE);
-                    binding.recyclerViewWishlist.setVisibility(View.GONE);
+                    binding.emptyWishlist.getRoot().setVisibility(android.view.View.VISIBLE);
+                    binding.recyclerViewWishlist.setVisibility(android.view.View.GONE);
                 } else {
-                    binding.emptyWishlist.getRoot().setVisibility(View.GONE);
-                    binding.recyclerViewWishlist.setVisibility(View.VISIBLE);
+                    binding.emptyWishlist.getRoot().setVisibility(android.view.View.GONE);
+                    binding.recyclerViewWishlist.setVisibility(android.view.View.VISIBLE);
                 }
                 Log.d(TAG, "Wishlist loaded successfully: " + products.size() + " items.");
             }
@@ -121,8 +116,8 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
             public void onError(Exception e) {
                 Log.e(TAG, "Error loading wishlist: " + e.getMessage(), e);
                 Toast.makeText(WishListActivity.this, "Error loading wishlist.", Toast.LENGTH_SHORT).show();
-                binding.emptyWishlist.getRoot().setVisibility(View.VISIBLE); // Show empty state on error too
-                binding.recyclerViewWishlist.setVisibility(View.GONE);
+                binding.emptyWishlist.getRoot().setVisibility(android.view.View.VISIBLE); // Show empty state on error too
+                binding.recyclerViewWishlist.setVisibility(android.view.View.GONE);
             }
         });
     }
@@ -142,8 +137,8 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
                 wishlistItems.remove(product);
                 wishlistAdapter.notifyDataSetChanged();
                 if (wishlistItems.isEmpty()) {
-                    binding.emptyWishlist.getRoot().setVisibility(View.VISIBLE);
-                    binding.recyclerViewWishlist.setVisibility(View.GONE);
+                    binding.emptyWishlist.getRoot().setVisibility(android.view.View.VISIBLE);
+                    binding.recyclerViewWishlist.setVisibility(android.view.View.GONE);
                 }
                 Log.d(TAG, product.getName() + " removed from wishlist successfully.");
             }
@@ -154,5 +149,13 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
                 Toast.makeText(WishListActivity.this, "Failed to remove item: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * Stub for “Add to Cart” – for now it just shows a Toast.
+     * Will implement real Firestore logic in a later commit.
+     */
+    private void addToCartFromWishlist(TableTennisProduct product) {
+        Toast.makeText(this, "Add to Cart clicked for " + product.getName(), Toast.LENGTH_SHORT).show();
     }
 }
