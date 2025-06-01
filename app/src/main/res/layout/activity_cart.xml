@@ -31,8 +31,7 @@
         android:id="@+id/emptyCart"
         layout="@layout/layout_empty_cart"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:visibility="gone"/>
 
     <include
