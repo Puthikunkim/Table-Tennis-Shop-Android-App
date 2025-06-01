@@ -87,7 +87,21 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         firestoreRepository.getProductById(productId, new FirestoreRepository.ProductDetailCallback() {
             @Override
             public void onSuccess(TableTennisProduct product) {
-                // TODO: Populate UI with product data
+                currentProduct = product;
+                if (product == null) {
+                    Toast.makeText(DetailsActivity.this, "Error: Product not found.", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+
+                // 1) Populate title, description, price, category
+                binding.textTitle.setText(product.getName());
+                binding.textDesc.setText(product.getDescription());
+                binding.textPrice.setText(String.format("$%.2f", product.getPrice()));
+                binding.textCategory.setText(product.getCategoryID());
+
+                // TODO: Set up image slider
+                // TODO: Check wishlist status
             }
 
             @Override
