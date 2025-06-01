@@ -149,6 +149,75 @@
                             android:layout_marginTop="12dp" />
                 </LinearLayout>
 
+                <!-- Wishlist Card Section -->
+                <LinearLayout
+                    android:id="@+id/wishlistCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/card_background"
+                    android:padding="16dp"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="8dp"
+                    android:elevation="2dp"
+                    android:backgroundTint="@color/card_background"
+                    android:layout_marginHorizontal="0dp">
+
+                        <!-- Top row: title and clear button -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_wishlist_filled"
+                                    android:tint="@color/text_primary" />
+
+                                <TextView
+                                    android:id="@+id/wishlistTitle"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Wishlist"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/text_primary"
+                                    android:paddingStart="8dp"
+                                    android:textSize="16sp" />
+
+                                <Button
+                                    android:id="@+id/btnClearWishlist"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Clear Wishlist"
+                                    android:textColor="@android:color/white"
+                                    android:backgroundTint="@android:color/holo_red_dark"
+                                    android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <!-- Item count -->
+                        <TextView
+                            android:id="@+id/wishlistItemCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="You have 0 items in your wishlist."
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp"
+                            android:layout_marginTop="12dp" />
+
+                        <!-- View Wishlist button -->
+                        <Button
+                            android:id="@+id/btnViewWishlist"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Go to Wishlist"
+                            android:textColor="@color/text_primary"
+                            android:backgroundTint="@color/purple_500"
+                            android:layout_marginTop="12dp" />
+                </LinearLayout>
+
                 <Button
                     android:id="@+id/buttonSignOut"
                     android:layout_width="match_parent"
