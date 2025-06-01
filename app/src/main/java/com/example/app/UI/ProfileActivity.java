@@ -163,9 +163,10 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         public void onClick(View view) {
             String email = binding.inputEmail.getText().toString().trim();
             String password = binding.inputCreatePassword.getText().toString().trim();
+            String name = binding.inputName.getText().toString().trim(); // ✅ Get name
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(ProfileActivity.this, "Please enter email and password", Toast.LENGTH_SHORT).show();
+            if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
+                Toast.makeText(ProfileActivity.this, "Please enter name, email and password", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (password.length() < 6) {
@@ -179,29 +180,37 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            // Use FirestoreRepository to create the user profile
                             if (user != null) {
+                                // ✅ Update Firebase Auth display name
+                                user.updateProfile(new com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                                        .setDisplayName(name)
+                                        .build()).addOnCompleteListener(profileTask -> {
+                                    if (profileTask.isSuccessful()) {
+                                        Log.d(TAG, "User display name updated.");
+                                    } else {
+                                        Log.w(TAG, "Failed to update display name", profileTask.getException());
+                                    }
+                                });
+
+                                // ✅ Save user profile in Firestore
                                 Map<String, Object> userProfile = new HashMap<>();
                                 userProfile.put("email", user.getEmail());
+                                userProfile.put("name", name); // Save name
                                 userProfile.put("createdAt", com.google.firebase.firestore.FieldValue.serverTimestamp());
 
                                 firestoreRepository.createUserProfile(user.getUid(), userProfile, new FirestoreRepository.UserProfileCallback() {
                                     @Override
                                     public void onSuccess() {
                                         Log.d(TAG, "User profile created in Firestore via repository");
-                                        // Now that profile is saved, update UI and show toast
                                         updateUI(user);
-                                        Toast.makeText(ProfileActivity.this, "Account created and signed in as: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(ProfileActivity.this, "Account created and signed in as: " + name, Toast.LENGTH_SHORT).show();
                                         clearCreateAccountForm();
                                     }
 
                                     @Override
                                     public void onError(Exception e) {
                                         Log.w(TAG, "Error creating user profile in Firestore via repository", e);
-                                        // Even if Firestore profile creation fails, the Firebase Auth account is created.
-                                        // You might want to log this but still proceed with login or inform the user.
-                                        // For simplicity here, we'll just log and proceed.
-                                        updateUI(user); // Still update UI as auth was successful
+                                        updateUI(user);
                                         Toast.makeText(ProfileActivity.this, "Account created, but profile data save failed: " + e.getMessage(),
                                                 Toast.LENGTH_LONG).show();
                                         clearCreateAccountForm();
@@ -209,9 +218,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
                                 });
 
                             } else {
-                                // This case should ideally not happen if task.isSuccessful() is true
                                 Log.e(TAG, "User was null after successful createUserWithEmailAndPassword");
-                                updateUI(null); // Fallback to logged out state
+                                updateUI(null);
                                 Toast.makeText(ProfileActivity.this, "Error: User data missing after account creation.", Toast.LENGTH_LONG).show();
                             }
 
@@ -242,6 +250,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     }
 
     private void clearCreateAccountForm() {
+        binding.inputName.setText(""); // 👈 Clear name field too
         binding.inputEmail.setText("");
         binding.inputCreatePassword.setText("");
     }
