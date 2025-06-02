@@ -116,7 +116,7 @@
         android:paddingBottom="8dp"
         android:layout_marginTop="12dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnFilter"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -124,18 +124,18 @@
             android:text="Filter"
             android:textColor="@color/white"
             android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/label_background"
-            android:background="@drawable/rounded_button_background" />
+            app:cornerRadius="16dp"
+            app:backgroundTint="@color/purple_500" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSort"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Sort"
             android:textColor="@color/white"
-            android:backgroundTint="@color/label_background"
-            android:background="@drawable/rounded_button_background" />
+            app:cornerRadius="16dp"
+            app:backgroundTint="@color/purple_500" />
     </LinearLayout>
 
 
