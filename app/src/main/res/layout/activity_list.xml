@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,14 +27,14 @@
             android:layout_alignParentStart="true" />
 
         <!-- Sort Button -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sort"
             android:textColor="@color/white"
-            android:backgroundTint="@color/label_background"
-            android:background="@drawable/rounded_button_background"
+            app:cornerRadius="16dp"
+            app:backgroundTint="@color/purple_500"
             android:layout_alignParentEnd="true" />
 
         <!-- Title -->
