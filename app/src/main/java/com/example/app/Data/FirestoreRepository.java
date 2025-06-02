@@ -1,6 +1,9 @@
 package com.example.app.Data;
 
+import android.util.Log;
+
 import com.example.app.Model.TableTennisProduct;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
@@ -101,6 +104,21 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Atomically increases the "views" field of the given product document by 1.
+     */
+    public void incrementProductViews(String productId) {
+        db.collection("products")
+                .document(productId)
+                .update("views", FieldValue.increment(1))
+                .addOnSuccessListener(aVoid -> {
+                    // (optional) Log or callback if you care
+                })
+                .addOnFailureListener(e -> {
+                    // (optional) Handle the error if increment fails
+                    Log.e("FirestoreRepo", "Failed to increment views for " + productId, e);
+                });
+    }
     public void getProductById(String productId, ProductDetailCallback callback) {
         db.collection("products")
                 .document(productId)
