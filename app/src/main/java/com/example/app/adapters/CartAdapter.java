@@ -101,8 +101,26 @@ public class CartAdapter extends BaseAdapter {
                 repo.addToCart(userId, product, qty - 1, null);
                 notifyDataSetChanged();
                 onCartChanged.run();
+            } else if (qty == 1) {
+                // Remove from cart and list
+                repo.removeFromCart(userId, product.getId(), new FirestoreRepository.OperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(context, "Item removed from cart", Toast.LENGTH_SHORT).show();
+                        cartItems.remove(position);
+                        notifyDataSetChanged();
+                        onCartChanged.run();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(context, "Failed to remove item", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
+
+
 
         // Delete item
         holder.deleteButton.setOnClickListener(v -> {
