@@ -39,6 +39,25 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     public SearchResultAdapter(Context context, List<TableTennisProduct> products) {
         this.context = context;
         this.products = products;
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            firestoreRepository.getWishlistProducts(user.getUid(), new FirestoreRepository.WishlistProductsCallback() {
+                @Override
+                public void onSuccess(List<TableTennisProduct> wishlistItems) {
+                    wishlistIds.clear();
+                    for (TableTennisProduct item : wishlistItems) {
+                        if (item.getId() != null) {
+                            wishlistIds.add(item.getId());
+                        }
+                    }
+                    notifyDataSetChanged();
+                }
+                @Override
+                public void onError(Exception e) {
+                    // Optionally handle error
+                }
+            });
+        }
     }
 
     /** Setter so the Activity can register its callback */
