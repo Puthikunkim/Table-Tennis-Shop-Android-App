@@ -189,22 +189,54 @@ public class FirestoreRepository {
             callback.onError(new IllegalArgumentException("Product ID cannot be null when adding to cart."));
             return;
         }
-        
-        Map<String, Object> cartItem = new HashMap<>();
-        cartItem.put("product", product);  // full object
-        cartItem.put("quantity", quantity);  // redundant, but helpful
 
         db.collection("users").document(userId)
                 .collection("cart")
                 .document(product.getId())
-                .set(cartItem)
-                .addOnSuccessListener(aVoid -> {
-                    if (callback != null) callback.onSuccess();
+                .get()
+                .addOnSuccessListener(docSnapshot -> {
+                    if (docSnapshot.exists()) {
+                        // Already in cart: increment quantity
+                        Long currentQty = docSnapshot.getLong("quantity");
+                        int newQty = (currentQty != null ? currentQty.intValue() : 0) + quantity;
+
+                        Map<String, Object> update = new HashMap<>();
+                        update.put("quantity", newQty);
+
+                        db.collection("users").document(userId)
+                                .collection("cart")
+                                .document(product.getId())
+                                .update(update)
+                                .addOnSuccessListener(aVoid -> {
+                                    if (callback != null) callback.onSuccess();
+                                })
+                                .addOnFailureListener(e -> {
+                                    if (callback != null) callback.onError(e);
+                                });
+
+                    } else {
+                        // Not in cart: add as new item
+                        Map<String, Object> cartItem = new HashMap<>();
+                        cartItem.put("product", product);
+                        cartItem.put("quantity", quantity);
+
+                        db.collection("users").document(userId)
+                                .collection("cart")
+                                .document(product.getId())
+                                .set(cartItem)
+                                .addOnSuccessListener(aVoid -> {
+                                    if (callback != null) callback.onSuccess();
+                                })
+                                .addOnFailureListener(e -> {
+                                    if (callback != null) callback.onError(e);
+                                });
+                    }
                 })
                 .addOnFailureListener(e -> {
                     if (callback != null) callback.onError(e);
                 });
     }
+
 
     public void getCartItems(String userId, ProductsCallback callback) {
         db.collection("users").document(userId)

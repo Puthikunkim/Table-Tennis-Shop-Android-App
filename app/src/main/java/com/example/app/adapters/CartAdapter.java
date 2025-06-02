@@ -1,6 +1,7 @@
 package com.example.app.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +120,14 @@ public class CartAdapter extends BaseAdapter {
                 }
             });
         });
+
+        // Add click listener to open DetailsActivity
+        convertView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, com.example.app.UI.DetailsActivity.class);
+            intent.putExtra("productId", product.getId());
+            context.startActivity(intent);
+        });
+
 
         return convertView;
     }
