@@ -23,7 +23,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
+
 public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
+
+    static class ViewHolder {
+        TextView nameTextView, descTextView, priceTextView;
+        ImageView imageView;
+        ImageButton heartButton;
+        View productInfoLayout;
+    }
 
     private final Context mContext;
     private final int mResource;
@@ -67,116 +76,81 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View itemView = convertView;
-        if (itemView == null) {
-            itemView = LayoutInflater.from(mContext).inflate(mResource, parent, false);
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(mResource, parent, false);
+            holder = new ViewHolder();
+            holder.nameTextView = convertView.findViewById(R.id.textViewProductName);
+            holder.descTextView = convertView.findViewById(R.id.textViewProductDescription);
+            holder.priceTextView = convertView.findViewById(R.id.textViewProductPrice);
+            holder.imageView = convertView.findViewById(R.id.imageViewProduct);
+            holder.heartButton = convertView.findViewById(R.id.btnWishlist);
+            holder.productInfoLayout = convertView.findViewById(R.id.productInfoLayout);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
         TableTennisProduct product = mProducts.get(position);
 
-        TextView nameTextView = itemView.findViewById(R.id.textViewProductName);
-        TextView descTextView = itemView.findViewById(R.id.textViewProductDescription);
-        TextView priceTextView = itemView.findViewById(R.id.textViewProductPrice);
-        ImageView imageView = itemView.findViewById(R.id.imageViewProduct);
-        ImageButton heartButton = itemView.findViewById(R.id.btnWishlist);
+        holder.nameTextView.setText(product.getName());
+        holder.descTextView.setText(product.getDescription());
+        holder.priceTextView.setText(String.format("$%.2f", product.getPrice()));
 
-        // Populate text fields:
-        nameTextView.setText(product.getName());
-        descTextView.setText(product.getDescription());
-        priceTextView.setText(String.format("$%.2f", product.getPrice()));
-
-        // (Optional) If you have Glide or Picasso set up, load the product image URL:
         if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
             Glide.with(mContext)
                     .load(product.getImageUrls().get(0))
                     .placeholder(R.drawable.ic_launcher_foreground)
                     .error(R.drawable.ic_launcher_background)
-                    .into(imageView);
+                    .into(holder.imageView);
         } else {
-            imageView.setImageResource(R.drawable.ic_launcher_background);
+            holder.imageView.setImageResource(R.drawable.ic_launcher_background);
         }
 
-        // 1) Re‐fetch the current user in case they just signed in/out:
         user = FirebaseAuth.getInstance().getCurrentUser();
+        boolean isInWishlist = product.getId() != null && wishlistIds.contains(product.getId());
 
-        // 2) Determine if this product is currently in the wishlist:
-        boolean isInWishlist = false;
-        if (product.getId() != null) {
-            isInWishlist = wishlistIds.contains(product.getId());
-        }
-
-        // 3) Set the correct heart icon:
-        heartButton.setImageResource(
-                isInWishlist
-                        ? R.drawable.ic_filledheart
-                        : R.drawable.ic_unfilledheart
+        holder.heartButton.setImageResource(
+                isInWishlist ? R.drawable.ic_filledheart : R.drawable.ic_unfilledheart
         );
 
-        // 4) Now wire up onClick:
-        heartButton.setOnClickListener(v -> {
-            // If not logged in, tell them to sign in:
+        holder.heartButton.setOnClickListener(v -> {
             if (user == null) {
-                Toast.makeText(
-                        mContext,
-                        "Please sign in to add items to your wishlist",
-                        Toast.LENGTH_SHORT
-                ).show();
-                // Launch ProfileActivity (or your login screen):
+                Toast.makeText(mContext, "Please sign in to add items to your wishlist", Toast.LENGTH_SHORT).show();
                 Intent signInIntent = new Intent(mContext, ProfileActivity.class);
                 mContext.startActivity(signInIntent);
                 return;
             }
 
-            // If product.getId() is null for some reason, do nothing
             if (product.getId() == null) return;
 
-            // Re‐compute “is it currently in wishlist?” (in case it changed):
             boolean currentlyIn = wishlistIds.contains(product.getId());
             if (currentlyIn) {
-                // === REMOVE from wishlist in Firestore ===
-                firestoreRepository.removeProductFromWishlist(
-                        user.getUid(),
-                        product.getId(),
-                        new FirestoreRepository.WishlistOperationCallback() {
-                            @Override
-                            public void onSuccess() {
-                                // Update local set + UI:
-                                wishlistIds.remove(product.getId());
-                                notifyDataSetChanged();
-                            }
+                firestoreRepository.removeProductFromWishlist(user.getUid(), product.getId(), new FirestoreRepository.WishlistOperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        wishlistIds.remove(product.getId());
+                        notifyDataSetChanged();
+                    }
 
-                            @Override
-                            public void onError(Exception e) {
-                                // You could show a Toast if you want:
-                                // Toast.makeText(mContext, "Failed to remove from wishlist", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                );
+                    @Override
+                    public void onError(Exception e) {}
+                });
             } else {
-                // === ADD to wishlist in Firestore ===
-                firestoreRepository.addProductToWishlist(
-                        user.getUid(),
-                        product,
-                        new FirestoreRepository.WishlistOperationCallback() {
-                            @Override
-                            public void onSuccess() {
-                                // Update local set + UI:
-                                wishlistIds.add(product.getId());
-                                notifyDataSetChanged();
-                            }
+                firestoreRepository.addProductToWishlist(user.getUid(), product, new FirestoreRepository.WishlistOperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        wishlistIds.add(product.getId());
+                        notifyDataSetChanged();
+                    }
 
-                            @Override
-                            public void onError(Exception e) {
-                                // You could show a Toast if you want:
-                                // Toast.makeText(mContext, "Failed to add to wishlist", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                );
+                    @Override
+                    public void onError(Exception e) {}
+                });
             }
         });
 
-        View productInfoLayout = itemView.findViewById(R.id.productInfoLayout);
-        productInfoLayout.setOnClickListener(v -> {
+        holder.productInfoLayout.setOnClickListener(v -> {
             if (product.getId() != null) {
                 Intent intent = new Intent(mContext, com.example.app.UI.DetailsActivity.class);
                 intent.putExtra("productId", product.getId());
@@ -186,7 +160,7 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
             }
         });
 
-
-        return itemView;
+        return convertView;
     }
+
 }
