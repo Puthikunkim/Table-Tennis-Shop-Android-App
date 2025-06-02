@@ -175,6 +175,18 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
             }
         });
 
+        View productInfoLayout = itemView.findViewById(R.id.productInfoLayout);
+        productInfoLayout.setOnClickListener(v -> {
+            if (product.getId() != null) {
+                Intent intent = new Intent(mContext, com.example.app.UI.DetailsActivity.class);
+                intent.putExtra("productId", product.getId());
+                mContext.startActivity(intent);
+            } else {
+                Toast.makeText(mContext, "Product ID missing", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         return itemView;
     }
 }

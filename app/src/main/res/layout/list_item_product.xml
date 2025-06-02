@@ -65,7 +65,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- HEART BUTTON: remove android:clickable="false" so it is tappable -->
         <ImageButton
             android:id="@+id/btnWishlist"
             android:layout_width="24dp"
@@ -76,6 +75,8 @@
             android:src="@drawable/ic_unfilledheart"
             app:tint="@color/text_secondary"
             android:contentDescription="Toggle Wishlist"
+            android:focusableInTouchMode="false"
             android:focusable="false"/>
+
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
