@@ -31,7 +31,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="12dp">
+                    android:padding="12dp"
+                    android:background="@drawable/dark_to_light_gradient">
 
                     <TextView
                         android:id="@+id/featuredLabel"
@@ -152,8 +153,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="16dp"
-                    android:gravity="center_vertical">
-
+                    android:gravity="center_vertical"
+                    android:background="@drawable/dark_to_light_gradient">
                     <ImageView
                         android:layout_width="60dp"
                         android:layout_height="60dp"
@@ -197,7 +198,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="16dp"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:background="@drawable/dark_to_light_gradient">
 
                     <ImageView
                         android:layout_width="60dp"
@@ -242,7 +244,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="16dp"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:background="@drawable/dark_to_light_gradient">
 
                     <ImageView
                         android:layout_width="60dp"
