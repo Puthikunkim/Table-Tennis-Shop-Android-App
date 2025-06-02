@@ -28,6 +28,7 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.Wishli
     public interface OnWishlistItemActionListener {
         void onDeleteClick(TableTennisProduct product);
         void onAddToCartClick(TableTennisProduct product);
+        void onProductClick(TableTennisProduct product);
     }
 
     public WishListAdapter(Context context, List<TableTennisProduct> productList, OnWishlistItemActionListener listener) {
@@ -47,6 +48,10 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.Wishli
     public void onBindViewHolder(@NonNull WishlistProductViewHolder holder, int position) {
         TableTennisProduct product = productList.get(position);
         holder.bind(product);
+
+        holder.itemView.setOnClickListener(v -> {
+            listener.onProductClick(product);
+        });
     }
 
     @Override
