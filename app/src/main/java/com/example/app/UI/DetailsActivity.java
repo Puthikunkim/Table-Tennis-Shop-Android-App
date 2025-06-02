@@ -149,6 +149,9 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                     return;
                 }
 
+                // Increment the views counter
+                firestoreRepository.incrementProductViews(product.getId());
+
                 // 1) Populate title, description, price, category, etc.
                 binding.textTitle.setText(product.getName());
                 binding.textDesc.setText(product.getDescription());
