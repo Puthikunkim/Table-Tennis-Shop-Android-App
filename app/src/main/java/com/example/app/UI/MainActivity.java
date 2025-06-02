@@ -152,6 +152,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         LinearLayout searchBarContainer = findViewById(R.id.searchBarContainer);
         searchBarContainer.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            intent.putExtra("auto_focus", true);  // 👈 pass this flag
             startActivity(intent);
         });
     }

@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -90,6 +91,20 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
 
         binding.btnSort.setOnClickListener(v -> showSortMenu(v));
         binding.btnFilter.setOnClickListener(v -> showFilterMenu(v));
+
+        if (getIntent().getBooleanExtra("auto_focus", false)) {
+            searchEditText.requestFocus();
+            binding.recentSearchesContainer.setVisibility(View.VISIBLE);
+
+            // Optional: force show keyboard
+            searchEditText.post(() -> {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
+                }
+            });
+        }
+
     }
 
     private void initializeViews() {
