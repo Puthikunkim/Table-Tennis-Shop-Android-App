@@ -149,6 +149,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                     return;
                 }
 
+                Log.d("DetailsActivity", "About to increment views for " + product.getId());
                 // Increment the views counter
                 firestoreRepository.incrementProductViews(product.getId());
 

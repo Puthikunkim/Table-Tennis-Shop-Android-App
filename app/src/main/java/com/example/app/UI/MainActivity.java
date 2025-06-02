@@ -55,6 +55,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         loadFeaturedProduct();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadTopPicks(); // re‐query Firestore so the “views” have bumped
+    }
+
     private void openListActivity(String categoryID) {
         Intent intent = new Intent(this, ListActivity.class);
         intent.putExtra("categoryID", categoryID);
