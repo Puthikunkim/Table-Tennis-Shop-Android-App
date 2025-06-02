@@ -3,6 +3,7 @@ package com.example.app.UI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -53,6 +54,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
         // 4) Load (or reuse) featured product
         loadFeaturedProduct();
+
+        setupSearchBar();
     }
 
     private void openListActivity(String categoryID) {
@@ -144,4 +147,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             startActivity(intent);
         });
     }
+
+    private void setupSearchBar() {
+        LinearLayout searchBarContainer = findViewById(R.id.searchBarContainer);
+        searchBarContainer.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            startActivity(intent);
+        });
+    }
+
 }
