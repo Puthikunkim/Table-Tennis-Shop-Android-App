@@ -57,6 +57,18 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
             public void onAddToCartClick(TableTennisProduct product) {
                 addToCartFromWishlist(product);
             }
+
+            @Override
+            public void onProductClick(TableTennisProduct product) {
+                // 👉 Open details view
+                if (product.getId() != null) {
+                    Intent intent = new Intent(WishListActivity.this, DetailsActivity.class);
+                    intent.putExtra("productId", product.getId());
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(WishListActivity.this, "Product ID is missing", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
         binding.recyclerViewWishlist.setAdapter(wishlistAdapter);
 
