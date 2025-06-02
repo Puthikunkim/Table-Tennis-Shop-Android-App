@@ -57,10 +57,26 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
 
             @Override
             public void onAddToCartClick(TableTennisProduct product) {
-                // Handle add to cart logic here
-                // You'll likely need a separate method for cart operations in FirestoreRepository
-                // For now, just a toast
-                Toast.makeText(WishListActivity.this, "Added " + product.getName() + " to cart!", Toast.LENGTH_SHORT).show();
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if (currentUser == null) {
+                    Toast.makeText(WishListActivity.this, "Please sign in to add items to cart.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                firestoreRepository.addToCart(currentUser.getUid(), product, 1, new FirestoreRepository.OperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(WishListActivity.this, product.getName() + " added to cart.", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(WishListActivity.this, "Failed to add to cart: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                // Optional: also remove from wishlist after adding to cart
+                // removeProductFromWishlist(product);
             }
         });
         binding.recyclerViewWishlist.setAdapter(wishlistAdapter);
