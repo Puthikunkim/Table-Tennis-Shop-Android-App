@@ -54,6 +54,9 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
             Intent intent = new Intent(CartActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
+
+        setupCheckoutButton();
+
     }
 
     @Override
@@ -184,4 +187,39 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
     }
+
+    private void handleCheckout() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Please sign in to checkout", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirestoreRepository.getInstance().clearCart(user.getUid(), new FirestoreRepository.OperationCallback() {
+            @Override
+            public void onSuccess() {
+                cartItems.clear();
+                if (adapter != null) adapter.notifyDataSetChanged();
+                updateCartUI();
+                Toast.makeText(CartActivity.this, "Cart checked out successfully", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(CartActivity.this, "Checkout failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupCheckoutButton() {
+        View checkoutTotalView = findViewById(R.id.checkoutTotal);
+        if (checkoutTotalView != null) {
+            Button checkoutButton = checkoutTotalView.findViewById(R.id.checkoutButton);
+            if (checkoutButton != null) {
+                checkoutButton.setOnClickListener(v -> handleCheckout());
+            }
+        }
+    }
+
+
 }
