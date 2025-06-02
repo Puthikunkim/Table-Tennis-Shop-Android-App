@@ -197,8 +197,8 @@
                     android:layout_weight="1"
                     android:text="Add to Cart"
                     android:textColor="@color/text_primary"
-                    android:backgroundTint="@color/purple_500"
-                    android:background="@drawable/bg_cart_left_rounded"/>
+                    android:background="@drawable/bg_cart_left_rounded"
+                    app:backgroundTint="@color/purple_500"/>
 
                 <ImageButton
                     android:id="@+id/btnFavorite"
