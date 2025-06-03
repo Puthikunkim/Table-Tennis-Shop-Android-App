@@ -23,34 +23,43 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         app:cardCornerRadius="12dp"
-        app:cardBackgroundColor="@color/card_background">
+        app:cardBackgroundColor="@color/background_dark">
 
         <LinearLayout
+            android:id="@+id/searchBarContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_margin="16dp"
+            android:padding="12dp"
+            android:background="@drawable/main_search_outline"
+            android:elevation="2dp"
             android:gravity="center_vertical"
-            android:padding="12dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_search"
-                app:tint="@color/text_secondary"/>
+            android:clickable="true"
+            android:focusable="true">
 
             <EditText
                 android:id="@+id/searchEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="12dp"
+                android:hint="Search products..."
                 android:background="@null"
-                android:hint="Search products"
-                android:textColorHint="@color/text_secondary"
                 android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
                 android:textSize="16sp"
+                android:imeOptions="actionSearch"
                 android:inputType="text"
-                android:imeOptions="actionSearch"/>
+                android:maxLines="1"
+                android:layout_marginStart="8dp"/>
+
+            <ImageView
+                android:id="@+id/searchIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_search"
+                android:tint="@color/text_secondary"
+                android:layout_marginStart="8dp"/>
 
             <ImageButton
                 android:id="@+id/clearButton"
@@ -59,9 +68,10 @@
                 android:layout_marginStart="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/baseline_close_24"
-                app:tint="@color/text_secondary"/>
+                android:tint="@color/text_secondary"/>
 
         </LinearLayout>
+
 
     </androidx.cardview.widget.CardView>
 
