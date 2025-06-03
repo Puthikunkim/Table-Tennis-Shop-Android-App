@@ -3,6 +3,10 @@ package com.example.app.UI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -155,12 +159,45 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void setupSearchBar() {
-        LinearLayout searchBarContainer = findViewById(R.id.searchBarContainer);
-        searchBarContainer.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-            intent.putExtra("auto_focus", true);  // 👈 pass this flag
-            startActivity(intent);
+        EditText searchEditText = findViewById(R.id.searchEditText);
+
+        searchEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                String query = searchEditText.getText().toString().trim();
+                if (!query.isEmpty()) {
+                    Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                    intent.putExtra("searchQuery", query);
+                    startActivity(intent);
+                }
+                return true;
+            }
+            return false;
         });
+
+        ImageView searchIcon = findViewById(R.id.searchIcon);
+
+        searchEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                performSearchFromEditText(searchEditText);
+                return true;
+            }
+            return false;
+        });
+
+        searchIcon.setOnClickListener(v -> performSearchFromEditText(searchEditText));
+
     }
 
+    private void performSearchFromEditText(EditText searchEditText) {
+        String query = searchEditText.getText().toString().trim();
+        if (!query.isEmpty()) {
+            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            intent.putExtra("searchQuery", query);
+            startActivity(intent);
+        }
+    }
 }
