@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
@@ -52,7 +53,18 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
         TableTennisProduct product = products.get(position);
         holder.name.setText(product.getName());
         holder.views.setText(product.getViews() + " views");
-        // TODO: load product.getImageUrl() into holder.image via Glide/Picasso/etc.
+
+        List<String> imageUrls = product.getImageUrls();
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            String imageUrl = imageUrls.get(0);
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_background)
+                    .into(holder.image);
+        } else {
+            holder.image.setImageResource(R.drawable.ic_launcher_background);
+        }
 
         // 1) Card click → open product details
         holder.itemView.setOnClickListener(v -> {
