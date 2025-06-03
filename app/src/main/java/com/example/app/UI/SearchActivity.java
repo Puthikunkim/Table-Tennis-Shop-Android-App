@@ -92,7 +92,12 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         binding.btnSort.setOnClickListener(v -> showSortMenu(v));
         binding.btnFilter.setOnClickListener(v -> showFilterMenu(v));
 
-        if (getIntent().getBooleanExtra("auto_focus", false)) {
+        String query = getIntent().getStringExtra("searchQuery");
+        boolean shouldFocus = getIntent().getBooleanExtra("auto_focus", false);
+
+        if (query != null && !query.isEmpty()) {
+            search(query); // 🔍 use your new search method
+        } else if (shouldFocus) {
             searchEditText.requestFocus();
             binding.recentSearchesContainer.setVisibility(View.VISIBLE);
 
@@ -104,6 +109,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
                 }
             });
         }
+
 
     }
 
@@ -174,9 +180,16 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         });
 
         searchEditText.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override public void afterTextChanged(Editable s) {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 String query = s.toString().trim();
                 if (!query.isEmpty()) {
                     debounce(() -> searchProducts(query));
@@ -208,7 +221,8 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         String json = prefs.getString(RECENT_SEARCHES_KEY, null);
         List<String> searches = new ArrayList<>();
         if (json != null) {
-            Type type = new TypeToken<List<String>>(){}.getType();
+            Type type = new TypeToken<List<String>>() {
+            }.getType();
             searches = new Gson().fromJson(json, type);
             if (searches == null) searches = new ArrayList<>();
         }
@@ -241,6 +255,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
 
 
             }
+
             @Override
             public void onError(Exception e) {
                 Log.e(TAG, "Error searching products", e);
@@ -331,6 +346,16 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> implemen
         });
 
         popup.show();
+    }
+
+    private void search(String query) {
+        if (query == null || query.trim().isEmpty()) return;
+
+        searchEditText.setText(query);
+        searchEditText.setSelection(query.length()); // move cursor to end
+        addToRecentSearches(query);
+        searchProducts(query); // this already exists
+        binding.recentSearchesContainer.setVisibility(View.GONE);
     }
 
 }
