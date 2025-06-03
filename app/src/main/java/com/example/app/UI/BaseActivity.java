@@ -50,22 +50,29 @@ public abstract class BaseActivity<ContentBinding extends ViewBinding>
         bottomNav.setSelectedItemId(getSelectedMenuItemId());
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.home && getSelectedMenuItemId() != R.id.home) {
-                startActivity(new Intent(this, MainActivity.class));
-            } else if (id == R.id.cart && getSelectedMenuItemId() != R.id.cart) {
-                startActivity(new Intent(this, CartActivity.class));
-            } else if (id == R.id.search && getSelectedMenuItemId() != R.id.search) {
-                startActivity(new Intent(this, SearchActivity.class));
-            } else if (id == R.id.profile && getSelectedMenuItemId() != R.id.profile) {
-                startActivity(new Intent(this, ProfileActivity.class));
-            } else if (id == R.id.wish_list && getSelectedMenuItemId() != R.id.wish_list) {
-                startActivity(new Intent(this, WishListActivity.class));
-            } else {
-                return false;
+            Class<?> targetActivity = null;
+
+            if (id == R.id.home) {
+                targetActivity = MainActivity.class;
+            } else if (id == R.id.cart) {
+                targetActivity = CartActivity.class;
+            } else if (id == R.id.search) {
+                targetActivity = SearchActivity.class;
+            } else if (id == R.id.profile) {
+                targetActivity = ProfileActivity.class;
+            } else if (id == R.id.wish_list) {
+                targetActivity = WishListActivity.class;
             }
-            overridePendingTransition(0, 0);
-            finish();
-            return true;
+
+            if (targetActivity != null) {
+                Intent intent = new Intent(this, targetActivity);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            }
+            return false;
         });
     }
 }
