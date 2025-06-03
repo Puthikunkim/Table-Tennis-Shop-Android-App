@@ -18,8 +18,8 @@
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:contentDescription="BounceBros Logo"
-            android:scaleType="fitCenter"
-            android:src="@drawable/bouncebro3" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/bouncebroclean2" />
     </com.google.android.material.appbar.MaterialToolbar>
 
     <FrameLayout
