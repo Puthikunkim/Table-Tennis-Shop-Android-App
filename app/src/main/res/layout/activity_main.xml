@@ -144,7 +144,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -166,15 +165,16 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Browse Categories"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Browse Categories"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"/>
 
+            <!-- Bats -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardBats"
                 android:layout_width="match_parent"
@@ -192,11 +192,12 @@
                     android:padding="16dp"
                     android:gravity="center_vertical"
                     android:background="@drawable/dark_to_light_gradient">
+
                     <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/ic_launcher_background"
-                        android:background="@color/white"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/baticon"
+
                         android:padding="8dp"/>
 
                     <LinearLayout
@@ -222,6 +223,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Balls -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardBalls"
                 android:layout_width="match_parent"
@@ -239,10 +241,10 @@
                     android:background="@drawable/dark_to_light_gradient">
 
                     <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/ic_launcher_background"
-                        android:background="@color/white"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/ballicon"
+
                         android:padding="8dp"/>
 
                     <LinearLayout
@@ -268,6 +270,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Tables -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardTables"
                 android:layout_width="match_parent"
@@ -285,10 +288,10 @@
                     android:background="@drawable/dark_to_light_gradient">
 
                     <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/ic_launcher_background"
-                        android:background="@color/white"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/tableicon"
+
                         android:padding="8dp"/>
 
                     <LinearLayout
