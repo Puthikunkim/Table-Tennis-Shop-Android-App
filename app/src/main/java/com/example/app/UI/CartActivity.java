@@ -216,7 +216,22 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         if (checkoutTotalView != null) {
             Button checkoutButton = checkoutTotalView.findViewById(R.id.checkoutButton);
             if (checkoutButton != null) {
-                checkoutButton.setOnClickListener(v -> handleCheckout());
+                checkoutButton.setOnClickListener(v -> {
+                    v.animate()
+                            .scaleX(1.1f)
+                            .scaleY(1.1f)
+                            .setDuration(120)
+                            .withEndAction(() -> {
+                                v.animate()
+                                        .scaleX(1f)
+                                        .scaleY(1f)
+                                        .setDuration(120)
+                                        .start();
+                                handleCheckout(); // existing checkout logic
+                            })
+                            .start();
+                });
+
             }
         }
     }
