@@ -67,11 +67,22 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
         }
 
         // 1) Card click → open product details
+
+        // This allows for the animation process too
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
-                clickListener.onProductClick(product);
+                v.animate()
+                        .scaleX(0.95f)
+                        .scaleY(0.95f)
+                        .setDuration(100)
+                        .withEndAction(() -> {
+                            v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                            clickListener.onProductClick(product);
+                        })
+                        .start();
             }
         });
+
 
         // 2) Initialize the heart icon state:
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
