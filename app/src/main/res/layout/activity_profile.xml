@@ -97,7 +97,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@color/card_background"
+                    android:background="@drawable/rounded_card_background"
                     android:padding="16dp"
                     android:layout_marginBottom="24dp"
                     android:layout_marginTop="8dp"
@@ -135,7 +135,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Clear Cart"
                                     android:textColor="@android:color/white"
-                                    android:backgroundTint="@android:color/holo_red_dark"
+                                    android:backgroundTint="@color/profile_red"
                                     android:textSize="12sp" />
                         </LinearLayout>
 
@@ -155,8 +155,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Go to Cart"
-                            android:textColor="@color/text_primary"
-                            android:backgroundTint="@color/purple_500"
+                            android:textColor="@color/black"
+                            android:backgroundTint="@color/profile_grey"
                             android:layout_marginTop="12dp" />
                 </LinearLayout>
 
@@ -166,7 +166,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@color/card_background"
+                    android:background="@drawable/rounded_card_background"
                     android:padding="16dp"
                     android:layout_marginBottom="24dp"
                     android:layout_marginTop="8dp"
@@ -204,7 +204,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Clear Wishlist"
                                     android:textColor="@android:color/white"
-                                    android:backgroundTint="@android:color/holo_red_dark"
+                                    android:backgroundTint="@color/profile_red"
                                     android:textSize="12sp" />
                         </LinearLayout>
 
@@ -224,8 +224,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Go to Wishlist"
-                            android:textColor="@color/text_primary"
-                            android:backgroundTint="@color/purple_500"
+                            android:textColor="@color/black"
+                            android:backgroundTint="@color/profile_grey"
                             android:layout_marginTop="12dp" />
                 </LinearLayout>
 
@@ -234,7 +234,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Sign Out"
-                    android:backgroundTint="#FF0000"
+                    android:backgroundTint="@color/profile_red"
                     android:textColor="#FFFFFF" />
         </LinearLayout>
 

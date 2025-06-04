@@ -90,29 +90,47 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         });
 
         // 6) Set up "Add to Cart" button listener
+        // It has animations added
         binding.btnAddToCart.setOnClickListener(v -> {
-            if (currentProduct == null) {
-                Toast.makeText(this, "Product not loaded yet", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                Toast.makeText(this, "Please sign in to add to cart", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            String userId = user.getUid();
-            FirestoreRepository.getInstance().addToCart(userId, currentProduct, quantity,
-                    new FirestoreRepository.OperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            Toast.makeText(DetailsActivity.this, "Added to cart", Toast.LENGTH_SHORT).show();
+            v.animate()
+                    .scaleX(1.15f)
+                    .scaleY(1.15f)
+                    .setDuration(120)
+                    .withEndAction(() -> {
+                        v.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setDuration(120)
+                                .start();
+
+                        if (currentProduct == null) {
+                            Toast.makeText(this, "Product not loaded yet", Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                        @Override
-                        public void onError(Exception e) {
-                            Toast.makeText(DetailsActivity.this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        if (user == null) {
+                            Toast.makeText(this, "Please sign in to add to cart", Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                    });
+
+                        String userId = user.getUid();
+                        FirestoreRepository.getInstance().addToCart(userId, currentProduct, quantity,
+                                new FirestoreRepository.OperationCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Toast.makeText(DetailsActivity.this, "Added to cart", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        Toast.makeText(DetailsActivity.this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    })
+                    .start();
         });
+
 
         // 7) Load product details from Firestore
         loadProductDetails();
@@ -244,69 +262,81 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
      *  - If logged in and already wishlisted ⇒ remove from wishlist.
      */
     private void onFavoriteClicked() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) {
-            // 1) User is not signed in ⇒ prompt to log in
-            Toast.makeText(DetailsActivity.this, "Please sign in to add items to your wishlist.", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(DetailsActivity.this, ProfileActivity.class);
-            startActivity(intent);
-            return;
-        }
+        binding.btnFavorite.animate()
+                .scaleX(1.4f)
+                .scaleY(1.4f)
+                .setDuration(120)
+                .withEndAction(() -> {
+                    binding.btnFavorite.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(120)
+                            .start();
 
-        if (currentProduct == null) {
-            Toast.makeText(DetailsActivity.this, "Product data not loaded yet.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String uid = user.getUid();
-        String pid = currentProduct.getId();
-
-        if (!isWishlisted) {
-            // 2) Not in wishlist ⇒ add it
-            firestoreRepository.addProductToWishlist(uid, currentProduct,
-                    new FirestoreRepository.WishlistOperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            isWishlisted = true;
-                            binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_filled);
-                            Toast.makeText(DetailsActivity.this,
-                                    currentProduct.getName() + " added to wishlist.",
-                                    Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, "Product added to wishlist: " + pid);
-                        }
-                        @Override
-                        public void onError(Exception e) {
-                            Log.e(TAG, "Error adding to wishlist: " + e.getMessage(), e);
-                            Toast.makeText(DetailsActivity.this,
-                                    "Failed to add to wishlist: " + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                        }
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    if (user == null) {
+                        Toast.makeText(DetailsActivity.this, "Please sign in to add items to your wishlist.", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(DetailsActivity.this, ProfileActivity.class));
+                        return;
                     }
-            );
-        } else {
-            // 3) Already in wishlist ⇒ remove it
-            firestoreRepository.removeProductFromWishlist(uid, pid,
-                    new FirestoreRepository.WishlistOperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            isWishlisted = false;
-                            binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
-                            Toast.makeText(DetailsActivity.this,
-                                    currentProduct.getName() + " removed from wishlist.",
-                                    Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, "Product removed from wishlist: " + pid);
-                        }
-                        @Override
-                        public void onError(Exception e) {
-                            Log.e(TAG, "Error removing from wishlist: " + e.getMessage(), e);
-                            Toast.makeText(DetailsActivity.this,
-                                    "Failed to remove from wishlist: " + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                        }
+
+                    if (currentProduct == null) {
+                        Toast.makeText(DetailsActivity.this, "Product data not loaded yet.", Toast.LENGTH_SHORT).show();
+                        return;
                     }
-            );
-        }
+
+                    String uid = user.getUid();
+                    String pid = currentProduct.getId();
+
+                    if (!isWishlisted) {
+                        firestoreRepository.addProductToWishlist(uid, currentProduct,
+                                new FirestoreRepository.WishlistOperationCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        isWishlisted = true;
+                                        binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_filled);
+                                        Toast.makeText(DetailsActivity.this,
+                                                currentProduct.getName() + " added to wishlist.",
+                                                Toast.LENGTH_SHORT).show();
+                                        Log.d(TAG, "Product added to wishlist: " + pid);
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        Log.e(TAG, "Error adding to wishlist: " + e.getMessage(), e);
+                                        Toast.makeText(DetailsActivity.this,
+                                                "Failed to add to wishlist: " + e.getMessage(),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                        );
+                    } else {
+                        firestoreRepository.removeProductFromWishlist(uid, pid,
+                                new FirestoreRepository.WishlistOperationCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        isWishlisted = false;
+                                        binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
+                                        Toast.makeText(DetailsActivity.this,
+                                                currentProduct.getName() + " removed from wishlist.",
+                                                Toast.LENGTH_SHORT).show();
+                                        Log.d(TAG, "Product removed from wishlist: " + pid);
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        Log.e(TAG, "Error removing from wishlist: " + e.getMessage(), e);
+                                        Toast.makeText(DetailsActivity.this,
+                                                "Failed to remove from wishlist: " + e.getMessage(),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                        );
+                    }
+                })
+                .start();
     }
+
 
     /**
      * Fetches other products in the same category and displays them as horizontal "You Might Like" recommendations.

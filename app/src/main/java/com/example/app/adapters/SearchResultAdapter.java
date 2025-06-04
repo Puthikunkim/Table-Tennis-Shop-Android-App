@@ -137,11 +137,22 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             }
         });
 
+        // Wire up the click to custom listener:
+        // Adding in the code for the animations
         holder.itemView.setOnClickListener(v -> {
-            if (clickListener != null) {
-                clickListener.onProductClick(product);
-            }
+            v.animate()
+                    .scaleX(0.95f)
+                    .scaleY(0.95f)
+                    .setDuration(100)
+                    .withEndAction(() -> {
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                        if (clickListener != null) {
+                            clickListener.onProductClick(product);
+                        }
+                    }).start();
         });
+
+
     }
 
     @Override

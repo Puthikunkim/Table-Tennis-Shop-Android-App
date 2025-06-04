@@ -115,50 +115,69 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
         );
 
         holder.heartButton.setOnClickListener(v -> {
-            if (user == null) {
-                Toast.makeText(mContext, "Please sign in to add items to your wishlist", Toast.LENGTH_SHORT).show();
-                Intent signInIntent = new Intent(mContext, ProfileActivity.class);
-                mContext.startActivity(signInIntent);
-                return;
-            }
+            v.animate()
+                    .scaleX(1.4f)
+                    .scaleY(1.4f)
+                    .setDuration(120)
+                    .withEndAction(() -> {
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(120).start();
 
-            if (product.getId() == null) return;
+                        if (user == null) {
+                            Toast.makeText(mContext, "Please sign in to add items to your wishlist", Toast.LENGTH_SHORT).show();
+                            Intent signInIntent = new Intent(mContext, ProfileActivity.class);
+                            mContext.startActivity(signInIntent);
+                            return;
+                        }
 
-            boolean currentlyIn = wishlistIds.contains(product.getId());
-            if (currentlyIn) {
-                firestoreRepository.removeProductFromWishlist(user.getUid(), product.getId(), new FirestoreRepository.WishlistOperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                        wishlistIds.remove(product.getId());
-                        notifyDataSetChanged();
-                    }
+                        if (product.getId() == null) return;
 
-                    @Override
-                    public void onError(Exception e) {}
-                });
-            } else {
-                firestoreRepository.addProductToWishlist(user.getUid(), product, new FirestoreRepository.WishlistOperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                        wishlistIds.add(product.getId());
-                        notifyDataSetChanged();
-                    }
+                        boolean currentlyIn = wishlistIds.contains(product.getId());
+                        if (currentlyIn) {
+                            firestoreRepository.removeProductFromWishlist(user.getUid(), product.getId(), new FirestoreRepository.WishlistOperationCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    wishlistIds.remove(product.getId());
+                                    notifyDataSetChanged();
+                                }
 
-                    @Override
-                    public void onError(Exception e) {}
-                });
-            }
+                                @Override
+                                public void onError(Exception e) {}
+                            });
+                        } else {
+                            firestoreRepository.addProductToWishlist(user.getUid(), product, new FirestoreRepository.WishlistOperationCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    wishlistIds.add(product.getId());
+                                    notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onError(Exception e) {}
+                            });
+                        }
+                    }).start();
         });
 
-        holder.productInfoLayout.setOnClickListener(v -> {
-            if (product.getId() != null) {
-                Intent intent = new Intent(mContext, com.example.app.UI.DetailsActivity.class);
-                intent.putExtra("productId", product.getId());
-                mContext.startActivity(intent);
-            } else {
-                Toast.makeText(mContext, "Product ID missing", Toast.LENGTH_SHORT).show();
-            }
+
+        // Adding in the code for the animations on the list views
+        convertView.setOnClickListener(v -> {
+            v.animate()
+                    .scaleX(0.95f)
+                    .scaleY(0.95f)
+                    .setDuration(100)
+                    .withEndAction(() -> {
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                        if (product.getId() != null) {
+                            Intent intent = new Intent(mContext, com.example.app.UI.DetailsActivity.class);
+                            intent.putExtra("productId", product.getId());
+                            mContext.startActivity(intent);
+                        } else {
+                            Toast.makeText(mContext, "Product ID missing", Toast.LENGTH_SHORT).show();
+                        }
+                    }).start();
         });
+
+
 
         return convertView;
     }
