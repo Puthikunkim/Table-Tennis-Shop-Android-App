@@ -150,15 +150,25 @@ public class TableTennisAdapter extends ArrayAdapter<TableTennisProduct> {
             }
         });
 
+        // Adding in the code for the animations on the list views
         holder.productInfoLayout.setOnClickListener(v -> {
             if (product.getId() != null) {
-                Intent intent = new Intent(mContext, com.example.app.UI.DetailsActivity.class);
-                intent.putExtra("productId", product.getId());
-                mContext.startActivity(intent);
+                v.animate()
+                        .scaleX(0.95f)
+                        .scaleY(0.95f)
+                        .setDuration(100)
+                        .withEndAction(() -> {
+                            v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                            Intent intent = new Intent(mContext, com.example.app.UI.DetailsActivity.class);
+                            intent.putExtra("productId", product.getId());
+                            mContext.startActivity(intent);
+                        })
+                        .start();
             } else {
                 Toast.makeText(mContext, "Product ID missing", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         return convertView;
     }
