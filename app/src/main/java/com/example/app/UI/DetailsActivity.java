@@ -90,29 +90,47 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         });
 
         // 6) Set up "Add to Cart" button listener
+        // It has animations added
         binding.btnAddToCart.setOnClickListener(v -> {
-            if (currentProduct == null) {
-                Toast.makeText(this, "Product not loaded yet", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                Toast.makeText(this, "Please sign in to add to cart", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            String userId = user.getUid();
-            FirestoreRepository.getInstance().addToCart(userId, currentProduct, quantity,
-                    new FirestoreRepository.OperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            Toast.makeText(DetailsActivity.this, "Added to cart", Toast.LENGTH_SHORT).show();
+            v.animate()
+                    .scaleX(1.15f)
+                    .scaleY(1.15f)
+                    .setDuration(120)
+                    .withEndAction(() -> {
+                        v.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setDuration(120)
+                                .start();
+
+                        if (currentProduct == null) {
+                            Toast.makeText(this, "Product not loaded yet", Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                        @Override
-                        public void onError(Exception e) {
-                            Toast.makeText(DetailsActivity.this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        if (user == null) {
+                            Toast.makeText(this, "Please sign in to add to cart", Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                    });
+
+                        String userId = user.getUid();
+                        FirestoreRepository.getInstance().addToCart(userId, currentProduct, quantity,
+                                new FirestoreRepository.OperationCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Toast.makeText(DetailsActivity.this, "Added to cart", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        Toast.makeText(DetailsActivity.this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    })
+                    .start();
         });
+
 
         // 7) Load product details from Firestore
         loadProductDetails();
