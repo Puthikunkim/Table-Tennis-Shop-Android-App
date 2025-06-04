@@ -44,6 +44,9 @@ public abstract class BaseActivity<ContentBinding extends ViewBinding>
 
         // then do the bottom nav wiring
         setupBottomNavigation(baseBinding.bottomNavigation);
+
+        // Logo nav
+        setupLogoNavigation();
     }
 
     private void setupBottomNavigation(BottomNavigationView bottomNav) {
@@ -75,4 +78,14 @@ public abstract class BaseActivity<ContentBinding extends ViewBinding>
             return false;
         });
     }
+
+    private void setupLogoNavigation() {
+        baseBinding.toolbar.findViewById(R.id.logoImageView).setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        });
+    }
+
 }

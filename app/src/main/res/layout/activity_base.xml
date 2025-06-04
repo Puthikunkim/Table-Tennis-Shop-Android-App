@@ -14,12 +14,16 @@
         android:background="@drawable/dark_to_light_gradient"> <!-- ✅ gradient is OK here -->
 
         <ImageView
+            android:id="@+id/logoImageView"
             android:layout_width="200dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:contentDescription="BounceBros Logo"
             android:scaleType="centerCrop"
-            android:src="@drawable/bouncebroclean2" />
+            android:src="@drawable/bouncebroclean2"
+            android:clickable="true"
+            android:focusable="true" />
+
     </com.google.android.material.appbar.MaterialToolbar>
 
     <FrameLayout
