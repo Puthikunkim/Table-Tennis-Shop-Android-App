@@ -2,6 +2,8 @@ package com.example.app.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +14,9 @@ import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CartAdapter extends BaseAdapter {
 
@@ -21,7 +25,10 @@ public class CartAdapter extends BaseAdapter {
     private final LayoutInflater inflater;
     private final FirestoreRepository repo = FirestoreRepository.getInstance();
     private final String userId;
-    private final Runnable onCartChanged; // callback to update totals
+    private final Runnable onCartChanged;
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Map<String, Runnable> pendingUpdates = new HashMap<>();
 
     public CartAdapter(Context context, List<TableTennisProduct> cartItems, String userId, Runnable onCartChanged) {
         this.context = context;
@@ -74,7 +81,6 @@ public class CartAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        // Set values
         holder.productName.setText(product.getName());
         holder.productPrice.setText(String.format("$%.2f", product.getPrice()));
         holder.quantityText.setText(String.valueOf(product.getCartQuantity()));
@@ -84,25 +90,26 @@ public class CartAdapter extends BaseAdapter {
             Glide.with(context).load(product.getImageUrls().get(0)).into(holder.productImage);
         }
 
-        // Increment quantity
         holder.incrementButton.setOnClickListener(v -> {
-            int qty = product.getCartQuantity() + 1;
-            product.setCartQuantity(qty);
-            repo.addToCart(userId, product, qty, null);
+            int previousQty = product.getCartQuantity();
+            int newQty = previousQty + 1;
+            product.setCartQuantity(newQty);
             notifyDataSetChanged();
             onCartChanged.run();
+
+            scheduleDebouncedCartUpdate(product, newQty - previousQty);
         });
 
-        // Decrement quantity
         holder.decrementButton.setOnClickListener(v -> {
-            int qty = product.getCartQuantity();
-            if (qty > 1) {
-                product.setCartQuantity(qty - 1);
-                repo.addToCart(userId, product, qty - 1, null);
+            int currentQty = product.getCartQuantity();
+            if (currentQty > 1) {
+                int newQty = currentQty - 1;
+                product.setCartQuantity(newQty);
                 notifyDataSetChanged();
                 onCartChanged.run();
-            } else if (qty == 1) {
-                // Remove from cart and list
+
+                scheduleDebouncedCartUpdate(product, newQty - currentQty);
+            } else {
                 repo.removeFromCart(userId, product.getId(), new FirestoreRepository.OperationCallback() {
                     @Override
                     public void onSuccess() {
@@ -120,9 +127,6 @@ public class CartAdapter extends BaseAdapter {
             }
         });
 
-
-
-        // Delete item
         holder.deleteButton.setOnClickListener(v -> {
             repo.removeFromCart(userId, product.getId(), new FirestoreRepository.OperationCallback() {
                 @Override
@@ -139,14 +143,27 @@ public class CartAdapter extends BaseAdapter {
             });
         });
 
-        // Add click listener to open DetailsActivity
         convertView.setOnClickListener(v -> {
             Intent intent = new Intent(context, com.example.app.UI.DetailsActivity.class);
             intent.putExtra("productId", product.getId());
             context.startActivity(intent);
         });
 
-
         return convertView;
+    }
+
+    private void scheduleDebouncedCartUpdate(TableTennisProduct product, int deltaQty) {
+        Runnable previous = pendingUpdates.get(product.getId());
+        if (previous != null) {
+            handler.removeCallbacks(previous);
+        }
+
+        Runnable updateTask = () -> {
+            repo.addToCart(userId, product, deltaQty, null);
+            pendingUpdates.remove(product.getId());
+        };
+
+        pendingUpdates.put(product.getId(), updateTask);
+        handler.postDelayed(updateTask, 500); // 500ms debounce
     }
 }
