@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -60,6 +61,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         loadFeaturedProduct();
 
         setupSearchBar();
+
+        // Animations
+        setupCategoryCardAnimations();
     }
 
     @Override
@@ -200,4 +204,23 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             startActivity(intent);
         }
     }
+
+    private void setupCategoryCardAnimations() {
+        setupCardClickAnimation(findViewById(R.id.cardBats), () -> openListActivity("bats"));
+        setupCardClickAnimation(findViewById(R.id.cardBalls), () -> openListActivity("balls"));
+        setupCardClickAnimation(findViewById(R.id.cardTables), () -> openListActivity("tables"));
+    }
+    private void setupCardClickAnimation(View cardView, Runnable onClickAction) {
+        cardView.setOnClickListener(v -> {
+            v.animate()
+                    .scaleX(0.95f)
+                    .scaleY(0.95f)
+                    .setDuration(100)
+                    .withEndAction(() -> {
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                        onClickAction.run();
+                    }).start();
+        });
+    }
+
 }
