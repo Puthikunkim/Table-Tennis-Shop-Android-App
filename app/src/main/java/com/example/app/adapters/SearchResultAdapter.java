@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
@@ -21,18 +22,18 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
 
-    // Declare custom listener interface here:
     public interface OnProductClickListener {
         void onProductClick(TableTennisProduct product);
     }
 
     private final List<TableTennisProduct> products;
     private final Context context;
-    private OnProductClickListener clickListener;  // Uses the interface declared above
-    private final Set<String> wishlistIds = new java.util.HashSet<>();
+    private OnProductClickListener clickListener;
+    private final Set<String> wishlistIds = new HashSet<>();
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private final FirestoreRepository firestoreRepository = FirestoreRepository.getInstance();
 
@@ -52,15 +53,15 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                     }
                     notifyDataSetChanged();
                 }
+
                 @Override
                 public void onError(Exception e) {
-                    // Optionally handle error
+                    // Handle error if needed
                 }
             });
         }
     }
 
-    /** Setter so the Activity can register its callback */
     public void setOnProductClickListener(OnProductClickListener listener) {
         this.clickListener = listener;
     }
@@ -78,14 +79,26 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.productName.setText(product.getName());
         holder.productDescription.setText(product.getDescription());
         holder.productPrice.setText("$" + String.format("%.2f", product.getPrice()));
-        // TODO: load image into holder.productImage
+
+        // ✅ Load product image using Glide
+        List<String> imageUrls = product.getImageUrls();
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            Glide.with(context)
+                    .load(imageUrls.get(0))
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_background)
+                    .into(holder.productImage);
+        } else {
+            holder.productImage.setImageResource(R.drawable.ic_launcher_background);
+        }
 
         // Wishlist logic
         user = FirebaseAuth.getInstance().getCurrentUser();
         boolean isInWishlist = product.getId() != null && wishlistIds.contains(product.getId());
         holder.btnWishlist.setImageResource(
-            isInWishlist ? R.drawable.ic_filledheart : R.drawable.ic_unfilledheart
+                isInWishlist ? R.drawable.ic_filledheart : R.drawable.ic_unfilledheart
         );
+
         holder.btnWishlist.setOnClickListener(v -> {
             if (user == null) {
                 Toast.makeText(context, "Please sign in to add items to your wishlist", Toast.LENGTH_SHORT).show();
@@ -93,7 +106,9 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                 context.startActivity(signInIntent);
                 return;
             }
+
             if (product.getId() == null) return;
+
             boolean currentlyIn = wishlistIds.contains(product.getId());
             if (currentlyIn) {
                 firestoreRepository.removeProductFromWishlist(user.getUid(), product.getId(), new FirestoreRepository.WishlistOperationCallback() {
@@ -102,8 +117,10 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                         wishlistIds.remove(product.getId());
                         notifyDataSetChanged();
                     }
+
                     @Override
-                    public void onError(Exception e) {}
+                    public void onError(Exception e) {
+                    }
                 });
             } else {
                 firestoreRepository.addProductToWishlist(user.getUid(), product, new FirestoreRepository.WishlistOperationCallback() {
@@ -112,13 +129,14 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                         wishlistIds.add(product.getId());
                         notifyDataSetChanged();
                     }
+
                     @Override
-                    public void onError(Exception e) {}
+                    public void onError(Exception e) {
+                    }
                 });
             }
         });
 
-        // Wire up the click to custom listener:
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
                 clickListener.onProductClick(product);
@@ -131,7 +149,6 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         return products.size();
     }
 
-    /** If you ever need to swap the list out */
     public void setProducts(List<TableTennisProduct> newProducts) {
         products.clear();
         products.addAll(newProducts);
