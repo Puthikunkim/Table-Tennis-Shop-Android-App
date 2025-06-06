@@ -24,14 +24,17 @@ import java.util.List;
 import java.util.Set;
 
 public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder> {
-    private final Set<String> wishlistIds = new HashSet<>();
+    private final Set<String> wishlistIds;
     private FirebaseUser user;
 
     public ProductAdapter(Context context, List<TableTennisProduct> products) {
         super(context, products);
+        this.wishlistIds = new HashSet<>();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
+        loadWishlistItems();
+    }
 
-        // If the user is already logged in, preload their wishlist IDs
+    private void loadWishlistItems() {
         if (user != null) {
             firestoreRepository.getWishlistProducts(user.getUid(), new FirestoreRepository.WishlistProductsCallback() {
                 @Override
@@ -47,7 +50,7 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
 
                 @Override
                 public void onError(Exception e) {
-                    // We could log or show a toast, but for now just ignore
+                    // Silent fail - we'll show the default state
                 }
             });
         }
@@ -63,63 +66,97 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TableTennisProduct product = products.get(position);
+        bindProductData(holder, product);
+        setupWishlistButton(holder, product);
+    }
 
+    private void bindProductData(ViewHolder holder, TableTennisProduct product) {
         holder.productName.setText(product.getName());
         holder.productDescription.setText(product.getDescription());
         holder.productPrice.setText(String.format("$%.2f", product.getPrice()));
-
         loadProductImage(holder.productImage, product);
         setupProductClick(holder.itemView, product);
+    }
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
+    private void setupWishlistButton(ViewHolder holder, TableTennisProduct product) {
         boolean isInWishlist = product.getId() != null && wishlistIds.contains(product.getId());
-
         holder.btnWishlist.setImageResource(
                 isInWishlist ? R.drawable.ic_filledheart : R.drawable.ic_unfilledheart
         );
 
-        holder.btnWishlist.setOnClickListener(v -> {
-            v.animate()
-                    .scaleX(1.4f)
-                    .scaleY(1.4f)
-                    .setDuration(120)
-                    .withEndAction(() -> {
-                        v.animate().scaleX(1f).scaleY(1f).setDuration(120).start();
+        holder.btnWishlist.setOnClickListener(v -> handleWishlistClick(v, product));
+    }
 
-                        if (user == null) {
-                            Toast.makeText(context, "Please sign in to add items to your wishlist", Toast.LENGTH_SHORT).show();
-                            Intent signInIntent = new Intent(context, ProfileActivity.class);
-                            context.startActivity(signInIntent);
-                            return;
-                        }
+    private void handleWishlistClick(View view, TableTennisProduct product) {
+        animateWishlistButton(view, () -> {
+            if (user == null) {
+                promptUserToSignIn();
+                return;
+            }
 
-                        if (product.getId() == null) return;
+            if (product.getId() == null) return;
 
-                        boolean currentlyIn = wishlistIds.contains(product.getId());
-                        if (currentlyIn) {
-                            firestoreRepository.removeProductFromWishlist(user.getUid(), product.getId(), new FirestoreRepository.WishlistOperationCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    wishlistIds.remove(product.getId());
-                                    notifyDataSetChanged();
-                                }
+            boolean currentlyIn = wishlistIds.contains(product.getId());
+            toggleWishlistState(product, currentlyIn);
+        });
+    }
 
-                                @Override
-                                public void onError(Exception e) {}
-                            });
-                        } else {
-                            firestoreRepository.addProductToWishlist(user.getUid(), product, new FirestoreRepository.WishlistOperationCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    wishlistIds.add(product.getId());
-                                    notifyDataSetChanged();
-                                }
+    private void animateWishlistButton(View view, Runnable onAnimationComplete) {
+        view.animate()
+                .scaleX(1.4f)
+                .scaleY(1.4f)
+                .setDuration(120)
+                .withEndAction(() -> {
+                    view.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(120)
+                            .withEndAction(onAnimationComplete)
+                            .start();
+                }).start();
+    }
 
-                                @Override
-                                public void onError(Exception e) {}
-                            });
-                        }
-                    }).start();
+    private void promptUserToSignIn() {
+        Toast.makeText(context, "Please sign in to add items to your wishlist", Toast.LENGTH_SHORT).show();
+        Intent signInIntent = new Intent(context, ProfileActivity.class);
+        context.startActivity(signInIntent);
+    }
+
+    private void toggleWishlistState(TableTennisProduct product, boolean currentlyIn) {
+        if (currentlyIn) {
+            removeFromWishlist(product);
+        } else {
+            addToWishlist(product);
+        }
+    }
+
+    private void addToWishlist(TableTennisProduct product) {
+        firestoreRepository.addProductToWishlist(user.getUid(), product, new FirestoreRepository.WishlistOperationCallback() {
+            @Override
+            public void onSuccess() {
+                wishlistIds.add(product.getId());
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                // Silent fail - we'll keep the current state
+            }
+        });
+    }
+
+    private void removeFromWishlist(TableTennisProduct product) {
+        firestoreRepository.removeProductFromWishlist(user.getUid(), product.getId(), new FirestoreRepository.WishlistOperationCallback() {
+            @Override
+            public void onSuccess() {
+                wishlistIds.remove(product.getId());
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                // Silent fail - we'll keep the current state
+            }
         });
     }
 
@@ -130,8 +167,8 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
     }
 
     static class ViewHolder extends BaseViewHolder {
-        TextView productDescription;
-        ImageButton btnWishlist;
+        final TextView productDescription;
+        final ImageButton btnWishlist;
 
         ViewHolder(View itemView) {
             super(itemView);
