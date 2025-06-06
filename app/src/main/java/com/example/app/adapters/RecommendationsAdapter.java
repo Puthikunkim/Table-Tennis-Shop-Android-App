@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
 
 public class RecommendationsAdapter extends BaseProductAdapter<RecommendationsAdapter.ViewHolder> {
+    private static final String VIEWS_FORMAT = "%d views";
 
     public RecommendationsAdapter(Context context, List<TableTennisProduct> products) {
         super(context, products);
@@ -36,20 +37,24 @@ public class RecommendationsAdapter extends BaseProductAdapter<RecommendationsAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TableTennisProduct product = products.get(position);
-        holder.name.setText(product.getName());
-        holder.views.setText(product.getViews() + " views");
+        bindProductData(holder, product);
+    }
 
+    private void bindProductData(ViewHolder holder, TableTennisProduct product) {
+        holder.name.setText(product.getName());
+        holder.views.setText(String.format(VIEWS_FORMAT, product.getViews()));
         loadProductImage(holder.image, product);
         setupProductClick(holder.itemView, product);
         setupWishlistButton(holder.heartIcon, product);
     }
 
     static class ViewHolder extends BaseViewHolder {
-        ImageView image;
-        TextView name, views;
-        ImageView heartIcon;
+        final ImageView image;
+        final TextView name;
+        final TextView views;
+        final ImageView heartIcon;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.topPickImage);
             name = itemView.findViewById(R.id.topPickName);
