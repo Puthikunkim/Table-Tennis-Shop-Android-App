@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
-public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHolder> {
+public class RecommendationsAdapter extends RecyclerView.Adapter<RecommendationsAdapter.ViewHolder> {
     private final List<TableTennisProduct> products;
     private final Context context;
     private final FirestoreRepository firestoreRepository;
@@ -30,7 +30,7 @@ public class TopPicksAdapter extends RecyclerView.Adapter<TopPicksAdapter.ViewHo
         void onProductClick(TableTennisProduct product);
     }
 
-    public TopPicksAdapter(Context context, List<TableTennisProduct> products) {
+    public RecommendationsAdapter(Context context, List<TableTennisProduct> products) {
         this.context = context;
         this.products = products;
         this.firestoreRepository = FirestoreRepository.getInstance();

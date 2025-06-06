@@ -8,14 +8,13 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
-import com.example.app.adapters.TopPicksAdapter;
+import com.example.app.adapters.RecommendationsAdapter;
 import com.example.app.databinding.ActivityMainBinding;
 import com.example.app.Data.FirestoreRepository;
 
@@ -26,7 +25,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     private static final String TAG = "MainActivity";
 
-    private TopPicksAdapter topAdapter;
+    private RecommendationsAdapter topAdapter;
     private final List<TableTennisProduct> topList = new ArrayList<>();
 
     // 🔒 Cache featured product per app session
@@ -82,7 +81,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         LinearLayoutManager lm = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         binding.topPicksRecyclerView.setLayoutManager(lm);
 
-        topAdapter = new TopPicksAdapter(this, topList);
+        topAdapter = new RecommendationsAdapter(this, topList);
         binding.topPicksRecyclerView.setAdapter(topAdapter);
 
         topAdapter.setOnProductClickListener(product -> {

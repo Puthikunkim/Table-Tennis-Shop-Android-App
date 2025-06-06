@@ -13,7 +13,7 @@ import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.adapters.ImageSliderAdapter;
-import com.example.app.adapters.TopPicksAdapter;
+import com.example.app.adapters.RecommendationsAdapter;
 import com.example.app.databinding.ActivityDetailsBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,7 +37,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     private boolean isWishlisted;
     private int quantity = 1;
 
-    private TopPicksAdapter recommendationsAdapter;
+    private RecommendationsAdapter recommendationsAdapter;
 
     @Override
     protected ActivityDetailsBinding inflateContentBinding() {
@@ -358,7 +358,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 );
                 binding.rvRecommendations.setLayoutManager(llm);
 
-                recommendationsAdapter = new TopPicksAdapter(DetailsActivity.this, filtered);
+                recommendationsAdapter = new RecommendationsAdapter(DetailsActivity.this, filtered);
                 recommendationsAdapter.setOnProductClickListener(clickedProduct -> {
                     Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
                     intent.putExtra("productId", clickedProduct.getId());
