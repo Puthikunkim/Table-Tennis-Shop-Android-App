@@ -5,16 +5,13 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.UI.ProfileActivity;
@@ -26,23 +23,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
-    private final Context context;
-    private final List<TableTennisProduct> products;
+public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder> {
     private final Set<String> wishlistIds = new HashSet<>();
     private FirebaseUser user;
-    private final FirestoreRepository firestoreRepository;
-    private OnProductClickListener clickListener;
-
-    public interface OnProductClickListener {
-        void onProductClick(TableTennisProduct product);
-    }
 
     public ProductAdapter(Context context, List<TableTennisProduct> products) {
-        this.context = context;
-        this.products = products;
+        super(context, products);
         this.user = FirebaseAuth.getInstance().getCurrentUser();
-        this.firestoreRepository = FirestoreRepository.getInstance();
 
         // If the user is already logged in, preload their wishlist IDs
         if (user != null) {
@@ -66,10 +53,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         }
     }
 
-    public void setOnProductClickListener(OnProductClickListener listener) {
-        this.clickListener = listener;
-    }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -85,15 +68,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.productDescription.setText(product.getDescription());
         holder.productPrice.setText(String.format("$%.2f", product.getPrice()));
 
-        if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
-            Glide.with(context)
-                    .load(product.getImageUrls().get(0))
-                    .placeholder(R.drawable.ic_launcher_foreground)
-                    .error(R.drawable.ic_launcher_background)
-                    .into(holder.productImage);
-        } else {
-            holder.productImage.setImageResource(R.drawable.ic_launcher_background);
-        }
+        loadProductImage(holder.productImage, product);
+        setupProductClick(holder.itemView, product);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         boolean isInWishlist = product.getId() != null && wishlistIds.contains(product.getId());
@@ -145,24 +121,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                         }
                     }).start();
         });
-
-        holder.itemView.setOnClickListener(v -> {
-            v.animate()
-                    .scaleX(0.95f)
-                    .scaleY(0.95f)
-                    .setDuration(100)
-                    .withEndAction(() -> {
-                        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
-                        if (clickListener != null) {
-                            clickListener.onProductClick(product);
-                        }
-                    }).start();
-        });
-    }
-
-    @Override
-    public int getItemCount() {
-        return products.size();
     }
 
     public void setProducts(List<TableTennisProduct> newProducts) {
@@ -171,9 +129,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         notifyDataSetChanged();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView productImage;
-        TextView productName, productDescription, productPrice;
+    static class ViewHolder extends BaseViewHolder {
+        TextView productDescription;
         ImageButton btnWishlist;
 
         ViewHolder(View itemView) {
