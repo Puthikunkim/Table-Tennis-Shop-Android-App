@@ -12,14 +12,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide; // Consider adding Glide for image loading
 import com.example.app.Model.TableTennisProduct;
-import com.example.app.R; // Ensure this is correct
-import com.example.app.databinding.ItemWishlistProductBinding; // Assuming you're using view binding
+import com.example.app.R;
+import com.example.app.databinding.ItemWishlistProductBinding;
+import com.example.app.utils.ImageLoader;
 
 import java.util.List;
 
 public class WishListAdapter extends BaseProductAdapter<WishListAdapter.WishlistProductViewHolder> {
+    private static final String CURRENCY_FORMAT = "$%.2f";
 
     private final OnWishlistItemActionListener listener;
 
@@ -37,7 +38,8 @@ public class WishListAdapter extends BaseProductAdapter<WishListAdapter.Wishlist
     @NonNull
     @Override
     public WishlistProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemWishlistProductBinding binding = ItemWishlistProductBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        ItemWishlistProductBinding binding = ItemWishlistProductBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
         return new WishlistProductViewHolder(binding);
     }
 
@@ -45,12 +47,7 @@ public class WishListAdapter extends BaseProductAdapter<WishListAdapter.Wishlist
     public void onBindViewHolder(@NonNull WishlistProductViewHolder holder, int position) {
         TableTennisProduct product = products.get(position);
         holder.bind(product);
-
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onProductClick(product);
-            }
-        });
+        setupProductClick(holder.itemView, product);
     }
 
     public class WishlistProductViewHolder extends BaseViewHolder {
@@ -70,19 +67,13 @@ public class WishListAdapter extends BaseProductAdapter<WishListAdapter.Wishlist
         public void bind(TableTennisProduct product) {
             binding.productName.setText(product.getName());
             binding.productDescription.setText(product.getDescription());
-            binding.productPrice.setText(String.format("$%.2f", product.getPrice()));
+            binding.productPrice.setText(String.format(CURRENCY_FORMAT, product.getPrice()));
 
-            // Load image using Glide (add Glide dependency if you haven't)
-            if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
-                Glide.with(context)
-                        .load(product.getImageUrls().get(0)) // Load the first image URL
-                        .placeholder(R.drawable.ic_launcher_foreground) // Add a placeholder drawable
-                        .error(R.drawable.ic_launcher_background) // Add an error drawable
-                        .into(binding.productImage);
-            } else {
-                binding.productImage.setImageResource(R.drawable.ic_launcher_background); // Default image
-            }
+            loadProductImage(binding.productImage, product);
+            setupActionButtons(product);
+        }
 
+        private void setupActionButtons(TableTennisProduct product) {
             deleteButton.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onDeleteClick(product);
