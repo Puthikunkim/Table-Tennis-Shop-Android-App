@@ -8,10 +8,13 @@ import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
-import com.example.app.adapters.TableTennisAdapter;
+import com.example.app.adapters.ProductAdapter;
 import com.example.app.databinding.ActivityListBinding;
 
 import java.util.ArrayList;
@@ -22,7 +25,7 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     private static final String TAG = "ListActivity";
 
     private final List<TableTennisProduct> productList = new ArrayList<>();
-    private TableTennisAdapter adapter;
+    private ProductAdapter adapter;
 
     @Override
     protected ActivityListBinding inflateContentBinding() {
@@ -68,15 +71,12 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     }
 
     /**
-     * Initialises the adapter, attaches it to the ListView, and configures the item click listener.
+     * Initialises the adapter, attaches it to the RecyclerView, and configures the item click listener.
      */
     private void setupAdapter() {
-        adapter = new TableTennisAdapter(this, R.layout.list_item_product, productList);
-        binding.list.setAdapter(adapter);
-
-        binding.list.setOnItemClickListener((parent, view, position, id) -> {
-            TableTennisProduct selected = productList.get(position);
-            String productId = selected.getId();
+        adapter = new ProductAdapter(this, productList);
+        adapter.setOnProductClickListener(product -> {
+            String productId = product.getId();
             if (TextUtils.isEmpty(productId)) {
                 showToast("Missing product ID");
             } else {
@@ -85,6 +85,9 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
                 startActivity(intent);
             }
         });
+
+        binding.list.setLayoutManager(new LinearLayoutManager(this));
+        binding.list.setAdapter(adapter);
     }
 
     /**
