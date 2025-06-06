@@ -15,8 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapter.ViewHolder> {
-    private List<String> searches;
-    private OnSearchClickListener listener;
+    private final List<String> searches;
+    private final OnSearchClickListener listener;
+    private static final int MAX_SEARCHES = 10;
 
     public interface OnSearchClickListener {
         void onSearchClick(String search);
@@ -44,7 +45,7 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
         holder.itemView.setOnClickListener(v -> listener.onSearchClick(search));
         holder.removeButton.setOnClickListener(v -> {
             int adapterPosition = holder.getAdapterPosition();
-            if (adapterPosition != RecyclerView.NO_POSITION && adapterPosition < searches.size()) {
+            if (adapterPosition != RecyclerView.NO_POSITION) {
                 String toRemove = searches.get(adapterPosition);
                 listener.onSearchRemove(toRemove);
                 removeSearch(adapterPosition);
@@ -57,8 +58,9 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
         return searches.size();
     }
 
-    public void setSearches(List<String> searches) {
-        this.searches = searches;
+    public void setSearches(List<String> newSearches) {
+        this.searches.clear();
+        this.searches.addAll(newSearches);
         notifyDataSetChanged();
     }
 
@@ -67,11 +69,25 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
     }
 
     public void addSearch(String search) {
-        // Remove if already exists
-        searches.remove(search);
-        // Add to beginning
-        searches.add(0, search);
-        notifyDataSetChanged();
+        if (search == null || search.trim().isEmpty()) {
+            return;
+        }
+
+        String trimmedSearch = search.trim();
+        int existingIndex = searches.indexOf(trimmedSearch);
+        
+        if (existingIndex != -1) {
+            searches.remove(existingIndex);
+        }
+        
+        searches.add(0, trimmedSearch);
+        
+        if (searches.size() > MAX_SEARCHES) {
+            searches.remove(searches.size() - 1);
+            notifyItemRemoved(searches.size());
+        }
+        
+        notifyItemInserted(0);
     }
 
     public void removeSearch(int position) {
@@ -82,8 +98,8 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView searchText;
-        ImageButton removeButton;
+        final TextView searchText;
+        final ImageButton removeButton;
 
         ViewHolder(View itemView) {
             super(itemView);
