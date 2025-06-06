@@ -63,25 +63,27 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
-                <!-- Dot indicators INSIDE image block -->
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tabLayoutDots"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:background="@android:color/transparent"
-                    app:tabGravity="center"
-                    app:tabIndicatorFullWidth="false"
-                    app:tabIndicatorHeight="0dp"
-                    app:tabMode="fixed"
-                    app:tabRippleColor="@null"
-                    app:tabSelectedTextColor="@android:color/transparent"
-                    app:tabTextColor="@android:color/transparent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Dot indicators INSIDE image block -->
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayoutDots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:background="@android:color/transparent"
+                app:tabGravity="center"
+                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorHeight="0dp"
+                app:tabMode="fixed"
+                app:tabRippleColor="@null"
+                app:tabSelectedTextColor="@android:color/transparent"
+                app:tabTextColor="@android:color/transparent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
             <LinearLayout
                 android:layout_marginTop="16dp"
