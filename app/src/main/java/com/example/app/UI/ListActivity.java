@@ -2,26 +2,26 @@ package com.example.app.UI;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
-import android.widget.ListView;
+import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.adapters.TableTennisAdapter;
 import com.example.app.databinding.ActivityListBinding;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.example.app.Data.FirestoreRepository;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
 public class ListActivity extends BaseActivity<ActivityListBinding> {
+    private static final String TAG = "ListActivity";
 
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final List<TableTennisProduct> productList = new LinkedList<>();
+    private final List<TableTennisProduct> productList = new ArrayList<>();
     private TableTennisAdapter adapter;
 
     @Override
@@ -38,41 +38,60 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String rawCategory = getIntent().getStringExtra("categoryID");
-        String category = rawCategory;
-        if (category != null && category.length() > 0) {
-            category = category.substring(0, 1).toUpperCase() + category.substring(1);
-        }
-        binding.customListTitle.setText(category);
-
-        binding.customListBackButton.setOnClickListener(v -> finish());
-
-        adapter = new TableTennisAdapter(this, R.layout.list_item_product, productList);
-        ListView listView = binding.list;
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            TableTennisProduct selected = productList.get(position);
-            if (selected.getId() != null) {
-                Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
-                intent.putExtra("productId", selected.getId());
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Missing product ID", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        String categoryID = getIntent().getStringExtra("categoryID");
-        if (categoryID != null) {
-            fetchProductDataByCategory(categoryID);
-        } else {
-            Toast.makeText(this, "Category not specified", Toast.LENGTH_SHORT).show();
+        if (!setupTitleAndBackButton()) {
+            // Category was missing, so we already showed a toast and finished()
+            return;
         }
 
-        binding.btnSort.setOnClickListener(v -> showSortMenu(v));
+        setupAdapter();
+        loadProducts();
+
+        binding.btnSort.setOnClickListener(this::showSortMenu);
     }
 
-    private void fetchProductDataByCategory(String categoryID) {
+    /**
+     * Reads "categoryID" from the Intent, capitalises it for display,
+     * sets up the back button, and returns false + finish() if missing.
+     */
+    private boolean setupTitleAndBackButton() {
+        String rawCategory = getIntent().getStringExtra("categoryID");
+        if (TextUtils.isEmpty(rawCategory)) {
+            showToast("Category not specified");
+            finish();
+            return false;
+        }
+
+        String displayName = rawCategory.substring(0, 1).toUpperCase() + rawCategory.substring(1);
+        binding.customListTitle.setText(displayName);
+        binding.customListBackButton.setOnClickListener(v -> finish());
+        return true;
+    }
+
+    /**
+     * Initialises the adapter, attaches it to the ListView, and configures the item click listener.
+     */
+    private void setupAdapter() {
+        adapter = new TableTennisAdapter(this, R.layout.list_item_product, productList);
+        binding.list.setAdapter(adapter);
+
+        binding.list.setOnItemClickListener((parent, view, position, id) -> {
+            TableTennisProduct selected = productList.get(position);
+            String productId = selected.getId();
+            if (TextUtils.isEmpty(productId)) {
+                showToast("Missing product ID");
+            } else {
+                Intent intent = new Intent(ListActivity.this, DetailsActivity.class)
+                        .putExtra("productId", productId);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * Fetches products from Firestore (by category) and refreshes the adapter.
+     */
+    private void loadProducts() {
+        String categoryID = getIntent().getStringExtra("categoryID");
         FirestoreRepository.getInstance()
                 .getProductsByCategory(categoryID, new FirestoreRepository.ProductsCallback() {
                     @Override
@@ -81,60 +100,67 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
                         productList.addAll(products);
                         adapter.notifyDataSetChanged();
                     }
+
                     @Override
                     public void onError(Exception e) {
-                        Log.e("Firestore", "Failed to load " + categoryID, e);
-                        Toast.makeText(ListActivity.this, "Failed to load products", Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Failed to load products for category: " + categoryID, e);
+                        showToast("Failed to load products");
                     }
                 });
-
     }
 
-    private void showSortMenu(android.view.View anchor) {
+    /**
+     * Inflates the sort popup menu, looks up the selected option via SortOption enum,
+     * and applies the corresponding comparator.
+     */
+    private void showSortMenu(View anchor) {
         PopupMenu popup = new PopupMenu(this, anchor);
         popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
 
         popup.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.sort_price_asc) {
-                sortList("price", true);
+            SortOption option = SortOption.fromMenuId(item.getItemId());
+            if (option != null) {
+                productList.sort(option.comparator);
+                adapter.notifyDataSetChanged();
                 return true;
-            } else if (id == R.id.sort_price_desc) {
-                sortList("price", false);
-                return true;
-            } else if (id == R.id.sort_name_asc) {
-                sortList("name", true);
-                return true;
-            } else if (id == R.id.sort_name_desc) {
-                sortList("name", false);
-                return true;
-            } else {
-                return false;
             }
+            return false;
         });
 
         popup.show();
     }
 
-    private void sortList(String field, boolean ascending) {
-        Comparator<TableTennisProduct> comparator;
-
-        if ("price".equals(field)) {
-            comparator = Comparator.comparingDouble(TableTennisProduct::getPrice);
-        } else if ("name".equals(field)) {
-            comparator = Comparator.comparing(TableTennisProduct::getName, String.CASE_INSENSITIVE_ORDER);
-        } else {
-            return;
-        }
-
-        if (!ascending) {
-            comparator = comparator.reversed();
-        }
-
-        productList.sort(comparator);
-        adapter.notifyDataSetChanged();
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Enum to map menu item IDs to a Comparator for TableTennisProduct.
+     * This centralises all sorting logic in one place.
+     */
+    private enum SortOption {
+        PRICE_ASC(R.id.sort_price_asc, Comparator.comparingDouble(TableTennisProduct::getPrice)),
+        PRICE_DESC(R.id.sort_price_desc,
+                Comparator.comparingDouble(TableTennisProduct::getPrice).reversed()),
+        NAME_ASC(R.id.sort_name_asc,
+                Comparator.comparing(TableTennisProduct::getName, String.CASE_INSENSITIVE_ORDER)),
+        NAME_DESC(R.id.sort_name_desc,
+                Comparator.comparing(TableTennisProduct::getName, String.CASE_INSENSITIVE_ORDER)
+                        .reversed());
 
+        final int menuId;
+        final Comparator<TableTennisProduct> comparator;
+
+        SortOption(int menuId, Comparator<TableTennisProduct> comparator) {
+            this.menuId = menuId;
+            this.comparator = comparator;
+        }
+
+        static SortOption fromMenuId(int id) {
+            for (SortOption opt : values()) {
+                if (opt.menuId == id) return opt;
+            }
+            return null;
+        }
+    }
 }
