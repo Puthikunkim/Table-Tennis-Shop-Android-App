@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
-import com.example.app.adapters.WishListAdapter;
+import com.example.app.Adapters.WishListAdapter;
 import com.example.app.databinding.ActivityWishListBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

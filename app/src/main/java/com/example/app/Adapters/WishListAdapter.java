@@ -1,21 +1,16 @@
-package com.example.app.adapters;
+package com.example.app.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.Model.TableTennisProduct;
-import com.example.app.R;
 import com.example.app.databinding.ItemWishlistProductBinding;
-import com.example.app.utils.ImageLoader;
 
 import java.util.List;
 

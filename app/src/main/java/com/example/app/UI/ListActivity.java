@@ -9,12 +9,11 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
-import com.example.app.adapters.ProductAdapter;
+import com.example.app.Adapters.ProductAdapter;
 import com.example.app.databinding.ActivityListBinding;
 
 import java.util.ArrayList;

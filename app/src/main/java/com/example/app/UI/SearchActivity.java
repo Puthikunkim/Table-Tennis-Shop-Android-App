@@ -22,8 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
-import com.example.app.adapters.RecentSearchAdapter;
-import com.example.app.adapters.ProductAdapter;
+import com.example.app.Adapters.RecentSearchAdapter;
+import com.example.app.Adapters.ProductAdapter;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.databinding.ActivitySearchBinding;
 import com.example.app.Data.FirestoreRepository;

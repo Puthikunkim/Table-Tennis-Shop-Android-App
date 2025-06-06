@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
-import com.example.app.adapters.CartAdapter;
+import com.example.app.Adapters.CartAdapter;
 import com.example.app.databinding.ActivityCartBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

@@ -1,4 +1,4 @@
-package com.example.app.adapters;
+package com.example.app.Adapters;
 
 import android.content.Context;
 import android.view.View;
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
-import com.example.app.utils.ImageLoader;
+import com.example.app.Util.ImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

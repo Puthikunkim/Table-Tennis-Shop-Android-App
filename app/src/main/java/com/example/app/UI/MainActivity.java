@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
-import com.example.app.adapters.RecommendationsAdapter;
+import com.example.app.Adapters.RecommendationsAdapter;
 import com.example.app.databinding.ActivityMainBinding;
 import com.example.app.Data.FirestoreRepository;
 

@@ -1,4 +1,4 @@
-package com.example.app.adapters;
+package com.example.app.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
-import com.example.app.utils.ImageLoader;
+import com.example.app.Util.ImageLoader;
 
 import java.util.List;
 
