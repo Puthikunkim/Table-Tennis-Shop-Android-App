@@ -11,12 +11,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.app.Auth.AuthManager;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Adapters.CartAdapter;
 import com.example.app.databinding.ActivityCartBinding;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.List;
 public class CartActivity extends BaseActivity<ActivityCartBinding> {
     private static final String TAG = "CartActivity";
 
-    private FirebaseAuth mAuth;
+    private AuthManager authManager;
     private CartAdapter adapter;                   // Only initialized once we know userId
     private final List<TableTennisProduct> cartItems = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAuth = FirebaseAuth.getInstance();
+        authManager = AuthManager.getInstance(this);
 
         // Wire up the Sign In button inside the "loggedOutCart" include
         binding.loggedOutCart.getRoot().setVisibility(View.GONE);
@@ -57,18 +57,18 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
     @Override
     protected void onStart() {
         super.onStart();
-        updateUI(mAuth.getCurrentUser());
+        updateUI(authManager.getCurrentUser());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         // If the user just signed in on ProfileActivity, re-run updateUI
-        updateUI(mAuth.getCurrentUser());
+        updateUI(authManager.getCurrentUser());
     }
 
     /**
-     * Decide which “state” to show:
+     * Decide which "state" to show:
      *   – If user == null → show "logged‐out" include
      *   – If user != null → hide all, then load cart for that user
      */
@@ -156,9 +156,9 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         }
     }
 
-    /*** “Checkout” button logic ***/
+    /*** "Checkout" button logic ***/
     private void handleCheckout() {
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser user = authManager.getCurrentUser();
         if (user == null) {
             Toast.makeText(this, "Please sign in to checkout", Toast.LENGTH_SHORT).show();
             return;
@@ -203,7 +203,7 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         });
     }
 
-    /*** SMALL HELPERS TO SWITCH “Which View Is VISIBLE?” ***/
+    /*** SMALL HELPERS TO SWITCH "Which View Is VISIBLE?" ***/
 
     private void showLoggedOutState() {
         binding.loggedOutCart.getRoot().setVisibility(View.VISIBLE);
