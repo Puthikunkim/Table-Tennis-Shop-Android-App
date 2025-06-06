@@ -16,6 +16,7 @@ import com.example.app.R;
 import com.example.app.adapters.ImageSliderAdapter;
 import com.example.app.adapters.TopPicksAdapter;
 import com.example.app.databinding.ActivityDetailsBinding;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -185,6 +186,11 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 List<String> imageUrls = product.getImageUrls();
                 ImageSliderAdapter sliderAdapter = new ImageSliderAdapter(imageUrls);
                 binding.viewPagerImages.setAdapter(sliderAdapter);
+                new TabLayoutMediator(binding.tabLayoutDots, binding.viewPagerImages,
+                        (tab, position) -> {
+                            tab.setCustomView(R.layout.custom_tab_dot);
+                        }
+                ).attach();
 
                 // Hook up Prev/Next arrows for the ViewPager2:
                 binding.btnPrev.setOnClickListener(v -> {

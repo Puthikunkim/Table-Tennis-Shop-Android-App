@@ -26,17 +26,19 @@
                 android:layout_height="wrap_content"
                 android:text="back"
                 android:textColor="@color/text_primary" />
-            <!-- Image slider -->
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="300dp">
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/viewPagerImages"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
                 <ImageButton
                     android:id="@+id/btnPrev"
@@ -48,7 +50,7 @@
                     android:rotationY="180"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
                 <ImageButton
                     android:id="@+id/btnNext"
@@ -59,23 +61,28 @@
                     android:background="@android:color/transparent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
+                <!-- Dot indicators INSIDE image block -->
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabLayoutDots"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:background="@android:color/transparent"
                     app:tabGravity="center"
                     app:tabIndicatorFullWidth="false"
                     app:tabIndicatorHeight="0dp"
+                    app:tabMode="fixed"
+                    app:tabRippleColor="@null"
                     app:tabSelectedTextColor="@android:color/transparent"
                     app:tabTextColor="@android:color/transparent"
-                    app:tabRippleColor="@null"
-                    app:tabMode="fixed" />
-
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Category & Price -->
+
             <LinearLayout
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal"
@@ -191,7 +198,6 @@
                             android:minHeight="0dp"
                             android:text="+"
                             android:textColor="@color/text_primary" />
-
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -221,7 +227,6 @@
                     android:background="@drawable/bg_cart_right_rounded"
                     android:contentDescription="WishList"
                     android:padding="8dp" />
-
             </LinearLayout>
 
             <!-- You Might Like -->
@@ -242,5 +247,4 @@
                 android:orientation="horizontal"/>
         </LinearLayout>
     </ScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
