@@ -8,13 +8,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.app.Auth.AuthManager;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.databinding.ActivityProfileBinding;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +22,7 @@ import java.util.Map;
 public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     private static final String TAG = "ProfileActivity";
 
-    private FirebaseAuth mAuth;
+    private AuthManager authManager;
     private FirestoreRepository firestoreRepository;
 
     @Override
@@ -40,7 +39,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAuth = FirebaseAuth.getInstance();
+        authManager = AuthManager.getInstance(this);
         firestoreRepository = FirestoreRepository.getInstance();
 
         // Set up all button listeners in one place, using lambdas and helper methods
@@ -60,7 +59,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     protected void onStart() {
         super.onStart();
         // Update UI based on current auth state
-        updateUI(mAuth.getCurrentUser());
+        updateUI(authManager.getCurrentUser());
     }
 
     /*** UI‐state helper methods ***/
@@ -124,27 +123,24 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         String email = binding.inputSignInEmail.getText().toString().trim();
         String password = binding.inputSignInPassword.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        authManager.signIn(email, password, new AuthManager.AuthCallback() {
+            @Override
+            public void onSuccess(FirebaseUser user) {
+                updateUI(user);
+                Toast.makeText(ProfileActivity.this, 
+                    "Signed in as: " + (user != null ? user.getEmail() : ""), 
+                    Toast.LENGTH_SHORT).show();
+                clearSignInForm();
+            }
 
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "signInWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        updateUI(user);
-                        Toast.makeText(this, "Signed in as: " + (user != null ? user.getEmail() : ""), Toast.LENGTH_SHORT).show();
-                        clearSignInForm();
-                    } else {
-                        Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        Toast.makeText(this,
-                                "Authentication failed: " + (task.getException() != null ? task.getException().getMessage() : ""),
-                                Toast.LENGTH_LONG).show();
-                        updateUI(null);
-                    }
-                });
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(ProfileActivity.this,
+                    "Authentication failed: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+                updateUI(null);
+            }
+        });
     }
 
     private void handleCreateAccount() {
@@ -152,84 +148,52 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         String password = binding.inputCreatePassword.getText().toString().trim();
         String name = binding.inputName.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
-            Toast.makeText(this, "Please enter name, email and password", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (password.length() < 6) {
-            Toast.makeText(this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        authManager.createAccount(email, password, name, new AuthManager.AuthCallback() {
+            @Override
+            public void onSuccess(FirebaseUser user) {
+                if (user != null) {
+                    // Save additional data to Firestore
+                    Map<String, Object> userProfile = new HashMap<>();
+                    userProfile.put("email", user.getEmail());
+                    userProfile.put("name", name);
+                    userProfile.put("createdAt", com.google.firebase.firestore.FieldValue.serverTimestamp());
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "createUserWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        if (user == null) {
-                            Log.e(TAG, "User was null after successful account creation");
-                            Toast.makeText(this, "Error: User data missing after account creation.", Toast.LENGTH_LONG).show();
-                            updateUI(null);
-                            return;
+                    firestoreRepository.createUserProfile(user.getUid(), userProfile, new FirestoreRepository.UserProfileCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Log.d(TAG, "User profile created in Firestore");
+                            Toast.makeText(ProfileActivity.this,
+                                "Account created and signed in as: " + name,
+                                Toast.LENGTH_SHORT).show();
+                            clearCreateAccountForm();
+                            updateUI(user);
                         }
 
-                        // 1) Update display name:
-                        UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
-                                .setDisplayName(name)
-                                .build();
-
-                        user.updateProfile(request)
-                                .addOnCompleteListener(profileTask -> {
-                                    if (profileTask.isSuccessful()) {
-                                        Log.d(TAG, "User display name updated.");
-                                        // Force a reload so display name appears right away:
-                                        user.reload().addOnCompleteListener(reload -> updateUI(mAuth.getCurrentUser()));
-                                    } else {
-                                        Log.w(TAG, "Failed to update display name", profileTask.getException());
-                                        updateUI(user);
-                                    }
-                                });
-
-                        // 2) Save additional data to Firestore:
-                        Map<String, Object> userProfile = new HashMap<>();
-                        userProfile.put("email", user.getEmail());
-                        userProfile.put("name", name);
-                        userProfile.put("createdAt", com.google.firebase.firestore.FieldValue.serverTimestamp());
-
-                        firestoreRepository.createUserProfile(user.getUid(), userProfile, new FirestoreRepository.UserProfileCallback() {
-                            @Override
-                            public void onSuccess() {
-                                Log.d(TAG, "User profile created in Firestore");
-                                Toast.makeText(ProfileActivity.this,
-                                        "Account created and signed in as: " + name,
-                                        Toast.LENGTH_SHORT).show();
-                                clearCreateAccountForm();
-                                updateUI(user);
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                Log.w(TAG, "Error saving profile in Firestore", e);
-                                Toast.makeText(ProfileActivity.this,
-                                        "Account created, but profile save failed: " + e.getMessage(),
-                                        Toast.LENGTH_LONG).show();
-                                clearCreateAccountForm();
-                                updateUI(user);
-                            }
-                        });
-
-                    } else {
-                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                        Toast.makeText(this,
-                                "Account creation failed: " + (task.getException() != null ? task.getException().getMessage() : ""),
+                        @Override
+                        public void onError(Exception e) {
+                            Log.w(TAG, "Error saving profile in Firestore", e);
+                            Toast.makeText(ProfileActivity.this,
+                                "Account created, but profile save failed: " + e.getMessage(),
                                 Toast.LENGTH_LONG).show();
-                        updateUI(null);
-                    }
-                });
+                            clearCreateAccountForm();
+                            updateUI(user);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(ProfileActivity.this,
+                    "Account creation failed: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+                updateUI(null);
+            }
+        });
     }
 
     private void handleSignOut() {
-        mAuth.signOut();
+        authManager.signOut();
         updateUI(null);
         Toast.makeText(this, "Signed out successfully", Toast.LENGTH_SHORT).show();
     }
@@ -257,7 +221,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
         // "Clear Cart" checks for a signed-in user, calls repository.clearCart, updates UI
         binding.btnClearCart.setOnClickListener(v -> {
-            FirebaseUser user = mAuth.getCurrentUser();
+            FirebaseUser user = authManager.getCurrentUser();
             if (user == null) return;
 
             firestoreRepository.clearCart(user.getUid(), new FirestoreRepository.OperationCallback() {
@@ -281,7 +245,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         });
 
         binding.btnClearWishlist.setOnClickListener(v -> {
-            FirebaseUser user = mAuth.getCurrentUser();
+            FirebaseUser user = authManager.getCurrentUser();
             if (user == null) return;
 
             firestoreRepository.clearWishlist(user.getUid(), new FirestoreRepository.OperationCallback() {
