@@ -44,7 +44,7 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context)
-                .inflate(R.layout.item_top_pick, parent, false);
+                .inflate(R.layout.item_recommendation, parent, false);
         return new ViewHolder(view);
     }
 
