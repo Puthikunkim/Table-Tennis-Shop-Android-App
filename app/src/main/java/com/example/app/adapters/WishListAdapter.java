@@ -19,10 +19,8 @@ import com.example.app.databinding.ItemWishlistProductBinding; // Assuming you'r
 
 import java.util.List;
 
-public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.WishlistProductViewHolder> {
+public class WishListAdapter extends BaseProductAdapter<WishListAdapter.WishlistProductViewHolder> {
 
-    private final Context context;
-    private final List<TableTennisProduct> productList;
     private final OnWishlistItemActionListener listener;
 
     public interface OnWishlistItemActionListener {
@@ -32,8 +30,7 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.Wishli
     }
 
     public WishListAdapter(Context context, List<TableTennisProduct> productList, OnWishlistItemActionListener listener) {
-        this.context = context;
-        this.productList = productList;
+        super(context, productList);
         this.listener = listener;
     }
 
@@ -46,25 +43,28 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.Wishli
 
     @Override
     public void onBindViewHolder(@NonNull WishlistProductViewHolder holder, int position) {
-        TableTennisProduct product = productList.get(position);
+        TableTennisProduct product = products.get(position);
         holder.bind(product);
 
         holder.itemView.setOnClickListener(v -> {
-            listener.onProductClick(product);
+            if (listener != null) {
+                listener.onProductClick(product);
+            }
         });
     }
 
-    @Override
-    public int getItemCount() {
-        return productList.size();
-    }
-
-    public class WishlistProductViewHolder extends RecyclerView.ViewHolder {
+    public class WishlistProductViewHolder extends BaseViewHolder {
         private final ItemWishlistProductBinding binding;
+        private final TextView productDescription;
+        private final Button addToCartButton;
+        private final ImageButton deleteButton;
 
         public WishlistProductViewHolder(ItemWishlistProductBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            this.productDescription = binding.productDescription;
+            this.addToCartButton = binding.addToCartButton;
+            this.deleteButton = binding.deleteButton;
         }
 
         public void bind(TableTennisProduct product) {
@@ -83,13 +83,13 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.Wishli
                 binding.productImage.setImageResource(R.drawable.ic_launcher_background); // Default image
             }
 
-            binding.deleteButton.setOnClickListener(v -> {
+            deleteButton.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onDeleteClick(product);
                 }
             });
 
-            binding.addToCartButton.setOnClickListener(v -> {
+            addToCartButton.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onAddToCartClick(product);
                 }
