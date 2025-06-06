@@ -316,6 +316,10 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         ImageSliderAdapter sliderAdapter = new ImageSliderAdapter(imageUrls);
         binding.viewPagerImages.setAdapter(sliderAdapter);
 
+        new TabLayoutMediator(binding.tabLayoutDots, binding.viewPagerImages,
+                (tab, position) -> tab.setCustomView(R.layout.custom_tab_dot)
+        ).attach();
+
         binding.btnPrev.setOnClickListener(v -> {
             int prevIndex = binding.viewPagerImages.getCurrentItem() - 1;
             if (prevIndex >= 0) {
