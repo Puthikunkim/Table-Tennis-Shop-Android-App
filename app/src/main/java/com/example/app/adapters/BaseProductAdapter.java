@@ -9,10 +9,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
+import com.example.app.utils.ImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -23,9 +23,14 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
     protected final List<TableTennisProduct> products;
     protected final FirestoreRepository firestoreRepository;
     protected OnProductClickListener clickListener;
+    protected OnWishlistChangeListener wishlistListener;
 
     public interface OnProductClickListener {
         void onProductClick(TableTennisProduct product);
+    }
+
+    public interface OnWishlistChangeListener {
+        void onWishlistChanged(TableTennisProduct product, boolean added);
     }
 
     public BaseProductAdapter(Context context, List<TableTennisProduct> products) {
@@ -38,6 +43,10 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
         this.clickListener = listener;
     }
 
+    public void setOnWishlistChangeListener(OnWishlistChangeListener listener) {
+        this.wishlistListener = listener;
+    }
+
     @Override
     public int getItemCount() {
         return products.size();
@@ -45,11 +54,7 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
 
     protected void loadProductImage(ImageView imageView, TableTennisProduct product) {
         if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
-            Glide.with(context)
-                    .load(product.getImageUrls().get(0))
-                    .placeholder(R.drawable.ic_launcher_foreground)
-                    .error(R.drawable.ic_launcher_background)
-                    .into(imageView);
+            ImageLoader.loadProductImage(context, imageView, product.getImageUrls().get(0));
         } else {
             imageView.setImageResource(R.drawable.ic_launcher_background);
         }
@@ -73,64 +78,85 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
     protected void setupWishlistButton(ImageView heartIcon, TableTennisProduct product) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            heartIcon.setImageResource(R.drawable.ic_wishlist);
-            heartIcon.setTag(false);
-        } else {
-            String uid = currentUser.getUid();
-            firestoreRepository.checkIfProductInWishlist(uid, product.getId(), new FirestoreRepository.WishlistOperationCallback() {
-                @Override
-                public void onSuccess() {
-                    heartIcon.setImageResource(R.drawable.ic_wishlist_filled);
-                    heartIcon.setTag(true);
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    heartIcon.setImageResource(R.drawable.ic_wishlist);
-                    heartIcon.setTag(false);
-                }
-            });
+            updateWishlistButtonState(heartIcon, false);
+            return;
         }
 
-        heartIcon.setOnClickListener(v -> {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                Toast.makeText(context, "Please log in to add items to your wishlist", Toast.LENGTH_SHORT).show();
-                return;
+        String uid = currentUser.getUid();
+        firestoreRepository.checkIfProductInWishlist(uid, product.getId(), new FirestoreRepository.WishlistOperationCallback() {
+            @Override
+            public void onSuccess() {
+                updateWishlistButtonState(heartIcon, true);
             }
 
-            String uid = user.getUid();
-            Boolean isCurrentlyWishlisted = (Boolean) heartIcon.getTag();
-            if (isCurrentlyWishlisted != null && isCurrentlyWishlisted) {
-                firestoreRepository.removeProductFromWishlist(uid, product.getId(), new FirestoreRepository.WishlistOperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                        heartIcon.setImageResource(R.drawable.ic_wishlist);
-                        heartIcon.setTag(false);
-                        Toast.makeText(context, product.getName() + " removed from wishlist", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Toast.makeText(context, "Failed to remove from wishlist: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                firestoreRepository.addProductToWishlist(uid, product, new FirestoreRepository.WishlistOperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                        heartIcon.setImageResource(R.drawable.ic_wishlist_filled);
-                        heartIcon.setTag(true);
-                        Toast.makeText(context, product.getName() + " added to wishlist!", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Toast.makeText(context, "Failed to add to wishlist: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
+            @Override
+            public void onError(Exception e) {
+                updateWishlistButtonState(heartIcon, false);
             }
         });
+
+        heartIcon.setOnClickListener(v -> handleWishlistClick(heartIcon, product));
+    }
+
+    private void updateWishlistButtonState(ImageView heartIcon, boolean isWishlisted) {
+        heartIcon.setImageResource(isWishlisted ? R.drawable.ic_wishlist_filled : R.drawable.ic_wishlist);
+        heartIcon.setTag(isWishlisted);
+    }
+
+    private void handleWishlistClick(ImageView heartIcon, TableTennisProduct product) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(context, "Please log in to add items to your wishlist", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String uid = user.getUid();
+        Boolean isCurrentlyWishlisted = (Boolean) heartIcon.getTag();
+        boolean newState = !(isCurrentlyWishlisted != null && isCurrentlyWishlisted);
+
+        if (newState) {
+            addToWishlist(uid, product, heartIcon);
+        } else {
+            removeFromWishlist(uid, product, heartIcon);
+        }
+    }
+
+    private void addToWishlist(String uid, TableTennisProduct product, ImageView heartIcon) {
+        firestoreRepository.addProductToWishlist(uid, product, new FirestoreRepository.WishlistOperationCallback() {
+            @Override
+            public void onSuccess() {
+                updateWishlistButtonState(heartIcon, true);
+                notifyWishlistChanged(product, true);
+                Toast.makeText(context, product.getName() + " added to wishlist!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(context, "Failed to add to wishlist: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void removeFromWishlist(String uid, TableTennisProduct product, ImageView heartIcon) {
+        firestoreRepository.removeProductFromWishlist(uid, product.getId(), new FirestoreRepository.WishlistOperationCallback() {
+            @Override
+            public void onSuccess() {
+                updateWishlistButtonState(heartIcon, false);
+                notifyWishlistChanged(product, false);
+                Toast.makeText(context, product.getName() + " removed from wishlist", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(context, "Failed to remove from wishlist: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void notifyWishlistChanged(TableTennisProduct product, boolean added) {
+        if (wishlistListener != null) {
+            wishlistListener.onWishlistChanged(product, added);
+        }
     }
 
     public static class BaseViewHolder extends RecyclerView.ViewHolder {
