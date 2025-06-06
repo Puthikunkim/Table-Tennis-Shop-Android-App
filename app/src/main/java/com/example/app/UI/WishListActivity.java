@@ -9,12 +9,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.app.Auth.AuthManager;
 import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.Adapters.WishListAdapter;
 import com.example.app.databinding.ActivityWishListBinding;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.List;
 public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     private static final String TAG = "WishListActivity";
 
-    private FirebaseAuth mAuth;
+    private AuthManager authManager;
     private FirestoreRepository firestoreRepository;
     private WishListAdapter wishlistAdapter;
     private final List<TableTennisProduct> wishlistItems = new ArrayList<>();
@@ -42,7 +42,7 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAuth = FirebaseAuth.getInstance();
+        authManager = AuthManager.getInstance(this);
         firestoreRepository = FirestoreRepository.getInstance();
 
         setupRecyclerView();
@@ -54,7 +54,7 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     @Override
     protected void onStart() {
         super.onStart();
-        updateUI(mAuth.getCurrentUser());
+        updateUI(authManager.getCurrentUser());
     }
 
     // Show either logged‐in wishlist or logged‐out message
@@ -103,9 +103,9 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     }
 
     /*** Helper methods to switch between:
-     1) “logged‐out” message
-     2) “empty wishlist” message
-     3) “show RecyclerView” ***/
+     1) "logged‐out" message
+     2) "empty wishlist" message
+     3) "show RecyclerView" ***/
 
     private void showLoggedOutState() {
         binding.loggedOutWishlist.getRoot().setVisibility(View.VISIBLE);
@@ -159,7 +159,7 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
                 Toast.makeText(WishListActivity.this,
                         "Error loading wishlist.",
                         Toast.LENGTH_SHORT).show();
-                // If error, treat it like “empty”
+                // If error, treat it like "empty"
                 wishlistItems.clear();
                 showEmptyState();
             }
@@ -169,7 +169,7 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     /*** Remove a single product from both Firestore and local list ***/
 
     private void removeProductFromWishlist(TableTennisProduct product) {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = authManager.getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(this,
                     "Please sign in to manage your wishlist.",
@@ -208,7 +208,7 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
      * 3) Finally update local list and UI
      */
     private void addToCartFromWishlist(TableTennisProduct product) {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = authManager.getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(this,
                     "Please sign in to add to cart.",
@@ -247,7 +247,7 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
                                         Log.e(TAG, "Failed to remove after adding to cart: " + e.getMessage(), e);
                                         Toast.makeText(
                                                 WishListActivity.this,
-                                                "Added to cart but couldn’t remove from wishlist.",
+                                                "Added to cart but couldn't remove from wishlist.",
                                                 Toast.LENGTH_LONG
                                         ).show();
                                     }
