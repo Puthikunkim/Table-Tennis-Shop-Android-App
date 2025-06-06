@@ -8,16 +8,25 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide; // If you use Glide (add dependency in Gradle)
 import com.example.app.R;
+import com.example.app.utils.ImageLoader;
 
 import java.util.List;
 
 public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.ImageViewHolder> {
     private final List<String> imageUrls;
+    private OnImageClickListener listener;
+
+    public interface OnImageClickListener {
+        void onImageClick(int position);
+    }
 
     public ImageSliderAdapter(List<String> imageUrls) {
         this.imageUrls = imageUrls;
+    }
+
+    public void setOnImageClickListener(OnImageClickListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -32,11 +41,11 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         String url = imageUrls.get(position);
-        // Use your favorite image-loading library (Glide, Picasso). Example uses Glide:
-        Glide.with(holder.itemView.getContext())
-                .load(url)
-                .placeholder(R.drawable.ic_launcher_background) // optional
-                .into(holder.imageView);
+        ImageLoader.loadImage(holder.itemView.getContext(), holder.imageView, url);
+        
+        if (listener != null) {
+            holder.itemView.setOnClickListener(v -> listener.onImageClick(position));
+        }
     }
 
     @Override
@@ -45,7 +54,8 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
     }
 
     static class ImageViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
+        final ImageView imageView;
+        
         ImageViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.sliderImageView);
