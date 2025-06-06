@@ -9,13 +9,13 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.app.Auth.AuthManager;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Adapters.ImageSliderAdapter;
 import com.example.app.Adapters.RecommendationsAdapter;
 import com.example.app.databinding.ActivityDetailsBinding;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     private static final String TAG = "DetailsActivity";
     private static final long ANIMATION_DURATION = 120;
 
-    private FirebaseAuth mAuth;
+    private AuthManager authManager;
     private FirestoreRepository firestoreRepository;
 
     private String productId;
@@ -53,8 +53,8 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize FirebaseAuth and FirestoreRepository
-        mAuth = FirebaseAuth.getInstance();
+        // Initialize AuthManager and FirestoreRepository
+        authManager = AuthManager.getInstance(this);
         firestoreRepository = FirestoreRepository.getInstance();
 
         // Obtain productId from Intent extras
@@ -107,7 +107,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     private void setupFavoriteButton() {
         binding.btnFavorite.setOnClickListener(v ->
                 animateButton(v, () -> {
-                    FirebaseUser user = mAuth.getCurrentUser();
+                    FirebaseUser user = authManager.getCurrentUser();
                     if (user == null) {
                         Toast.makeText(this,
                                 "Please sign in to add items to your wishlist.",
@@ -175,7 +175,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
 
     /** Updates the wishlist icon based on whether the current product is wishlisted. */
     private void updateWishlistIcon() {
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser user = authManager.getCurrentUser();
         if (user == null || currentProduct == null) {
             binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
             isWishlisted = false;
@@ -205,7 +205,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                         Toast.makeText(this, "Product not loaded yet", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    FirebaseUser user = mAuth.getCurrentUser();
+                    FirebaseUser user = authManager.getCurrentUser();
                     if (user == null) {
                         Toast.makeText(this, "Please sign in to add to cart", Toast.LENGTH_SHORT).show();
                         return;
