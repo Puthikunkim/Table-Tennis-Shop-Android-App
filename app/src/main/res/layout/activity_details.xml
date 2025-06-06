@@ -60,6 +60,19 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayoutDots"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabGravity="center"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabSelectedTextColor="@android:color/transparent"
+                    app:tabTextColor="@android:color/transparent"
+                    app:tabRippleColor="@null"
+                    app:tabMode="fixed" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Category & Price -->
