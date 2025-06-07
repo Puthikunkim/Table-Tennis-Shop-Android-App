@@ -141,7 +141,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
                 intent.putExtra("productId", productId);
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "Missing product ID", Toast.LENGTH_SHORT).show();
+                showCustomToast("Error: Product ID is missing");
             }
         });
 
