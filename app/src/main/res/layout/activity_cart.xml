@@ -28,6 +28,7 @@
         android:dividerHeight="15dp"
         android:divider="@android:color/transparent"
         android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
         android:visibility="gone"/>
 
     <!-- NEW: Include the “logged‐out” cart layout -->

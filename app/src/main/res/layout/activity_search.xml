@@ -7,21 +7,11 @@
     android:orientation="vertical"
     android:background="@color/background_dark">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Search"
-        android:textColor="@color/text_primary"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="24dp"/>
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        app:cardElevation="0dp"
         app:cardCornerRadius="12dp"
         app:cardBackgroundColor="@color/background_dark">
 
@@ -31,8 +21,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_margin="16dp"
-            android:padding="12dp"
             android:background="@drawable/main_search_outline"
+            android:padding="12dp"
             android:elevation="2dp"
             android:gravity="center_vertical"
             android:clickable="true"
