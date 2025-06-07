@@ -250,11 +250,22 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
                 fullResults.addAll(products);
                 applyFilterAndSort();
                 binding.sortFilterContainer.setVisibility(View.VISIBLE);
+                
+                // Add toast when no results are found
+                if (products.isEmpty()) {
+                    Toast.makeText(SearchActivity.this, 
+                        "No items found matching '" + query + "'", 
+                        Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 android.util.Log.e(TAG, "Error searching products", e);
+                // Show a toast for search errors
+                Toast.makeText(SearchActivity.this, 
+                    "Error searching products. Please try again.", 
+                    Toast.LENGTH_SHORT).show();
             }
         });
     }
