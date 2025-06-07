@@ -22,6 +22,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Displays a list of products based on the selected category.
+ * Supports sorting (price/name) and navigating to product details.
+ */
 public class ListActivity extends BaseActivity<ActivityListBinding> {
     private static final String TAG = "ListActivity";
 
@@ -42,10 +46,8 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!setupTitleAndBackButton()) {
-            // Category was missing, so we already showed a toast and finished()
-            return;
-        }
+        // If category is missing, we cancel and show a toast
+        if (!setupTitleAndBackButton()) return;
 
         setupAdapter();
         loadProducts();
@@ -54,8 +56,9 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     }
 
     /**
-     * Reads "categoryID" from the Intent, capitalises it for display,
-     * sets up the back button, and returns false + finish() if missing.
+     * Gets category from intent and sets it as the page title.
+     * Also wires up the back button.
+     * Returns false if category is missing, in which case we finish the screen early.
      */
     private boolean setupTitleAndBackButton() {
         String rawCategory = getIntent().getStringExtra("categoryID");
@@ -72,7 +75,7 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     }
 
     /**
-     * Initialises the adapter, attaches it to the RecyclerView, and configures the item click listener.
+     * Sets up RecyclerView and adapter, plus click listener to open product details.
      */
     private void setupAdapter() {
         adapter = new ProductAdapter(this, productList);
@@ -82,10 +85,10 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
                 ErrorHandler.handleMissingDataError(this, "Product ID");
             } else {
                 NavigationUtils.navigateToActivity(
-                    ListActivity.this,
-                    DetailsActivity.class,
-                    "productId",
-                    productId
+                        ListActivity.this,
+                        DetailsActivity.class,
+                        "productId",
+                        productId
                 );
             }
         });
@@ -95,7 +98,8 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     }
 
     /**
-     * Fetches products from Firestore (by category) and refreshes the adapter.
+     * Loads all products for the given category from Firestore.
+     * Updates the adapter once data is loaded.
      */
     private void loadProducts() {
         String categoryID = getIntent().getStringExtra("categoryID");
@@ -116,8 +120,8 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     }
 
     /**
-     * Inflates the sort popup menu, looks up the selected option via SortOption enum,
-     * and applies the corresponding comparator.
+     * Shows a popup menu with sorting options (price, name).
+     * Uses the selected menu item to sort the list accordingly.
      */
     private void showSortMenu(View anchor) {
         PopupMenu popup = new PopupMenu(this, anchor);
@@ -136,13 +140,14 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
         popup.show();
     }
 
+    /** Utility for quick toasts, used for debugging or minor alerts. */
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     /**
-     * Enum to map menu item IDs to a Comparator for TableTennisProduct.
-     * This centralises all sorting logic in one place.
+     * Enum that maps popup menu items to sorting logic.
+     * Keeps all sorting behavior organized in one place.
      */
     private enum SortOption {
         PRICE_ASC(R.id.sort_price_asc, Comparator.comparingDouble(TableTennisProduct::getPrice)),

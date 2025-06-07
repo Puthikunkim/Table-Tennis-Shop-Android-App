@@ -8,12 +8,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
+/**
+ * A singleton class that manages Firestore operations for products, users, wishlist, and cart.
+ */
 public class FirestoreRepository {
     private static FirestoreRepository instance;
     private final FirebaseFirestore db;
@@ -22,6 +21,7 @@ public class FirestoreRepository {
         db = FirebaseFirestore.getInstance();
     }
 
+    // Singleton access point
     public static synchronized FirestoreRepository getInstance() {
         if (instance == null) {
             instance = new FirestoreRepository();
@@ -29,6 +29,7 @@ public class FirestoreRepository {
         return instance;
     }
 
+    // Callback interfaces
     public interface ProductsCallback {
         void onSuccess(List<TableTennisProduct> products);
         void onError(Exception e);
@@ -59,6 +60,9 @@ public class FirestoreRepository {
         void onError(Exception e);
     }
 
+    /**
+     * Fetches products that belong to a specific category.
+     */
     public void getProductsByCategory(String categoryId, ProductsCallback callback) {
         db.collection("products")
                 .whereEqualTo("categoryID", categoryId)
@@ -77,6 +81,9 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Performs a case-insensitive search on product name, description, and tags.
+     */
     public void searchProducts(String query, ProductsCallback callback) {
         db.collection("products")
                 .get()
@@ -105,20 +112,18 @@ public class FirestoreRepository {
     }
 
     /**
-     * Atomically increases the "views" field of the given product document by 1.
+     * Increments a product's view count by 1 in Firestore.
      */
     public void incrementProductViews(String productId) {
         db.collection("products")
                 .document(productId)
                 .update("views", FieldValue.increment(1))
-                .addOnSuccessListener(aVoid -> {
-                    // (optional) Log or callback if you care
-                })
-                .addOnFailureListener(e -> {
-                    // (optional) Handle the error if increment fails
-                    Log.e("FirestoreRepo", "Failed to increment views for " + productId, e);
-                });
+                .addOnFailureListener(e -> Log.e("FirestoreRepo", "Failed to increment views for " + productId, e));
     }
+
+    /**
+     * Gets full product details by ID.
+     */
     public void getProductById(String productId, ProductDetailCallback callback) {
         db.collection("products")
                 .document(productId)
@@ -139,6 +144,9 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Creates or updates a user profile document in Firestore.
+     */
     public void createUserProfile(String userId, Map<String, Object> userProfileData, UserProfileCallback callback) {
         db.collection("users")
                 .document(userId)
@@ -147,6 +155,9 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Adds a product to the user's wishlist.
+     */
     public void addProductToWishlist(String userId, TableTennisProduct product, WishlistOperationCallback callback) {
         if (product.getId() == null) {
             callback.onError(new IllegalArgumentException("Product ID cannot be null when adding to wishlist."));
@@ -160,6 +171,9 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Removes a product from the user's wishlist.
+     */
     public void removeProductFromWishlist(String userId, String productId, WishlistOperationCallback callback) {
         db.collection("users").document(userId)
                 .collection("wishlist")
@@ -169,6 +183,9 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Fetches all wishlist products for the given user.
+     */
     public void getWishlistProducts(String userId, WishlistProductsCallback callback) {
         db.collection("users").document(userId)
                 .collection("wishlist")
@@ -187,6 +204,9 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Checks if a specific product is in the user's wishlist.
+     */
     public void checkIfProductInWishlist(String userId, String productId, WishlistOperationCallback callback) {
         db.collection("users").document(userId)
                 .collection("wishlist")
@@ -202,6 +222,9 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Adds a product to the user's cart. If it exists, increments quantity.
+     */
     public void addToCart(String userId, TableTennisProduct product, int quantity, OperationCallback callback) {
         if (product.getId() == null) {
             callback.onError(new IllegalArgumentException("Product ID cannot be null when adding to cart."));
@@ -214,7 +237,6 @@ public class FirestoreRepository {
                 .get()
                 .addOnSuccessListener(docSnapshot -> {
                     if (docSnapshot.exists()) {
-                        // Already in cart: increment quantity
                         Long currentQty = docSnapshot.getLong("quantity");
                         int newQty = (currentQty != null ? currentQty.intValue() : 0) + quantity;
 
@@ -233,7 +255,7 @@ public class FirestoreRepository {
                                 });
 
                     } else {
-                        // Not in cart: add as new item
+                        // Not in cart: add new item
                         Map<String, Object> cartItem = new HashMap<>();
                         cartItem.put("product", product);
                         cartItem.put("quantity", quantity);
@@ -255,7 +277,9 @@ public class FirestoreRepository {
                 });
     }
 
-
+    /**
+     * Fetches all items in the user's cart, including quantities.
+     */
     public void getCartItems(String userId, ProductsCallback callback) {
         db.collection("users").document(userId)
                 .collection("cart")
@@ -267,7 +291,7 @@ public class FirestoreRepository {
                         Long qty = doc.getLong("quantity");
 
                         if (product != null) {
-                            product.setId(doc.getId()); // Optional: use Firestore doc ID
+                            product.setId(doc.getId());
                             product.setCartQuantity(qty != null ? qty.intValue() : 1);
                             cartItems.add(product);
                         }
@@ -277,6 +301,9 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Removes a specific product from the user's cart.
+     */
     public void removeFromCart(String userId, String productId, OperationCallback callback) {
         db.collection("users").document(userId)
                 .collection("cart")
@@ -290,6 +317,9 @@ public class FirestoreRepository {
                 });
     }
 
+    /**
+     * Returns the top N viewed products across the platform.
+     */
     public void getTopViewedProducts(int limit, ProductsCallback callback) {
         db.collection("products")
                 .orderBy("views", Query.Direction.DESCENDING)
@@ -307,6 +337,9 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Picks a random product from all available products.
+     */
     public void getRandomProduct(ProductDetailCallback callback) {
         db.collection("products")
                 .get()
@@ -329,6 +362,9 @@ public class FirestoreRepository {
                 .addOnFailureListener(callback::onError);
     }
 
+    /**
+     * Removes all items from the user's cart.
+     */
     public void clearCart(String userId, OperationCallback callback) {
         db.collection("users").document(userId)
                 .collection("cart")
@@ -344,6 +380,9 @@ public class FirestoreRepository {
                 });
     }
 
+    /**
+     * Removes all items from the user's wishlist.
+     */
     public void clearWishlist(String userId, OperationCallback callback) {
         db.collection("users").document(userId)
                 .collection("wishlist")
@@ -358,6 +397,4 @@ public class FirestoreRepository {
                     if (callback != null) callback.onError(e);
                 });
     }
-
-
 }

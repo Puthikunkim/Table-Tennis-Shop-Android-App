@@ -14,13 +14,21 @@ import com.example.app.R;
 
 import java.util.List;
 
+/**
+ * Adapter for displaying recommended products, such as in a "Top Picks" or "You might also like" section.
+ * Shows the product image, name, view count, and a heart icon for wishlist interaction.
+ */
 public class RecommendationsAdapter extends BaseProductAdapter<RecommendationsAdapter.ViewHolder> {
-    private static final String VIEWS_FORMAT = "%d views";
+
+    private static final String VIEWS_FORMAT = "%d views"; // Format string for view count
 
     public RecommendationsAdapter(Context context, List<TableTennisProduct> products) {
         super(context, products);
     }
 
+    /**
+     * Inflate the layout for a single recommendation item.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -29,25 +37,40 @@ public class RecommendationsAdapter extends BaseProductAdapter<RecommendationsAd
         return new ViewHolder(view);
     }
 
+    /**
+     * Bind a product to the given ViewHolder.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TableTennisProduct product = products.get(position);
         bindProductData(holder, product);
     }
 
+    /**
+     * Populates the ViewHolder with product info and sets up click/wishlist logic.
+     */
     private void bindProductData(ViewHolder holder, TableTennisProduct product) {
         holder.name.setText(product.getName());
         holder.views.setText(String.format(VIEWS_FORMAT, product.getViews()));
+
+        // Load the product's image
         loadProductImage(holder.image, product);
+
+        // Set up tap-to-view details
         setupProductClick(holder.itemView, product);
+
+        // Set up heart icon for wishlist toggling
         setupWishlistButton(holder.heartIcon, product);
     }
 
+    /**
+     * ViewHolder subclass holds all views for a single recommended product item.
+     */
     static class ViewHolder extends BaseViewHolder {
-        final ImageView image;
-        final TextView name;
-        final TextView views;
-        final ImageView heartIcon;
+        final ImageView image;      // Product image
+        final TextView name;        // Product name
+        final TextView views;       // View count
+        final ImageView heartIcon;  // Wishlist toggle icon
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);

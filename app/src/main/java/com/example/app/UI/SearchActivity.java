@@ -1,3 +1,6 @@
+// SearchActivity.java
+// Handles product search, filtering, sorting, and recent search management
+
 package com.example.app.UI;
 
 import android.content.Intent;
@@ -39,28 +42,34 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         implements RecentSearchAdapter.OnSearchClickListener {
 
+    // Constants for logging and preferences
     private static final String TAG = "SearchActivity";
     private static final String PREFS_NAME = "SearchPrefs";
     private static final String RECENT_SEARCHES_KEY = "recentSearches";
     private static final long DEBOUNCE_DELAY = 300;
 
+    // UI components
     private EditText searchEditText;
     private ImageButton clearButton;
     private RecyclerView recentSearchesRecyclerView;
     private TextView clearHistoryButton;
-    private RecentSearchAdapter recentSearchAdapter;
-
     private RecyclerView searchResultsRecyclerView;
+
+    // Adapters
+    private RecentSearchAdapter recentSearchAdapter;
     private ProductAdapter searchResultAdapter;
 
+    // Shared preferences and search logic
     private SharedPreferences prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final AtomicBoolean isProcessing = new AtomicBoolean(false);
     private Runnable pendingAction;
 
+    // Search results
     private final List<TableTennisProduct> fullResults = new ArrayList<>();
     private final List<TableTennisProduct> filteredResults = new ArrayList<>();
 
+    // Filter/sort settings
     private String selectedCategory = "all";
     private String sortField = "name";
     private boolean sortAscending = true;
@@ -87,14 +96,14 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
             loadRecentSearches();
             hideRecentSearchesContainer();
         } catch (Exception e) {
-            // In case of binding glitches, log but prevent crash
             android.util.Log.e(TAG, "Error in onCreate", e);
         }
 
-        // Sort & Filter buttons
+        // Sort & Filter menu setup
         binding.btnSort.setOnClickListener(this::showSortMenu);
         binding.btnFilter.setOnClickListener(this::showFilterMenu);
 
+        // If launched with query from MainActivity
         String initialQuery = getIntent().getStringExtra("searchQuery");
         boolean shouldFocus = getIntent().getBooleanExtra("auto_focus", false);
         if (initialQuery != null && !initialQuery.trim().isEmpty()) {
@@ -104,6 +113,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         }
     }
 
+    // Cache key UI references
     private void bindViews() {
         searchEditText = binding.searchEditText;
         clearButton = binding.clearButton;
@@ -113,12 +123,14 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
     }
 
+    // Recent search UI setup
     private void setupRecentSearchesList() {
         recentSearchAdapter = new RecentSearchAdapter(this);
         recentSearchesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         recentSearchesRecyclerView.setAdapter(recentSearchAdapter);
     }
 
+    // RecyclerView setup for displaying results
     private void setupSearchResultsList() {
         searchResultAdapter = new ProductAdapter(this, filteredResults);
         searchResultAdapter.setOnProductClickListener(product -> {
@@ -136,8 +148,8 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         searchResultsRecyclerView.setAdapter(searchResultAdapter);
     }
 
+    // Handles all interactive logic
     private void setupClickListeners() {
-        // Clear text button
         clearButton.setOnClickListener(v -> {
             searchEditText.setText("");
             filteredResults.clear();
@@ -146,17 +158,14 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
             showRecentSearchesContainer();
         });
 
-        // Clear history button (debounced)
         clearHistoryButton.setOnClickListener(v -> debounce(this::clearSearchHistory));
-
-        // Tapping outside search field hides recent-searches
         binding.getRoot().setOnClickListener(v -> hideRecentSearchesContainer());
         searchEditText.setOnClickListener(v -> showRecentSearchesContainer());
 
-        // "Search" action on keyboard
+        // IME Action
         searchEditText.setOnEditorActionListener((v, actionId, event) -> {
-            boolean isSearchAction = actionId == EditorInfo.IME_ACTION_SEARCH
-                    || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER);
+            boolean isSearchAction = actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER);
             if (isSearchAction) {
                 String queryText = searchEditText.getText().toString().trim();
                 if (!queryText.isEmpty()) {
@@ -171,10 +180,10 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
             return false;
         });
 
-        // Live-search as user types (debounced)
+        // Live text change (debounced)
         searchEditText.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -290,22 +299,13 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         PopupMenu popup = new PopupMenu(this, anchor);
         popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
 
-        // Use if/else instead of switch to avoid "constant expression required"
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int id = item.getItemId();
-                if (id == R.id.sort_price_asc) {
-                    sortList("price", true);
-                } else if (id == R.id.sort_price_desc) {
-                    sortList("price", false);
-                } else if (id == R.id.sort_name_asc) {
-                    sortList("name", true);
-                } else if (id == R.id.sort_name_desc) {
-                    sortList("name", false);
-                }
-                return true;
-            }
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.sort_price_asc) sortList("price", true);
+            else if (id == R.id.sort_price_desc) sortList("price", false);
+            else if (id == R.id.sort_name_asc) sortList("name", true);
+            else if (id == R.id.sort_name_desc) sortList("name", false);
+            return true;
         });
 
         popup.show();
@@ -315,22 +315,14 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         PopupMenu popup = new PopupMenu(this, anchor);
         popup.getMenuInflater().inflate(R.menu.menu_filter, popup.getMenu());
 
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int id = item.getItemId();
-                if (id == R.id.filter_all) {
-                    selectedCategory = "all";
-                } else if (id == R.id.filter_bats) {
-                    selectedCategory = "bats";
-                } else if (id == R.id.filter_balls) {
-                    selectedCategory = "balls";
-                } else if (id == R.id.filter_tables) {
-                    selectedCategory = "tables";
-                }
-                applyFilterAndSort();
-                return true;
-            }
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.filter_all) selectedCategory = "all";
+            else if (id == R.id.filter_bats) selectedCategory = "bats";
+            else if (id == R.id.filter_balls) selectedCategory = "balls";
+            else if (id == R.id.filter_tables) selectedCategory = "tables";
+            applyFilterAndSort();
+            return true;
         });
 
         popup.show();
@@ -349,8 +341,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         searchEditText.requestFocus();
         showRecentSearchesContainer();
         searchEditText.post(() -> {
-            InputMethodManager imm =
-                    (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
             }

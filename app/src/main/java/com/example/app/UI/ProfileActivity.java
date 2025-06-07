@@ -19,6 +19,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Profile screen handles:
+ * - Logged-in/logged-out UI states
+ * - Sign in / Sign up / Sign out flows
+ * - Showing cart and wishlist summaries
+ * - Navigation to Cart and Wishlist screens
+ */
 public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     private static final String TAG = "ProfileActivity";
 
@@ -42,17 +49,20 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         authManager = AuthManager.getInstance(this);
         firestoreRepository = FirestoreRepository.getInstance();
 
-        setupButtonListeners();
-        setupCartButtons();
-        setupWishlistButtons();
+        setupButtonListeners();     // Auth + form actions
+        setupCartButtons();         // View / Clear Cart
+        setupWishlistButtons();     // View / Clear Wishlist
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        updateUI(authManager.getCurrentUser());
+        updateUI(authManager.getCurrentUser());  // Reflect logged-in state
     }
 
+    // === UI Setup Methods ===
+
+    /** All main button listeners for auth and form transitions */
     private void setupButtonListeners() {
         binding.buttonSignIn.setOnClickListener(v -> showSignInForm());
         binding.buttonCreateAccount.setOnClickListener(v -> showCreateForm());
@@ -63,40 +73,45 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.buttonSignOut.setOnClickListener(v -> handleSignOut());
     }
 
+    /** Shows the sign-in form and hides other sections */
     private void showSignInForm() {
         UIStateManager.showViewAndHideOthers(
-            (ViewGroup) binding.getRoot(),
-            binding.signInForm
+                (ViewGroup) binding.getRoot(),
+                binding.signInForm
         );
     }
 
+    /** Shows the create account form and hides others */
     private void showCreateForm() {
         UIStateManager.showViewAndHideOthers(
-            (ViewGroup) binding.getRoot(),
-            binding.createAccountForm
+                (ViewGroup) binding.getRoot(),
+                binding.createAccountForm
         );
     }
 
+    /** Returns to main logged-out screen from sign-in */
     private void returnToLoggedOutFromSignIn() {
         UIStateManager.showViewAndHideOthers(
-            (ViewGroup) binding.getRoot(),
-            binding.mainContentLoggedOut
+                (ViewGroup) binding.getRoot(),
+                binding.mainContentLoggedOut
         );
         clearSignInForm();
     }
 
+    /** Returns to main logged-out screen from create-account */
     private void returnToLoggedOutFromCreate() {
         UIStateManager.showViewAndHideOthers(
-            (ViewGroup) binding.getRoot(),
-            binding.mainContentLoggedOut
+                (ViewGroup) binding.getRoot(),
+                binding.mainContentLoggedOut
         );
         clearCreateAccountForm();
     }
 
+    /** Shows the logged-in view and pulls cart/wishlist data */
     private void showLoggedInState(FirebaseUser user) {
         UIStateManager.showViewAndHideOthers(
-            (ViewGroup) binding.getRoot(),
-            binding.mainContentLoggedIn
+                (ViewGroup) binding.getRoot(),
+                binding.mainContentLoggedIn
         );
 
         String displayName = (user.getDisplayName() != null) ? user.getDisplayName() : "User";
@@ -107,13 +122,15 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         fetchWishlistSummary(user.getUid());
     }
 
+    /** Shows the guest view for signed-out users */
     private void showLoggedOutState() {
         UIStateManager.showViewAndHideOthers(
-            (ViewGroup) binding.getRoot(),
-            binding.mainContentLoggedOut
+                (ViewGroup) binding.getRoot(),
+                binding.mainContentLoggedOut
         );
     }
 
+    /** Updates profile screen based on current user state */
     private void updateUI(@Nullable FirebaseUser user) {
         if (user != null) {
             showLoggedInState(user);
@@ -122,6 +139,9 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         }
     }
 
+    // === Auth Handlers ===
+
+    /** Attempts sign-in and shows result */
     private void handleSignIn() {
         String email = binding.inputSignInEmail.getText().toString().trim();
         String password = binding.inputSignInPassword.getText().toString().trim();
@@ -131,7 +151,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             public void onSuccess(FirebaseUser user) {
                 updateUI(user);
                 ErrorHandler.showUserError(ProfileActivity.this,
-                    "Signed in as: " + (user != null ? user.getEmail() : ""));
+                        "Signed in as: " + (user != null ? user.getEmail() : ""));
                 clearSignInForm();
             }
 
@@ -143,6 +163,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         });
     }
 
+    /** Attempts account creation, saves profile to Firestore */
     private void handleCreateAccount() {
         String email = binding.inputEmail.getText().toString().trim();
         String password = binding.inputCreatePassword.getText().toString().trim();
@@ -162,7 +183,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
                         public void onSuccess() {
                             Log.d(TAG, "User profile created in Firestore");
                             ErrorHandler.showUserError(ProfileActivity.this,
-                                "Account created and signed in as: " + name);
+                                    "Account created and signed in as: " + name);
                             clearCreateAccountForm();
                             updateUI(user);
                         }
@@ -185,6 +206,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         });
     }
 
+    /** Signs the user out and updates UI */
     private void handleSignOut() {
         authManager.signOut();
         updateUI(null);
@@ -202,9 +224,12 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.inputCreatePassword.setText("");
     }
 
+    // === Cart/Wishlist Button Logic ===
+
+    /** Hooks up cart-related button listeners */
     private void setupCartButtons() {
-        binding.btnViewCart.setOnClickListener(v -> 
-            NavigationUtils.navigateToActivity(this, CartActivity.class)
+        binding.btnViewCart.setOnClickListener(v ->
+                NavigationUtils.navigateToActivity(this, CartActivity.class)
         );
 
         binding.btnClearCart.setOnClickListener(v -> {
@@ -226,9 +251,10 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         });
     }
 
+    /** Hooks up wishlist-related button listeners */
     private void setupWishlistButtons() {
-        binding.btnViewWishlist.setOnClickListener(v -> 
-            NavigationUtils.navigateToActivity(this, WishListActivity.class)
+        binding.btnViewWishlist.setOnClickListener(v ->
+                NavigationUtils.navigateToActivity(this, WishListActivity.class)
         );
 
         binding.btnClearWishlist.setOnClickListener(v -> {
@@ -250,6 +276,9 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         });
     }
 
+    // === Data Fetchers ===
+
+    /** Shows cart item count summary (e.g. "You have 3 items in your cart.") */
     private void fetchCartSummary(String userId) {
         firestoreRepository.getCartItems(userId, new FirestoreRepository.ProductsCallback() {
             @Override
@@ -274,6 +303,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         });
     }
 
+    /** Shows wishlist item count summary (e.g. "You have 2 items in your wishlist.") */
     private void fetchWishlistSummary(String userId) {
         firestoreRepository.getWishlistProducts(userId, new FirestoreRepository.WishlistProductsCallback() {
             @Override

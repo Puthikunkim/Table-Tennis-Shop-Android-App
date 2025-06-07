@@ -19,8 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Adapter for displaying cart items in a ListView.
+ * Supports incrementing, decrementing, and removing items with debounced Firestore updates.
+ */
 public class CartAdapter extends BaseAdapter {
-    private static final long DEBOUNCE_DELAY = 500; // 500ms debounce
+    private static final long DEBOUNCE_DELAY = 500; // 500ms debounce for batch-like updates
     private static final String CURRENCY_FORMAT = "$%.2f";
 
     private final Context context;
@@ -30,7 +34,7 @@ public class CartAdapter extends BaseAdapter {
     private final String userId;
     private final Runnable onCartChanged;
     private final Handler handler;
-    private final Map<String, Runnable> pendingUpdates;
+    private final Map<String, Runnable> pendingUpdates; // Stores pending quantity updates for debounce
 
     public CartAdapter(Context context, List<TableTennisProduct> cartItems, String userId, Runnable onCartChanged) {
         this.context = context;
@@ -58,6 +62,9 @@ public class CartAdapter extends BaseAdapter {
         return position;
     }
 
+    /**
+     * Inflates and binds each cart item view
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
@@ -75,32 +82,43 @@ public class CartAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * Binds product data and click listeners to the view components.
+     */
     private void bindViewHolder(ViewHolder holder, TableTennisProduct product, int position) {
         holder.productName.setText(product.getName());
         holder.productPrice.setText(String.format(CURRENCY_FORMAT, product.getPrice()));
         holder.quantityText.setText(String.valueOf(product.getCartQuantity()));
         holder.totalPrice.setText(String.format(CURRENCY_FORMAT, product.getCartQuantity() * product.getPrice()));
 
+        // Load image if available
         if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
             ImageLoader.loadProductImage(context, holder.productImage, product.getImageUrls().get(0));
         }
 
+        // Set up buttons and click behavior
         setupIncrementButton(holder, product);
         setupDecrementButton(holder, product, position);
         setupDeleteButton(holder, product, position);
         setupProductClick(holder.itemView, product);
     }
 
+    /**
+     * Increments product quantity and schedules a Firestore update.
+     */
     private void setupIncrementButton(ViewHolder holder, TableTennisProduct product) {
         holder.incrementButton.setOnClickListener(v -> {
             int newQty = product.getCartQuantity() + 1;
             product.setCartQuantity(newQty);
-            notifyDataSetChanged();
-            onCartChanged.run();
+            notifyDataSetChanged();         // Refresh UI
+            onCartChanged.run();            // Notify parent (e.g., update total)
             scheduleDebouncedCartUpdate(product, 1);
         });
     }
 
+    /**
+     * Decrements product quantity or removes it if quantity == 1.
+     */
     private void setupDecrementButton(ViewHolder holder, TableTennisProduct product, int position) {
         holder.decrementButton.setOnClickListener(v -> {
             int currentQty = product.getCartQuantity();
@@ -111,15 +129,21 @@ public class CartAdapter extends BaseAdapter {
                 onCartChanged.run();
                 scheduleDebouncedCartUpdate(product, -1);
             } else {
-                removeItemFromCart(product, position);
+                removeItemFromCart(product, position); // Remove item if quantity drops to 0
             }
         });
     }
 
+    /**
+     * Deletes product from Firestore and removes it locally from the list.
+     */
     private void setupDeleteButton(ViewHolder holder, TableTennisProduct product, int position) {
         holder.deleteButton.setOnClickListener(v -> removeItemFromCart(product, position));
     }
 
+    /**
+     * Navigates to DetailsActivity when the product is clicked.
+     */
     private void setupProductClick(View itemView, TableTennisProduct product) {
         itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailsActivity.class);
@@ -128,6 +152,9 @@ public class CartAdapter extends BaseAdapter {
         });
     }
 
+    /**
+     * Remove the item from the cart both in Firestore and the local list.
+     */
     private void removeItemFromCart(TableTennisProduct product, int position) {
         repo.removeFromCart(userId, product.getId(), new FirestoreRepository.OperationCallback() {
             @Override
@@ -147,10 +174,13 @@ public class CartAdapter extends BaseAdapter {
         });
     }
 
+    /**
+     * Debounce Firestore updates when quantity is changed to avoid rapid network calls.
+     */
     private void scheduleDebouncedCartUpdate(TableTennisProduct product, int deltaQty) {
         Runnable previous = pendingUpdates.get(product.getId());
         if (previous != null) {
-            handler.removeCallbacks(previous);
+            handler.removeCallbacks(previous); // Cancel previous pending update if any
         }
 
         Runnable updateTask = () -> {
@@ -162,6 +192,9 @@ public class CartAdapter extends BaseAdapter {
         handler.postDelayed(updateTask, DEBOUNCE_DELAY);
     }
 
+    /**
+     * ViewHolder pattern to cache view references for performance.
+     */
     static class ViewHolder {
         final View itemView;
         final ImageView productImage;
