@@ -17,6 +17,8 @@ import com.example.app.Adapters.ImageSliderAdapter;
 import com.example.app.Adapters.RecommendationsAdapter;
 import com.example.app.Util.AnimationUtils;
 import com.example.app.databinding.ActivityDetailsBinding;
+import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -294,6 +296,10 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     private void setupImageSlider(List<String> imageUrls) {
         ImageSliderAdapter sliderAdapter = new ImageSliderAdapter(imageUrls);
         binding.viewPagerImages.setAdapter(sliderAdapter);
+
+        new TabLayoutMediator(binding.tabLayoutDots, binding.viewPagerImages,
+                (tab, position) -> tab.setCustomView(R.layout.custom_tab_dot)
+        ).attach();
 
         binding.btnPrev.setOnClickListener(v -> {
             int prevIndex = binding.viewPagerImages.getCurrentItem() - 1;
