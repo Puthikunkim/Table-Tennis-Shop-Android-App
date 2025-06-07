@@ -11,7 +11,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/dark_to_light_gradient"> <!-- ✅ gradient is OK here -->
+        android:background="@drawable/dark_to_light_gradient">
 
         <ImageView
             android:id="@+id/logoImageView"
@@ -39,5 +39,5 @@
         app:menu="@menu/menu_navigation"
         app:labelVisibilityMode="unlabeled"
         app:itemIconTint="@color/text_primary"
-        android:background="@drawable/dark_to_light_gradient" /> <!-- ✅ only background is gradient -->
+        android:background="@drawable/dark_to_light_gradient" />
 </LinearLayout>
