@@ -8,11 +8,15 @@ import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
-import com.example.app.adapters.TableTennisAdapter;
+import com.example.app.Adapters.ProductAdapter;
 import com.example.app.databinding.ActivityListBinding;
+import com.example.app.Util.ErrorHandler;
+import com.example.app.Util.NavigationUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,7 +26,7 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     private static final String TAG = "ListActivity";
 
     private final List<TableTennisProduct> productList = new ArrayList<>();
-    private TableTennisAdapter adapter;
+    private ProductAdapter adapter;
 
     @Override
     protected ActivityListBinding inflateContentBinding() {
@@ -56,7 +60,7 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     private boolean setupTitleAndBackButton() {
         String rawCategory = getIntent().getStringExtra("categoryID");
         if (TextUtils.isEmpty(rawCategory)) {
-            showToast("Category not specified");
+            ErrorHandler.handleMissingDataError(this, "Category");
             finish();
             return false;
         }
@@ -68,23 +72,26 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     }
 
     /**
-     * Initialises the adapter, attaches it to the ListView, and configures the item click listener.
+     * Initialises the adapter, attaches it to the RecyclerView, and configures the item click listener.
      */
     private void setupAdapter() {
-        adapter = new TableTennisAdapter(this, R.layout.list_item_product, productList);
-        binding.list.setAdapter(adapter);
-
-        binding.list.setOnItemClickListener((parent, view, position, id) -> {
-            TableTennisProduct selected = productList.get(position);
-            String productId = selected.getId();
+        adapter = new ProductAdapter(this, productList);
+        adapter.setOnProductClickListener(product -> {
+            String productId = product.getId();
             if (TextUtils.isEmpty(productId)) {
-                showToast("Missing product ID");
+                ErrorHandler.handleMissingDataError(this, "Product ID");
             } else {
-                Intent intent = new Intent(ListActivity.this, DetailsActivity.class)
-                        .putExtra("productId", productId);
-                startActivity(intent);
+                NavigationUtils.navigateToActivity(
+                    ListActivity.this,
+                    DetailsActivity.class,
+                    "productId",
+                    productId
+                );
             }
         });
+
+        binding.list.setLayoutManager(new LinearLayoutManager(this));
+        binding.list.setAdapter(adapter);
     }
 
     /**
@@ -103,8 +110,7 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
 
                     @Override
                     public void onError(Exception e) {
-                        Log.e(TAG, "Failed to load products for category: " + categoryID, e);
-                        showToast("Failed to load products");
+                        ErrorHandler.handleFirestoreError(ListActivity.this, "load products", e);
                     }
                 });
     }

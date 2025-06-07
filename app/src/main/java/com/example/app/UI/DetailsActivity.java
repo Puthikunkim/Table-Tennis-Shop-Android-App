@@ -9,11 +9,13 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.app.Auth.AuthManager;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
-import com.example.app.adapters.ImageSliderAdapter;
-import com.example.app.adapters.TopPicksAdapter;
+import com.example.app.Adapters.ImageSliderAdapter;
+import com.example.app.Adapters.RecommendationsAdapter;
+import com.example.app.Util.AnimationUtils;
 import com.example.app.databinding.ActivityDetailsBinding;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +32,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     private static final String TAG = "DetailsActivity";
     private static final long ANIMATION_DURATION = 120;
 
-    private FirebaseAuth mAuth;
+    private AuthManager authManager;
     private FirestoreRepository firestoreRepository;
 
     private String productId;
@@ -38,7 +40,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     private boolean isWishlisted;
     private int quantity = 1;
 
-    private TopPicksAdapter recommendationsAdapter;
+    private RecommendationsAdapter recommendationsAdapter;
 
     @Override
     protected ActivityDetailsBinding inflateContentBinding() {
@@ -54,8 +56,8 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize FirebaseAuth and FirestoreRepository
-        mAuth = FirebaseAuth.getInstance();
+        // Initialize AuthManager and FirestoreRepository
+        authManager = AuthManager.getInstance(this);
         firestoreRepository = FirestoreRepository.getInstance();
 
         // Obtain productId from Intent extras
@@ -107,8 +109,8 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     /** Sets up the "Favorite" button click listener with animation and toggle logic. */
     private void setupFavoriteButton() {
         binding.btnFavorite.setOnClickListener(v ->
-                animateButton(v, () -> {
-                    FirebaseUser user = mAuth.getCurrentUser();
+                AnimationUtils.animateButton(v, () -> {
+                    FirebaseUser user = authManager.getCurrentUser();
                     if (user == null) {
                         Toast.makeText(this,
                                 "Please sign in to add items to your wishlist.",
@@ -176,7 +178,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
 
     /** Updates the wishlist icon based on whether the current product is wishlisted. */
     private void updateWishlistIcon() {
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser user = authManager.getCurrentUser();
         if (user == null || currentProduct == null) {
             binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
             isWishlisted = false;
@@ -201,12 +203,12 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     /** Sets up the "Add to Cart" button listener with animation and repository call. */
     private void setupAddToCartButton() {
         binding.btnAddToCart.setOnClickListener(v ->
-                animateButton(v, () -> {
+                AnimationUtils.animateButton(v, () -> {
                     if (currentProduct == null) {
                         Toast.makeText(this, "Product not loaded yet", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    FirebaseUser user = mAuth.getCurrentUser();
+                    FirebaseUser user = authManager.getCurrentUser();
                     if (user == null) {
                         Toast.makeText(this, "Please sign in to add to cart", Toast.LENGTH_SHORT).show();
                         return;
@@ -227,27 +229,6 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                             });
                 })
         );
-    }
-
-    /**
-     * Applies a scale animation to the provided view, then runs the given action.
-     * @param v The view to animate.
-     * @param afterAnimation The action to run after the scaling animation completes.
-     */
-    private void animateButton(View v, Runnable afterAnimation) {
-        v.animate()
-                .scaleX(1.15f)
-                .scaleY(1.15f)
-                .setDuration(ANIMATION_DURATION)
-                .withEndAction(() -> {
-                    v.animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .setDuration(ANIMATION_DURATION)
-                            .withEndAction(afterAnimation)
-                            .start();
-                })
-                .start();
     }
 
     /**
@@ -363,7 +344,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 );
                 binding.rvRecommendations.setLayoutManager(llm);
 
-                recommendationsAdapter = new TopPicksAdapter(DetailsActivity.this, filtered);
+                recommendationsAdapter = new RecommendationsAdapter(DetailsActivity.this, filtered);
                 recommendationsAdapter.setOnProductClickListener(clickedProduct -> {
                     Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
                     intent.putExtra("productId", clickedProduct.getId());
