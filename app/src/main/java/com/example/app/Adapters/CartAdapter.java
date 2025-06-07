@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,6 +153,19 @@ public class CartAdapter extends BaseAdapter {
         });
     }
 
+    private void showCustomToast(String message) {
+        View layout = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
+        
+        TextView text = layout.findViewById(R.id.toast_text);
+        text.setText(message);
+        
+        Toast toast = new Toast(context.getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(layout);
+        toast.show();
+    }
+
     /**
      * Remove the item from the cart both in Firestore and the local list.
      */
@@ -163,13 +177,13 @@ public class CartAdapter extends BaseAdapter {
                 notifyDataSetChanged();
                 onCartChanged.run();
                 if (position == 0) {
-                    Toast.makeText(context, "Item removed from cart", Toast.LENGTH_SHORT).show();
+                    showCustomToast("Item removed from cart");
                 }
             }
 
             @Override
             public void onError(Exception e) {
-                Toast.makeText(context, "Failed to remove item", Toast.LENGTH_SHORT).show();
+                showCustomToast("Failed to remove item: " + e.getMessage());
             }
         });
     }
