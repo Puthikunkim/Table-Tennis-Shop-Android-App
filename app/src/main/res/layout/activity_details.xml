@@ -75,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginStart="16dp"
+                android:layout_gravity="center_horizontal"
                 android:background="@android:color/transparent"
                 app:tabGravity="center"
                 app:tabIndicatorFullWidth="false"
@@ -83,9 +83,7 @@
                 app:tabMode="fixed"
                 app:tabRippleColor="@null"
                 app:tabSelectedTextColor="@android:color/transparent"
-                app:tabTextColor="@android:color/transparent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:tabTextColor="@android:color/transparent" />
 
             <LinearLayout
                 android:layout_marginTop="16dp"
