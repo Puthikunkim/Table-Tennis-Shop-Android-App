@@ -28,7 +28,8 @@
             android:orientation="vertical"
             android:gravity="center"
             android:padding="24dp"
-            android:background="#1E1E1E"
+            android:background="@drawable/rounded_card_background"
+            android:backgroundTint="@color/card_background"
             android:elevation="4dp"
             android:visibility="visible">
 
@@ -70,7 +71,8 @@
             android:orientation="vertical"
             android:gravity="center"
             android:padding="24dp"
-            android:background="#1E1E1E"
+            android:background="@drawable/rounded_card_background"
+            android:backgroundTint="@color/card_background"
             android:elevation="4dp"
             android:visibility="gone">
 
@@ -103,7 +105,7 @@
                     android:layout_marginBottom="24dp"
                     android:layout_marginTop="8dp"
                     android:elevation="2dp"
-                    android:backgroundTint="@color/card_background"
+                    android:backgroundTint="#2A2A2A"
                     android:layout_marginHorizontal="0dp">
 
                         <!-- Top row: title and clear button -->
@@ -172,7 +174,7 @@
                     android:layout_marginBottom="24dp"
                     android:layout_marginTop="8dp"
                     android:elevation="2dp"
-                    android:backgroundTint="@color/card_background"
+                    android:backgroundTint="#2A2A2A"
                     android:layout_marginHorizontal="0dp">
 
                         <!-- Top row: title and clear button -->
@@ -248,7 +250,8 @@
             android:orientation="vertical"
             android:visibility="gone"
             android:padding="24dp"
-            android:background="#1E1E1E"
+            android:background="@drawable/rounded_card_background"
+            android:backgroundTint="@color/card_background"
             android:elevation="8dp">
 
                 <TextView
@@ -310,7 +313,7 @@
                     android:layout_height="wrap_content"
                     android:text="Cancel"
                     android:layout_marginTop="4dp"
-                    android:backgroundTint="#333333"
+                    android:backgroundTint="@color/profile_red"
                     android:textColor="#FFFFFF" />
         </LinearLayout>
 
@@ -323,7 +326,8 @@
             android:orientation="vertical"
             android:visibility="gone"
             android:padding="24dp"
-            android:background="#1E1E1E"
+            android:background="@drawable/rounded_card_background"
+            android:backgroundTint="@color/card_background"
             android:elevation="8dp">
 
                 <TextView
@@ -403,7 +407,7 @@
                     android:layout_height="wrap_content"
                     android:text="Cancel"
                     android:layout_marginTop="4dp"
-                    android:backgroundTint="#333333"
+                    android:backgroundTint="@color/profile_red"
                     android:textColor="#FFFFFF" />
         </LinearLayout>
 </FrameLayout>
