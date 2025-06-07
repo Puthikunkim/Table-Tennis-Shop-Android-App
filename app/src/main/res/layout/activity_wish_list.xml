@@ -23,12 +23,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:visibility="gone"/> <androidx.recyclerview.widget.RecyclerView
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewWishlist"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:visibility="gone" /> <include
+        android:visibility="gone" />
+
+    <include
         android:id="@+id/emptyWishlist"
         layout="@layout/layout_empty_wishlist"
         android:layout_width="match_parent"
