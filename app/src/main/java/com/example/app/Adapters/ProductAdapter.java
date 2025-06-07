@@ -22,17 +22,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Adapter used to display product items in a RecyclerView (e.g., search or home screen).
+ * Supports showing product info and letting users toggle wishlist state.
+ */
 public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder> {
-    private final Set<String> wishlistIds;
+
+    private final Set<String> wishlistIds; // Tracks which products are in the wishlist
     private FirebaseUser user;
 
     public ProductAdapter(Context context, List<TableTennisProduct> products) {
         super(context, products);
         this.wishlistIds = new HashSet<>();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
-        loadWishlistItems();
+        loadWishlistItems(); // Preload wishlist IDs to show correct heart icons
     }
 
+    /**
+     * Loads the user's wishlist items from Firestore and stores their IDs locally.
+     */
     private void loadWishlistItems() {
         if (user != null) {
             firestoreRepository.getWishlistProducts(user.getUid(), new FirestoreRepository.WishlistProductsCallback() {
@@ -44,17 +52,20 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
                             wishlistIds.add(item.getId());
                         }
                     }
-                    notifyDataSetChanged();
+                    notifyDataSetChanged(); // Refresh UI once data is loaded
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    // Silent fail - we'll show the default state
+                    // Fail silently – show default state
                 }
             });
         }
     }
 
+    /**
+     * Inflate and return a new ViewHolder for a product item.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -62,6 +73,9 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
+    /**
+     * Bind a product's data and behavior to the given ViewHolder.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TableTennisProduct product = products.get(position);
@@ -69,6 +83,9 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
         setupWishlistButton(holder, product);
     }
 
+    /**
+     * Populates the ViewHolder with product name, description, price, and image.
+     */
     private void bindProductData(ViewHolder holder, TableTennisProduct product) {
         holder.productName.setText(product.getName());
         holder.productDescription.setText(product.getDescription());
@@ -77,6 +94,9 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
         setupProductClick(holder.itemView, product);
     }
 
+    /**
+     * Sets the heart icon state and sets up click listener for wishlist toggling.
+     */
     private void setupWishlistButton(ViewHolder holder, TableTennisProduct product) {
         boolean isInWishlist = product.getId() != null && wishlistIds.contains(product.getId());
         holder.btnWishlist.setImageResource(
@@ -86,6 +106,10 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
         holder.btnWishlist.setOnClickListener(v -> handleWishlistClick(v, product));
     }
 
+    /**
+     * Handles when a user taps the heart icon (with animation).
+     * If logged out, they are prompted to sign in.
+     */
     private void handleWishlistClick(View view, TableTennisProduct product) {
         animateWishlistButton(view, () -> {
             if (user == null) {
@@ -100,6 +124,9 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
         });
     }
 
+    /**
+     * Quick scale animation for visual feedback when tapping the heart icon.
+     */
     private void animateWishlistButton(View view, Runnable onAnimationComplete) {
         view.animate()
                 .scaleX(1.4f)
@@ -115,12 +142,18 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
                 }).start();
     }
 
+    /**
+     * Redirects the user to the profile screen to sign in if they're not authenticated.
+     */
     private void promptUserToSignIn() {
         Toast.makeText(context, "Please sign in to add items to your wishlist", Toast.LENGTH_SHORT).show();
         Intent signInIntent = new Intent(context, ProfileActivity.class);
         context.startActivity(signInIntent);
     }
 
+    /**
+     * Toggles the wishlist state for a product depending on whether it's already saved.
+     */
     private void toggleWishlistState(TableTennisProduct product, boolean currentlyIn) {
         if (currentlyIn) {
             removeFromWishlist(product);
@@ -129,42 +162,54 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
         }
     }
 
+    /**
+     * Adds the given product to the user's wishlist in Firestore and updates UI.
+     */
     private void addToWishlist(TableTennisProduct product) {
         firestoreRepository.addProductToWishlist(user.getUid(), product, new FirestoreRepository.WishlistOperationCallback() {
             @Override
             public void onSuccess() {
                 wishlistIds.add(product.getId());
-                notifyDataSetChanged();
+                notifyDataSetChanged(); // Update heart icon
             }
 
             @Override
             public void onError(Exception e) {
-                // Silent fail - we'll keep the current state
+                // Silent fail – state will remain unchanged
             }
         });
     }
 
+    /**
+     * Removes the given product from the user's wishlist in Firestore and updates UI.
+     */
     private void removeFromWishlist(TableTennisProduct product) {
         firestoreRepository.removeProductFromWishlist(user.getUid(), product.getId(), new FirestoreRepository.WishlistOperationCallback() {
             @Override
             public void onSuccess() {
                 wishlistIds.remove(product.getId());
-                notifyDataSetChanged();
+                notifyDataSetChanged(); // Update heart icon
             }
 
             @Override
             public void onError(Exception e) {
-                // Silent fail - we'll keep the current state
+                // Silent fail – state will remain unchanged
             }
         });
     }
 
+    /**
+     * Replaces the current product list with a new one and refreshes the adapter.
+     */
     public void setProducts(List<TableTennisProduct> newProducts) {
         products.clear();
         products.addAll(newProducts);
         notifyDataSetChanged();
     }
 
+    /**
+     * ViewHolder subclass that holds references to the product item views.
+     */
     static class ViewHolder extends BaseViewHolder {
         final TextView productDescription;
         final ImageButton btnWishlist;
@@ -178,4 +223,4 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
             btnWishlist = itemView.findViewById(R.id.btnWishlist);
         }
     }
-} 
+}
