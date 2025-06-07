@@ -7,6 +7,10 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -73,6 +77,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     /** Navigates to ListActivity with the selected category ID. */
     private void openListActivity(String categoryID) {
+        if (categoryID == null || categoryID.isEmpty()) {
+            showCustomToast("Invalid category selected");
+            return;
+        }
         NavigationUtils.navigateToActivity(
                 this,
                 ListActivity.class,
@@ -121,7 +129,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
                     @Override
                     public void onError(Exception e) {
-                        ErrorHandler.handleFirestoreError(MainActivity.this, "load top picks", e);
+                        showCustomToast("Failed to load top picks: " + e.getMessage());
+                        Log.e(TAG, "Error loading top picks", e);
                     }
                 });
     }
@@ -136,13 +145,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         FirestoreRepository.getInstance().getRandomProduct(new FirestoreRepository.ProductDetailCallback() {
             @Override
             public void onSuccess(TableTennisProduct product) {
+                if (product == null) {
+                    showCustomToast("No featured products available");
+                    return;
+                }
                 cachedFeaturedProduct = product;
                 updateFeaturedUI(product);
             }
 
             @Override
             public void onError(Exception e) {
-                ErrorHandler.handleFirestoreError(MainActivity.this, "load featured product", e);
+                showCustomToast("Failed to load featured product: " + e.getMessage());
+                Log.e(TAG, "Error loading featured product", e);
             }
         });
     }
@@ -194,14 +208,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     /** Reads the search text and navigates to the Search screen. */
     private void performSearchFromEditText(EditText searchEditText) {
         String query = searchEditText.getText().toString().trim();
-        if (!query.isEmpty()) {
-            NavigationUtils.navigateToActivity(
-                    MainActivity.this,
-                    SearchActivity.class,
-                    "searchQuery",
-                    query
-            );
+        if (query.isEmpty()) {
+            showCustomToast("Please enter a search term");
+            return;
         }
+        NavigationUtils.navigateToActivity(
+                MainActivity.this,
+                SearchActivity.class,
+                "searchQuery",
+                query
+        );
     }
 
     /** Sets up click animations for category cards (bats, balls, tables). */
@@ -216,5 +232,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         cardView.setOnClickListener(v ->
                 AnimationUtils.animateButton(v, onClickAction)
         );
+    }
+
+    private void showCustomToast(String message) {
+        View layout = getLayoutInflater().inflate(R.layout.custom_toast, null);
+        
+        TextView text = layout.findViewById(R.id.toast_text);
+        text.setText(message);
+        
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(layout);
+        toast.show();
     }
 }

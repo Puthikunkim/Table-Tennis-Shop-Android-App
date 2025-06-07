@@ -3,7 +3,10 @@ package com.example.app.UI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -63,7 +66,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         // Get product ID from intent
         productId = getIntent().getStringExtra("productId");
         if (productId == null) {
-            Toast.makeText(this, "Product not specified.", Toast.LENGTH_SHORT).show();
+            showCustomToast("Product not specified.");
             finish();
             return;
         }
@@ -105,22 +108,32 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         }
     }
 
+    /** Shows a custom toast with the specified message. */
+    private void showCustomToast(String message) {
+        View layout = getLayoutInflater().inflate(R.layout.custom_toast, null);
+        
+        TextView text = layout.findViewById(R.id.toast_text);
+        text.setText(message);
+        
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(layout);
+        toast.show();
+    }
+
     /** Handles wishlist heart toggle logic (with animation). */
     private void setupFavoriteButton() {
         binding.btnFavorite.setOnClickListener(v ->
                 AnimationUtils.animateButton(v, () -> {
                     FirebaseUser user = authManager.getCurrentUser();
                     if (user == null) {
-                        Toast.makeText(this,
-                                "Please sign in to add items to your wishlist.",
-                                Toast.LENGTH_LONG).show();
+                        showCustomToast("Please sign in to add items to your wishlist");
                         startActivity(new Intent(DetailsActivity.this, ProfileActivity.class));
                         return;
                     }
                     if (currentProduct == null) {
-                        Toast.makeText(this,
-                                "Product data not loaded yet.",
-                                Toast.LENGTH_SHORT).show();
+                        showCustomToast("Product data not loaded yet");
                         return;
                     }
                     toggleWishlist(user.getUid(), currentProduct.getId());
@@ -136,18 +149,14 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 public void onSuccess() {
                     isWishlisted = true;
                     binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_filled_black);
-                    Toast.makeText(DetailsActivity.this,
-                            currentProduct.getName() + " added to wishlist.",
-                            Toast.LENGTH_SHORT).show();
+                    showCustomToast(currentProduct.getName() + " added to wishlist");
                     Log.d(TAG, "Product added to wishlist: " + pid);
                 }
 
                 @Override
                 public void onError(Exception e) {
                     Log.e(TAG, "Error adding to wishlist: " + e.getMessage(), e);
-                    Toast.makeText(DetailsActivity.this,
-                            "Failed to add to wishlist: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
+                    showCustomToast("Failed to add to wishlist: " + e.getMessage());
                 }
             });
         } else {
@@ -156,18 +165,14 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 public void onSuccess() {
                     isWishlisted = false;
                     binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_black);
-                    Toast.makeText(DetailsActivity.this,
-                            currentProduct.getName() + " removed from wishlist.",
-                            Toast.LENGTH_SHORT).show();
+                    showCustomToast(currentProduct.getName() + " removed from wishlist");
                     Log.d(TAG, "Product removed from wishlist: " + pid);
                 }
 
                 @Override
                 public void onError(Exception e) {
                     Log.e(TAG, "Error removing from wishlist: " + e.getMessage(), e);
-                    Toast.makeText(DetailsActivity.this,
-                            "Failed to remove from wishlist: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
+                    showCustomToast("Failed to remove from wishlist: " + e.getMessage());
                 }
             });
         }
@@ -203,26 +208,24 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         binding.btnAddToCart.setOnClickListener(v ->
                 AnimationUtils.animateButton(v, () -> {
                     if (currentProduct == null) {
-                        Toast.makeText(this, "Product not loaded yet", Toast.LENGTH_SHORT).show();
+                        showCustomToast("Product not loaded yet");
                         return;
                     }
                     FirebaseUser user = authManager.getCurrentUser();
                     if (user == null) {
-                        Toast.makeText(this, "Please sign in to add to cart", Toast.LENGTH_SHORT).show();
+                        showCustomToast("Please sign in to add to cart");
                         return;
                     }
                     firestoreRepository.addToCart(user.getUid(), currentProduct, quantity,
                             new FirestoreRepository.OperationCallback() {
                                 @Override
                                 public void onSuccess() {
-                                    Toast.makeText(DetailsActivity.this,
-                                            "Added to cart", Toast.LENGTH_SHORT).show();
+                                    showCustomToast("Added to cart");
                                 }
 
                                 @Override
                                 public void onError(Exception e) {
-                                    Toast.makeText(DetailsActivity.this,
-                                            "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                                    showCustomToast("Failed to add to cart");
                                 }
                             });
                 })
@@ -236,8 +239,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
             public void onSuccess(TableTennisProduct product) {
                 currentProduct = product;
                 if (product == null) {
-                    Toast.makeText(DetailsActivity.this,
-                            "Error: Product not found.", Toast.LENGTH_SHORT).show();
+                    showCustomToast("Error: Product not found");
                     finish();
                     return;
                 }
@@ -258,8 +260,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
             @Override
             public void onError(Exception e) {
                 Log.e(TAG, "Error fetching product details: " + e.getMessage(), e);
-                Toast.makeText(DetailsActivity.this,
-                        "Failed to load product details.", Toast.LENGTH_SHORT).show();
+                showCustomToast("Failed to load product details");
                 finish();
             }
         });
