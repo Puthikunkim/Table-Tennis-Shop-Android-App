@@ -12,8 +12,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginEnd="12dp"
-        android:src="@drawable/ic_profile"
-        android:tint="@color/white" />
+        android:src="@drawable/bounce_bros_app_icon" />
 
     <TextView
         android:id="@+id/toast_text"
