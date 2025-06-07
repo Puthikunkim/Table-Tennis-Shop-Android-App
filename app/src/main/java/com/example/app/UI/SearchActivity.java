@@ -22,8 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
-import com.example.app.adapters.RecentSearchAdapter;
-import com.example.app.adapters.SearchResultAdapter;
+import com.example.app.Adapters.RecentSearchAdapter;
+import com.example.app.Adapters.ProductAdapter;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.databinding.ActivitySearchBinding;
 import com.example.app.Data.FirestoreRepository;
@@ -51,7 +51,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
     private RecentSearchAdapter recentSearchAdapter;
 
     private RecyclerView searchResultsRecyclerView;
-    private SearchResultAdapter searchResultAdapter;
+    private ProductAdapter searchResultAdapter;
 
     private SharedPreferences prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -120,7 +120,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
     }
 
     private void setupSearchResultsList() {
-        searchResultAdapter = new SearchResultAdapter(this, filteredResults);
+        searchResultAdapter = new ProductAdapter(this, filteredResults);
         searchResultAdapter.setOnProductClickListener(product -> {
             String productId = product.getId();
             if (productId != null) {
@@ -153,7 +153,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         binding.getRoot().setOnClickListener(v -> hideRecentSearchesContainer());
         searchEditText.setOnClickListener(v -> showRecentSearchesContainer());
 
-        // “Search” action on keyboard
+        // "Search" action on keyboard
         searchEditText.setOnEditorActionListener((v, actionId, event) -> {
             boolean isSearchAction = actionId == EditorInfo.IME_ACTION_SEARCH
                     || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER);
@@ -290,7 +290,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         PopupMenu popup = new PopupMenu(this, anchor);
         popup.getMenuInflater().inflate(R.menu.menu_sort, popup.getMenu());
 
-        // Use if/else instead of switch to avoid “constant expression required”
+        // Use if/else instead of switch to avoid "constant expression required"
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {

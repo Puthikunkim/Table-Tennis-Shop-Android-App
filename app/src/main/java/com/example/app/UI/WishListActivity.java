@@ -1,20 +1,21 @@
 package com.example.app.UI;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
+import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.app.Auth.AuthManager;
 import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
-import com.example.app.adapters.WishListAdapter;
+import com.example.app.Adapters.WishListAdapter;
+import com.example.app.Util.ErrorHandler;
+import com.example.app.Util.NavigationUtils;
+import com.example.app.Util.UIStateManager;
 import com.example.app.databinding.ActivityWishListBinding;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.List;
 public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     private static final String TAG = "WishListActivity";
 
-    private FirebaseAuth mAuth;
+    private AuthManager authManager;
     private FirestoreRepository firestoreRepository;
     private WishListAdapter wishlistAdapter;
     private final List<TableTennisProduct> wishlistItems = new ArrayList<>();
@@ -42,19 +43,19 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAuth = FirebaseAuth.getInstance();
+        authManager = AuthManager.getInstance(this);
         firestoreRepository = FirestoreRepository.getInstance();
 
         setupRecyclerView();
         binding.loggedOutWishlist.signInButtonWishlist.setOnClickListener(v ->
-                startActivity(new Intent(WishListActivity.this, ProfileActivity.class))
+                NavigationUtils.navigateToActivity(this, ProfileActivity.class)
         );
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        updateUI(mAuth.getCurrentUser());
+        updateUI(authManager.getCurrentUser());
     }
 
     // Show either logged‐in wishlist or logged‐out message
@@ -88,13 +89,14 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
                     @Override
                     public void onProductClick(TableTennisProduct product) {
                         if (product.getId() != null) {
-                            Intent intent = new Intent(WishListActivity.this, DetailsActivity.class);
-                            intent.putExtra("productId", product.getId());
-                            startActivity(intent);
+                            NavigationUtils.navigateToActivity(
+                                WishListActivity.this,
+                                DetailsActivity.class,
+                                "productId",
+                                product.getId()
+                            );
                         } else {
-                            Toast.makeText(WishListActivity.this,
-                                    "Product ID is missing",
-                                    Toast.LENGTH_SHORT).show();
+                            ErrorHandler.handleMissingDataError(WishListActivity.this, "Product ID");
                         }
                     }
                 }
@@ -103,27 +105,30 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     }
 
     /*** Helper methods to switch between:
-     1) “logged‐out” message
-     2) “empty wishlist” message
-     3) “show RecyclerView” ***/
+     1) "logged‐out" message
+     2) "empty wishlist" message
+     3) "show RecyclerView" ***/
 
     private void showLoggedOutState() {
-        binding.loggedOutWishlist.getRoot().setVisibility(View.VISIBLE);
-        binding.recyclerViewWishlist.setVisibility(View.GONE);
-        binding.emptyWishlist.getRoot().setVisibility(View.GONE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.loggedOutWishlist.getRoot()
+        );
         Log.d(TAG, "User not signed in. Showing logged‐out message.");
     }
 
     private void showWishlistState() {
-        binding.loggedOutWishlist.getRoot().setVisibility(View.GONE);
-        binding.recyclerViewWishlist.setVisibility(View.VISIBLE);
-        binding.emptyWishlist.getRoot().setVisibility(View.GONE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.recyclerViewWishlist
+        );
     }
 
     private void showEmptyState() {
-        binding.loggedOutWishlist.getRoot().setVisibility(View.GONE);
-        binding.recyclerViewWishlist.setVisibility(View.GONE);
-        binding.emptyWishlist.getRoot().setVisibility(View.VISIBLE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.emptyWishlist.getRoot()
+        );
     }
 
     // After changing wishlistItems (add/remove), call this to show/hide RecyclerView vs. empty view
@@ -155,11 +160,7 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
 
             @Override
             public void onError(Exception e) {
-                Log.e(TAG, "Error loading wishlist: " + e.getMessage(), e);
-                Toast.makeText(WishListActivity.this,
-                        "Error loading wishlist.",
-                        Toast.LENGTH_SHORT).show();
-                // If error, treat it like “empty”
+                ErrorHandler.handleFirestoreError(WishListActivity.this, "load wishlist", e);
                 wishlistItems.clear();
                 showEmptyState();
             }
@@ -169,11 +170,9 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     /*** Remove a single product from both Firestore and local list ***/
 
     private void removeProductFromWishlist(TableTennisProduct product) {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = authManager.getCurrentUser();
         if (currentUser == null) {
-            Toast.makeText(this,
-                    "Please sign in to manage your wishlist.",
-                    Toast.LENGTH_SHORT).show();
+            ErrorHandler.showUserError(this, "Please sign in to manage your wishlist.");
             return;
         }
 
@@ -185,18 +184,14 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
                     public void onSuccess() {
                         wishlistItems.remove(product);
                         updateListVisibility();
-                        Toast.makeText(WishListActivity.this,
-                                product.getName() + " removed from wishlist.",
-                                Toast.LENGTH_SHORT).show();
+                        ErrorHandler.showUserError(WishListActivity.this,
+                            product.getName() + " removed from wishlist.");
                         Log.d(TAG, product.getName() + " successfully removed.");
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        Log.e(TAG, "Error removing product: " + e.getMessage(), e);
-                        Toast.makeText(WishListActivity.this,
-                                "Failed to remove item: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        ErrorHandler.handleFirestoreError(WishListActivity.this, "remove from wishlist", e);
                     }
                 }
         );
@@ -208,11 +203,9 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
      * 3) Finally update local list and UI
      */
     private void addToCartFromWishlist(TableTennisProduct product) {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = authManager.getCurrentUser();
         if (currentUser == null) {
-            Toast.makeText(this,
-                    "Please sign in to add to cart.",
-                    Toast.LENGTH_SHORT).show();
+            ErrorHandler.showUserError(this, "Please sign in to add to cart.");
             return;
         }
 
@@ -234,22 +227,20 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
                                     public void onSuccess() {
                                         wishlistItems.remove(product);
                                         updateListVisibility();
-                                        Toast.makeText(
-                                                WishListActivity.this,
-                                                product.getName() + " moved to cart.",
-                                                Toast.LENGTH_SHORT
-                                        ).show();
+                                        ErrorHandler.showUserError(
+                                            WishListActivity.this,
+                                            product.getName() + " moved to cart."
+                                        );
                                         Log.d(TAG, "Removed from wishlist after adding to cart: " + product.getName());
                                     }
 
                                     @Override
                                     public void onError(Exception e) {
-                                        Log.e(TAG, "Failed to remove after adding to cart: " + e.getMessage(), e);
-                                        Toast.makeText(
-                                                WishListActivity.this,
-                                                "Added to cart but couldn’t remove from wishlist.",
-                                                Toast.LENGTH_LONG
-                                        ).show();
+                                        ErrorHandler.handleFirestoreError(
+                                            WishListActivity.this,
+                                            "remove from wishlist after adding to cart",
+                                            e
+                                        );
                                     }
                                 }
                         );
@@ -257,12 +248,7 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
 
                     @Override
                     public void onError(Exception e) {
-                        Log.e(TAG, "Error adding to cart: " + e.getMessage(), e);
-                        Toast.makeText(
-                                WishListActivity.this,
-                                "Failed to add to cart: " + e.getMessage(),
-                                Toast.LENGTH_LONG
-                        ).show();
+                        ErrorHandler.handleFirestoreError(WishListActivity.this, "add to cart", e);
                     }
                 }
         );
