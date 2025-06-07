@@ -66,7 +66,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         // Get product ID from intent
         productId = getIntent().getStringExtra("productId");
         if (productId == null) {
-            Toast.makeText(this, "Product not specified.", Toast.LENGTH_SHORT).show();
+            showCustomToast("Product not specified.");
             finish();
             return;
         }

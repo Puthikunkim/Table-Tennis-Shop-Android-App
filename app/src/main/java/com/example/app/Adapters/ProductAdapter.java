@@ -146,7 +146,7 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
      * Redirects the user to the profile screen to sign in if they're not authenticated.
      */
     private void promptUserToSignIn() {
-        Toast.makeText(context, "Please sign in to add items to your wishlist", Toast.LENGTH_SHORT).show();
+        showCustomToast("Please sign in to add items to your wishlist");
         Intent signInIntent = new Intent(context, ProfileActivity.class);
         context.startActivity(signInIntent);
     }

@@ -18,6 +18,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
+import android.view.Gravity;
+import android.view.LayoutInflater;
+
 /**
  * Abstract base adapter for displaying products.
  * Handles image loading, wishlist logic, and click animations.
@@ -165,12 +168,12 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
             public void onSuccess() {
                 updateWishlistButtonState(heartIcon, false);
                 notifyWishlistChanged(product, false);
-                Toast.makeText(context, product.getName() + " removed from wishlist", Toast.LENGTH_SHORT).show();
+                showCustomToast(product.getName() + " removed from wishlist");
             }
 
             @Override
             public void onError(Exception e) {
-                Toast.makeText(context, "Failed to remove from wishlist: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                showCustomToast("Failed to remove from wishlist: " + e.getMessage());
             }
         });
     }
@@ -180,6 +183,19 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
         if (wishlistListener != null) {
             wishlistListener.onWishlistChanged(product, added);
         }
+    }
+
+    protected void showCustomToast(String message) {
+        View layout = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
+        
+        TextView text = layout.findViewById(R.id.toast_text);
+        text.setText(message);
+        
+        Toast toast = new Toast(context.getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(layout);
+        toast.show();
     }
 
     /**
