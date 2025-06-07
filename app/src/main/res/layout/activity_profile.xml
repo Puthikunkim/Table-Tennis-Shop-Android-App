@@ -47,16 +47,17 @@
                     android:layout_height="wrap_content"
                     android:text="Sign In"
                     android:layout_marginBottom="12dp"
-                    android:backgroundTint="@color/purple_500"
-                    android:textColor="@color/text_primary" />
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/profile_grey"/>
 
                 <Button
                     android:id="@+id/buttonCreateAccount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Create Account"
-                    android:backgroundTint="#000000"
-                    android:textColor="#FFFFFF"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:textColor="@color/text_primary"
+                    app:strokeColor="@color/text_primary"
                     android:layout_marginBottom="12dp" />
         </LinearLayout>
 
@@ -300,8 +301,8 @@
                     android:layout_height="wrap_content"
                     android:text="Submit"
                     android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/purple_500"
-                    android:textColor="@color/text_primary" />
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/profile_grey"/>
 
                 <Button
                     android:id="@+id/closeSignIn"
@@ -393,8 +394,8 @@
                     android:layout_height="wrap_content"
                     android:text="Submit"
                     android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/purple_500"
-                    android:textColor="@color/text_primary" />
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/profile_grey"/>
 
                 <Button
                     android:id="@+id/closeCreate"

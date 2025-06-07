@@ -135,10 +135,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="View All"
-                            style="?attr/materialButtonOutlinedStyle"
-                            android:textColor="@color/text_primary"
                             android:paddingStart="24dp"
                             android:paddingEnd="24dp"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:textColor="@color/text_primary"
                             app:strokeColor="@color/text_primary" />
                     </LinearLayout>
                 </LinearLayout>
