@@ -4,20 +4,36 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 
+/**
+ * Data model representing a table tennis product.
+ * This class maps directly to documents in the "products" Firestore collection.
+ */
 public class TableTennisProduct {
+    // Firestore document ID (not stored as a field in Firestore itself)
     private String id;
+
+    // Basic product info
     private String name;
     private String description;
     private double price;
     private String categoryID;
+
+    // Tags for search/filter functionality
     private List<String> tags;
+
+    // Quantity of this product added to the user's cart
     private int cartQuantity;
+
+    // Number of times this product has been viewed
     private int views;
+
+    // URLs to product images
     private List<String> imageUrls;
 
-    // Firestore requires a no-arg constructor
+    // Required no-argument constructor for Firestore deserialization
     public TableTennisProduct() {}
 
+    // Full constructor (optional, used for manual creation or testing)
     public TableTennisProduct(String id,
                               String name,
                               String description,
@@ -38,54 +54,63 @@ public class TableTennisProduct {
         this.imageUrls = imageUrls;
     }
 
+    // Getters and setters – used by Firestore and UI binding logic
     public String getId() {
         return id;
     }
     public void setId(String id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
     public void setName(String name) {
         this.name = name;
     }
+
     public String getDescription() {
         return description;
     }
     public void setDescription(String description) {
         this.description = description;
     }
+
     public double getPrice() {
         return price;
     }
     public void setPrice(double price) {
         this.price = price;
     }
+
     public String getCategoryID() {
         return categoryID;
     }
     public void setCategoryID(String categoryID) {
         this.categoryID = categoryID;
     }
+
     public List<String> getTags() {
         return tags;
     }
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+
     public int getCartQuantity() {
         return cartQuantity;
     }
     public void setCartQuantity(int cartQuantity) {
         this.cartQuantity = cartQuantity;
     }
+
     public int getViews() {
         return views;
     }
     public void setViews(int views) {
         this.views = views;
     }
+
     public List<String> getImageUrls() {
         return imageUrls;
     }
@@ -93,6 +118,7 @@ public class TableTennisProduct {
         this.imageUrls = imageUrls;
     }
 
+    // For debugging/logging – prints out all the fields of the product
     @NonNull
     @Override
     public String toString() {
