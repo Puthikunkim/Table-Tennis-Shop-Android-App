@@ -1,4 +1,4 @@
-package com.example.app.UI;
+package com.example.app.Util;
 
 import android.view.View;
 import android.view.ViewGroup;

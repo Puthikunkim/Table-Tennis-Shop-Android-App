@@ -1,13 +1,12 @@
 package com.example.app.UI;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -16,6 +15,10 @@ import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Adapters.CartAdapter;
+import com.example.app.Util.AnimationUtils;
+import com.example.app.Util.ErrorHandler;
+import com.example.app.Util.NavigationUtils;
+import com.example.app.Util.UIStateManager;
 import com.example.app.databinding.ActivityCartBinding;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -26,7 +29,7 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
     private static final String TAG = "CartActivity";
 
     private AuthManager authManager;
-    private CartAdapter adapter;                   // Only initialized once we know userId
+    private CartAdapter adapter;
     private final List<TableTennisProduct> cartItems = new ArrayList<>();
 
     @Override
@@ -45,10 +48,9 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
 
         authManager = AuthManager.getInstance(this);
 
-        // Wire up the Sign In button inside the "loggedOutCart" include
         binding.loggedOutCart.getRoot().setVisibility(View.GONE);
         binding.loggedOutCart.signInButtonCart.setOnClickListener(v ->
-                startActivity(new Intent(CartActivity.this, ProfileActivity.class))
+                NavigationUtils.navigateToActivity(this, ProfileActivity.class)
         );
 
         setupCheckoutButton();
@@ -63,15 +65,9 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
     @Override
     protected void onResume() {
         super.onResume();
-        // If the user just signed in on ProfileActivity, re-run updateUI
         updateUI(authManager.getCurrentUser());
     }
 
-    /**
-     * Decide which "state" to show:
-     *   – If user == null → show "logged‐out" include
-     *   – If user != null → hide all, then load cart for that user
-     */
     private void updateUI(@Nullable FirebaseUser user) {
         if (user == null) {
             showLoggedOutState();
@@ -81,9 +77,7 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         }
     }
 
-    /*** Load all items from Firestore for this user ***/
     private void loadCartForUser(String userId) {
-        // Hide everything until Firestore returns
         hideAllStates();
 
         FirestoreRepository.getInstance().getCartItems(userId, new FirestoreRepository.ProductsCallback() {
@@ -106,9 +100,7 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
 
             @Override
             public void onError(Exception e) {
-                Log.e(TAG, "Error loading cart: " + e.getMessage(), e);
-                Toast.makeText(CartActivity.this, "Failed to load cart.", Toast.LENGTH_SHORT).show();
-
+                ErrorHandler.handleFirestoreError(CartActivity.this, "load cart", e);
                 cartItems.clear();
                 if (adapter != null) adapter.notifyDataSetChanged();
                 showEmptyState();
@@ -116,10 +108,6 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         });
     }
 
-    /**
-     * Only create the adapter once we know a valid userId.
-     * If adapter already exists, we do NOT recreate it—just notifyDataSetChanged().
-     */
     private void ensureAdapterExists(String userId) {
         if (adapter == null) {
             ListView cartListView = binding.cartListView;
@@ -133,22 +121,18 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         }
     }
 
-    /*** COMPUTE TOTALS & TOGGLE VIEWS AFTER ANY CHANGE ***/
     private void updateCartUI() {
-        // 1) Recompute subtotal
         double subtotal = 0.0;
         for (TableTennisProduct item : cartItems) {
             subtotal += item.getPrice() * item.getCartQuantity();
         }
 
-        // 2) Update the two TextViews inside checkoutTotal include
         View checkoutRoot = binding.checkoutTotal.getRoot();
         TextView subtotalText = checkoutRoot.findViewById(R.id.subtotalText);
         TextView totalText = checkoutRoot.findViewById(R.id.totalText);
         subtotalText.setText(String.format("$%.2f", subtotal));
         totalText.setText(String.format("$%.2f", subtotal));
 
-        // 3) If cart is now empty, show the empty‐cart placeholder; otherwise show list+checkout
         if (cartItems.isEmpty()) {
             showEmptyState();
         } else {
@@ -156,11 +140,10 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         }
     }
 
-    /*** "Checkout" button logic ***/
     private void handleCheckout() {
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null) {
-            Toast.makeText(this, "Please sign in to checkout", Toast.LENGTH_SHORT).show();
+            ErrorHandler.showUserError(this, "Please sign in to checkout");
             return;
         }
 
@@ -172,16 +155,12 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
                         cartItems.clear();
                         if (adapter != null) adapter.notifyDataSetChanged();
                         updateCartUI();
-                        Toast.makeText(CartActivity.this,
-                                "Cart checked out successfully",
-                                Toast.LENGTH_SHORT).show();
+                        ErrorHandler.showUserError(CartActivity.this, "Cart checked out successfully");
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        Toast.makeText(CartActivity.this,
-                                "Checkout failed: " + e.getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        ErrorHandler.handleFirestoreError(CartActivity.this, "checkout", e);
                     }
                 }
         );
@@ -192,39 +171,32 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         checkoutRoot.setVisibility(View.GONE);
 
         Button checkoutButton = checkoutRoot.findViewById(R.id.checkoutButton);
-        checkoutButton.setOnClickListener(v -> {
-            v.animate()
-                    .scaleX(1.1f).scaleY(1.1f).setDuration(120)
-                    .withEndAction(() -> {
-                        v.animate().scaleX(1f).scaleY(1f).setDuration(120).start();
-                        handleCheckout();
-                    })
-                    .start();
-        });
+        checkoutButton.setOnClickListener(v -> 
+            AnimationUtils.animateButton(v, this::handleCheckout)
+        );
     }
 
-    /*** SMALL HELPERS TO SWITCH "Which View Is VISIBLE?" ***/
-
     private void showLoggedOutState() {
-        binding.loggedOutCart.getRoot().setVisibility(View.VISIBLE);
-        binding.cartListView.setVisibility(View.GONE);
-        binding.emptyCart.getRoot().setVisibility(View.GONE);
-        binding.checkoutTotal.getRoot().setVisibility(View.GONE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.loggedOutCart.getRoot()
+        );
         Log.d(TAG, "User not signed in. Showing logged‐out cart placeholder.");
     }
 
     private void showEmptyState() {
-        binding.loggedOutCart.getRoot().setVisibility(View.GONE);
-        binding.cartListView.setVisibility(View.GONE);
-        binding.emptyCart.getRoot().setVisibility(View.VISIBLE);
-        binding.checkoutTotal.getRoot().setVisibility(View.GONE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.emptyCart.getRoot()
+        );
     }
 
     private void showCartState() {
-        binding.loggedOutCart.getRoot().setVisibility(View.GONE);
-        binding.emptyCart.getRoot().setVisibility(View.GONE);
-        binding.cartListView.setVisibility(View.VISIBLE);
-        binding.checkoutTotal.getRoot().setVisibility(View.VISIBLE);
+        UIStateManager.showViewsAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.cartListView,
+            binding.checkoutTotal.getRoot()
+        );
     }
 
     private void hideAllStates() {

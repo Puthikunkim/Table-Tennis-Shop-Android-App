@@ -15,6 +15,7 @@ import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Adapters.ImageSliderAdapter;
 import com.example.app.Adapters.RecommendationsAdapter;
+import com.example.app.Util.AnimationUtils;
 import com.example.app.databinding.ActivityDetailsBinding;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -106,7 +107,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     /** Sets up the "Favorite" button click listener with animation and toggle logic. */
     private void setupFavoriteButton() {
         binding.btnFavorite.setOnClickListener(v ->
-                animateButton(v, () -> {
+                AnimationUtils.animateButton(v, () -> {
                     FirebaseUser user = authManager.getCurrentUser();
                     if (user == null) {
                         Toast.makeText(this,
@@ -200,7 +201,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     /** Sets up the "Add to Cart" button listener with animation and repository call. */
     private void setupAddToCartButton() {
         binding.btnAddToCart.setOnClickListener(v ->
-                animateButton(v, () -> {
+                AnimationUtils.animateButton(v, () -> {
                     if (currentProduct == null) {
                         Toast.makeText(this, "Product not loaded yet", Toast.LENGTH_SHORT).show();
                         return;
@@ -226,27 +227,6 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                             });
                 })
         );
-    }
-
-    /**
-     * Applies a scale animation to the provided view, then runs the given action.
-     * @param v The view to animate.
-     * @param afterAnimation The action to run after the scaling animation completes.
-     */
-    private void animateButton(View v, Runnable afterAnimation) {
-        v.animate()
-                .scaleX(1.15f)
-                .scaleY(1.15f)
-                .setDuration(ANIMATION_DURATION)
-                .withEndAction(() -> {
-                    v.animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .setDuration(ANIMATION_DURATION)
-                            .withEndAction(afterAnimation)
-                            .start();
-                })
-                .start();
     }
 
     /**

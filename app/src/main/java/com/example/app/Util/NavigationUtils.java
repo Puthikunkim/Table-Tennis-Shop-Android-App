@@ -1,8 +1,10 @@
-package com.example.app.UI;
+package com.example.app.Util;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.example.app.UI.BaseActivity;
 
 /**
  * Utility class for handling common navigation patterns across activities

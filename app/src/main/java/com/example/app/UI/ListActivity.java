@@ -15,6 +15,8 @@ import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Adapters.ProductAdapter;
 import com.example.app.databinding.ActivityListBinding;
+import com.example.app.Util.ErrorHandler;
+import com.example.app.Util.NavigationUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -58,7 +60,7 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
     private boolean setupTitleAndBackButton() {
         String rawCategory = getIntent().getStringExtra("categoryID");
         if (TextUtils.isEmpty(rawCategory)) {
-            showToast("Category not specified");
+            ErrorHandler.handleMissingDataError(this, "Category");
             finish();
             return false;
         }
@@ -77,11 +79,14 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
         adapter.setOnProductClickListener(product -> {
             String productId = product.getId();
             if (TextUtils.isEmpty(productId)) {
-                showToast("Missing product ID");
+                ErrorHandler.handleMissingDataError(this, "Product ID");
             } else {
-                Intent intent = new Intent(ListActivity.this, DetailsActivity.class)
-                        .putExtra("productId", productId);
-                startActivity(intent);
+                NavigationUtils.navigateToActivity(
+                    ListActivity.this,
+                    DetailsActivity.class,
+                    "productId",
+                    productId
+                );
             }
         });
 
@@ -105,8 +110,7 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
 
                     @Override
                     public void onError(Exception e) {
-                        Log.e(TAG, "Failed to load products for category: " + categoryID, e);
-                        showToast("Failed to load products");
+                        ErrorHandler.handleFirestoreError(ListActivity.this, "load products", e);
                     }
                 });
     }

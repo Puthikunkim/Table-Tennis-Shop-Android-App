@@ -1,17 +1,17 @@
 package com.example.app.UI;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
-
+import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 
 import com.example.app.Auth.AuthManager;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
+import com.example.app.Util.ErrorHandler;
+import com.example.app.Util.NavigationUtils;
+import com.example.app.Util.UIStateManager;
 import com.example.app.databinding.ActivityProfileBinding;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -42,15 +42,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         authManager = AuthManager.getInstance(this);
         firestoreRepository = FirestoreRepository.getInstance();
 
-        // Set up all button listeners in one place, using lambdas and helper methods
-        binding.buttonSignIn.setOnClickListener(v -> showSignInForm());
-        binding.buttonCreateAccount.setOnClickListener(v -> showCreateForm());
-        binding.closeSignIn.setOnClickListener(v -> returnToLoggedOutFromSignIn());
-        binding.closeCreate.setOnClickListener(v -> returnToLoggedOutFromCreate());
-        binding.submitSignIn.setOnClickListener(v -> handleSignIn());
-        binding.submitCreate.setOnClickListener(v -> handleCreateAccount());
-        binding.buttonSignOut.setOnClickListener(v -> handleSignOut());
-
+        setupButtonListeners();
         setupCartButtons();
         setupWishlistButtons();
     }
@@ -58,41 +50,54 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     @Override
     protected void onStart() {
         super.onStart();
-        // Update UI based on current auth state
         updateUI(authManager.getCurrentUser());
     }
 
-    /*** UI‐state helper methods ***/
+    private void setupButtonListeners() {
+        binding.buttonSignIn.setOnClickListener(v -> showSignInForm());
+        binding.buttonCreateAccount.setOnClickListener(v -> showCreateForm());
+        binding.closeSignIn.setOnClickListener(v -> returnToLoggedOutFromSignIn());
+        binding.closeCreate.setOnClickListener(v -> returnToLoggedOutFromCreate());
+        binding.submitSignIn.setOnClickListener(v -> handleSignIn());
+        binding.submitCreate.setOnClickListener(v -> handleCreateAccount());
+        binding.buttonSignOut.setOnClickListener(v -> handleSignOut());
+    }
 
     private void showSignInForm() {
-        binding.signInForm.setVisibility(View.VISIBLE);
-        binding.createAccountForm.setVisibility(View.GONE);
-        binding.mainContentLoggedOut.setVisibility(View.GONE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.signInForm
+        );
     }
 
     private void showCreateForm() {
-        binding.createAccountForm.setVisibility(View.VISIBLE);
-        binding.signInForm.setVisibility(View.GONE);
-        binding.mainContentLoggedOut.setVisibility(View.GONE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.createAccountForm
+        );
     }
 
     private void returnToLoggedOutFromSignIn() {
-        binding.signInForm.setVisibility(View.GONE);
-        binding.mainContentLoggedOut.setVisibility(View.VISIBLE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.mainContentLoggedOut
+        );
         clearSignInForm();
     }
 
     private void returnToLoggedOutFromCreate() {
-        binding.createAccountForm.setVisibility(View.GONE);
-        binding.mainContentLoggedOut.setVisibility(View.VISIBLE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.mainContentLoggedOut
+        );
         clearCreateAccountForm();
     }
 
     private void showLoggedInState(FirebaseUser user) {
-        binding.mainContentLoggedOut.setVisibility(View.GONE);
-        binding.signInForm.setVisibility(View.GONE);
-        binding.createAccountForm.setVisibility(View.GONE);
-        binding.mainContentLoggedIn.setVisibility(View.VISIBLE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.mainContentLoggedIn
+        );
 
         String displayName = (user.getDisplayName() != null) ? user.getDisplayName() : "User";
         binding.textWelcome.setText("Welcome, " + displayName + "!");
@@ -103,10 +108,10 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     }
 
     private void showLoggedOutState() {
-        binding.mainContentLoggedOut.setVisibility(View.VISIBLE);
-        binding.mainContentLoggedIn.setVisibility(View.GONE);
-        binding.signInForm.setVisibility(View.GONE);
-        binding.createAccountForm.setVisibility(View.GONE);
+        UIStateManager.showViewAndHideOthers(
+            (ViewGroup) binding.getRoot(),
+            binding.mainContentLoggedOut
+        );
     }
 
     private void updateUI(@Nullable FirebaseUser user) {
@@ -117,8 +122,6 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         }
     }
 
-    /*** Authentication callbacks ***/
-
     private void handleSignIn() {
         String email = binding.inputSignInEmail.getText().toString().trim();
         String password = binding.inputSignInPassword.getText().toString().trim();
@@ -127,17 +130,14 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             @Override
             public void onSuccess(FirebaseUser user) {
                 updateUI(user);
-                Toast.makeText(ProfileActivity.this, 
-                    "Signed in as: " + (user != null ? user.getEmail() : ""), 
-                    Toast.LENGTH_SHORT).show();
+                ErrorHandler.showUserError(ProfileActivity.this,
+                    "Signed in as: " + (user != null ? user.getEmail() : ""));
                 clearSignInForm();
             }
 
             @Override
             public void onError(Exception e) {
-                Toast.makeText(ProfileActivity.this,
-                    "Authentication failed: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+                ErrorHandler.handleAuthError(ProfileActivity.this, e);
                 updateUI(null);
             }
         });
@@ -152,7 +152,6 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             @Override
             public void onSuccess(FirebaseUser user) {
                 if (user != null) {
-                    // Save additional data to Firestore
                     Map<String, Object> userProfile = new HashMap<>();
                     userProfile.put("email", user.getEmail());
                     userProfile.put("name", name);
@@ -162,19 +161,15 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
                         @Override
                         public void onSuccess() {
                             Log.d(TAG, "User profile created in Firestore");
-                            Toast.makeText(ProfileActivity.this,
-                                "Account created and signed in as: " + name,
-                                Toast.LENGTH_SHORT).show();
+                            ErrorHandler.showUserError(ProfileActivity.this,
+                                "Account created and signed in as: " + name);
                             clearCreateAccountForm();
                             updateUI(user);
                         }
 
                         @Override
                         public void onError(Exception e) {
-                            Log.w(TAG, "Error saving profile in Firestore", e);
-                            Toast.makeText(ProfileActivity.this,
-                                "Account created, but profile save failed: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
+                            ErrorHandler.handleFirestoreError(ProfileActivity.this, "save profile", e);
                             clearCreateAccountForm();
                             updateUI(user);
                         }
@@ -184,9 +179,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             @Override
             public void onError(Exception e) {
-                Toast.makeText(ProfileActivity.this,
-                    "Account creation failed: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+                ErrorHandler.handleAuthError(ProfileActivity.this, e);
                 updateUI(null);
             }
         });
@@ -195,10 +188,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     private void handleSignOut() {
         authManager.signOut();
         updateUI(null);
-        Toast.makeText(this, "Signed out successfully", Toast.LENGTH_SHORT).show();
+        ErrorHandler.showUserError(this, "Signed out successfully");
     }
-
-    /*** Form‐clearing helpers ***/
 
     private void clearSignInForm() {
         binding.inputSignInEmail.setText("");
@@ -211,15 +202,11 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.inputCreatePassword.setText("");
     }
 
-    /*** Cart & Wishlist setup ***/
-
     private void setupCartButtons() {
-        // "View Cart" simply launches CartActivity
-        binding.btnViewCart.setOnClickListener(v -> {
-            startActivity(new Intent(ProfileActivity.this, CartActivity.class));
-        });
+        binding.btnViewCart.setOnClickListener(v -> 
+            NavigationUtils.navigateToActivity(this, CartActivity.class)
+        );
 
-        // "Clear Cart" checks for a signed-in user, calls repository.clearCart, updates UI
         binding.btnClearCart.setOnClickListener(v -> {
             FirebaseUser user = authManager.getCurrentUser();
             if (user == null) return;
@@ -227,22 +214,22 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             firestoreRepository.clearCart(user.getUid(), new FirestoreRepository.OperationCallback() {
                 @Override
                 public void onSuccess() {
-                    Toast.makeText(ProfileActivity.this, "Cart cleared!", Toast.LENGTH_SHORT).show();
+                    ErrorHandler.showUserError(ProfileActivity.this, "Cart cleared!");
                     binding.cartItemCount.setText("You have 0 items in your cart.");
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    Toast.makeText(ProfileActivity.this, "Failed to clear cart: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    ErrorHandler.handleFirestoreError(ProfileActivity.this, "clear cart", e);
                 }
             });
         });
     }
 
     private void setupWishlistButtons() {
-        binding.btnViewWishlist.setOnClickListener(v -> {
-            startActivity(new Intent(ProfileActivity.this, WishListActivity.class));
-        });
+        binding.btnViewWishlist.setOnClickListener(v -> 
+            NavigationUtils.navigateToActivity(this, WishListActivity.class)
+        );
 
         binding.btnClearWishlist.setOnClickListener(v -> {
             FirebaseUser user = authManager.getCurrentUser();
@@ -251,19 +238,17 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             firestoreRepository.clearWishlist(user.getUid(), new FirestoreRepository.OperationCallback() {
                 @Override
                 public void onSuccess() {
-                    Toast.makeText(ProfileActivity.this, "Wishlist cleared!", Toast.LENGTH_SHORT).show();
+                    ErrorHandler.showUserError(ProfileActivity.this, "Wishlist cleared!");
                     binding.wishlistItemCount.setText("You have 0 items in your wishlist.");
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    Toast.makeText(ProfileActivity.this, "Failed to clear wishlist: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    ErrorHandler.handleFirestoreError(ProfileActivity.this, "clear wishlist", e);
                 }
             });
         });
     }
-
-    /*** Summary‐fetching helpers ***/
 
     private void fetchCartSummary(String userId) {
         firestoreRepository.getCartItems(userId, new FirestoreRepository.ProductsCallback() {
@@ -283,6 +268,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             @Override
             public void onError(Exception e) {
+                ErrorHandler.handleFirestoreError(ProfileActivity.this, "load cart summary", e);
                 binding.cartItemCount.setText("Failed to load cart.");
             }
         });
@@ -302,6 +288,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             @Override
             public void onError(Exception e) {
+                ErrorHandler.handleFirestoreError(ProfileActivity.this, "load wishlist summary", e);
                 binding.wishlistItemCount.setText("Failed to load wishlist.");
             }
         });
