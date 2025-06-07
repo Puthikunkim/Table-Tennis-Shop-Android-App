@@ -21,11 +21,13 @@
 
             <Button
                 android:id="@+id/customDetailsBackButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:cornerRadius="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="back"
-                android:textColor="@color/text_primary" />
+                android:textColor="@color/text_primary"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:strokeColor="@color/text_secondary"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

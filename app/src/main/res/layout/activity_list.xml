@@ -19,11 +19,13 @@
         <!-- Back Button -->
         <Button
             android:id="@+id/customListBackButton"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:cornerRadius="16dp"
             android:text="Back"
             android:textColor="@color/text_primary"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="@color/text_secondary"
             android:layout_alignParentStart="true" />
 
         <!-- Sort Button -->
