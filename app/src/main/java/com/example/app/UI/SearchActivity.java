@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.Gravity;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -140,7 +141,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
                 intent.putExtra("productId", productId);
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "Missing product ID", Toast.LENGTH_SHORT).show();
+                showCustomToast("Error: Product ID is missing");
             }
         });
 
@@ -242,6 +243,19 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         saveRecentSearches(new ArrayList<>());
     }
 
+    private void showCustomToast(String message) {
+        View layout = getLayoutInflater().inflate(R.layout.custom_toast, null);
+        
+        TextView text = layout.findViewById(R.id.toast_text);
+        text.setText(message);
+        
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(layout);
+        toast.show();
+    }
+
     private void searchProducts(String query) {
         FirestoreRepository.getInstance().searchProducts(query, new FirestoreRepository.ProductsCallback() {
             @Override
@@ -250,11 +264,18 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
                 fullResults.addAll(products);
                 applyFilterAndSort();
                 binding.sortFilterContainer.setVisibility(View.VISIBLE);
+                
+                // Add custom toast when no results are found
+                if (products.isEmpty()) {
+                    showCustomToast("No items found matching '" + query + "'");
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 android.util.Log.e(TAG, "Error searching products", e);
+                // Show custom toast for search errors
+                showCustomToast("Error searching products. Please try again.");
             }
         });
     }
