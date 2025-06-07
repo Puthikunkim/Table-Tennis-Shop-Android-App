@@ -217,9 +217,9 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="Add to Cart"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/black"
                     android:background="@drawable/bg_cart_left_rounded"
-                    app:backgroundTint="@color/purple_500"/>
+                    app:backgroundTint="@color/profile_grey"/>
 
                 <ImageButton
                     android:id="@+id/btnFavorite"

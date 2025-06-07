@@ -135,7 +135,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 @Override
                 public void onSuccess() {
                     isWishlisted = true;
-                    binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_filled);
+                    binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_filled_black);
                     Toast.makeText(DetailsActivity.this,
                             currentProduct.getName() + " added to wishlist.",
                             Toast.LENGTH_SHORT).show();
@@ -155,7 +155,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 @Override
                 public void onSuccess() {
                     isWishlisted = false;
-                    binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
+                    binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_black);
                     Toast.makeText(DetailsActivity.this,
                             currentProduct.getName() + " removed from wishlist.",
                             Toast.LENGTH_SHORT).show();
@@ -177,7 +177,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     private void updateWishlistIcon() {
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null || currentProduct == null) {
-            binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
+            binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_black);
             isWishlisted = false;
             return;
         }
@@ -186,13 +186,14 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                     @Override
                     public void onSuccess() {
                         isWishlisted = true;
-                        binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_filled);
+                        binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_filled_black
+                        );
                     }
 
                     @Override
                     public void onError(Exception e) {
                         isWishlisted = false;
-                        binding.btnFavorite.setImageResource(R.drawable.ic_wishlist);
+                        binding.btnFavorite.setImageResource(R.drawable.ic_wishlist_black);
                     }
                 });
     }

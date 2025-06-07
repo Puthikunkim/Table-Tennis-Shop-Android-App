@@ -3,12 +3,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="background_dark">#1E1E1E</color>
-    <color name="card_background">#2C2C2C</color>
+    <color name="background_dark">#2A2A2A</color>
+    <color name="card_background">#333333</color>
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#CCCCCC</color>
     <color name="text_tertiary">#999999</color>
-    <color name="button_primary">#2196F3</color>
+    <color name="button_primary">#c2bebe</color>
     <color name="label_background">#666666</color>
 
     <color name="purple_200">#FFBB86FC</color>
