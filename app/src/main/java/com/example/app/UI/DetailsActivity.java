@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DetailsActivity shows the product details, allows adding to cart, toggling wishlist, and
- * displays category-based recommendations.
+ * Displays product details, images, wishlist toggles, add-to-cart,
+ * and category-based product recommendations.
  */
 public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     private static final String TAG = "DetailsActivity";
@@ -54,11 +54,11 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize AuthManager and FirestoreRepository
+        // Auth and data setup
         authManager = AuthManager.getInstance(this);
         firestoreRepository = FirestoreRepository.getInstance();
 
-        // Obtain productId from Intent extras
+        // Get product ID from intent
         productId = getIntent().getStringExtra("productId");
         if (productId == null) {
             Toast.makeText(this, "Product not specified.", Toast.LENGTH_SHORT).show();
@@ -66,36 +66,35 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
             return;
         }
 
+        // Hook up UI handlers
         setupBackButton();
         setupQuantityControls();
         setupFavoriteButton();
         setupAddToCartButton();
 
+        // Load the actual product info
         loadProductDetails();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        updateWishlistIcon();
+        updateWishlistIcon(); // Refresh heart icon on return
     }
 
-    /** Sets the back button to finish the activity. */
+    /** Goes back to previous screen. */
     private void setupBackButton() {
         binding.customDetailsBackButton.setOnClickListener(v -> finish());
     }
 
-    /** Initializes increment/decrement quantity buttons. */
+    /** Quantity selector buttons (+ / -). */
     private void setupQuantityControls() {
         binding.textQuantity.setText(String.valueOf(quantity));
         binding.btnIncrease.setOnClickListener(v -> changeQuantity(1));
         binding.btnDecrease.setOnClickListener(v -> changeQuantity(-1));
     }
 
-    /**
-     * Changes the quantity by delta (+1 or -1), ensuring it stays >= 1,
-     * and updates the TextView.
-     */
+    /** Changes item quantity, with a minimum of 1. */
     private void changeQuantity(int delta) {
         int newQuantity = quantity + delta;
         if (newQuantity >= 1) {
@@ -104,7 +103,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         }
     }
 
-    /** Sets up the "Favorite" button click listener with animation and toggle logic. */
+    /** Handles wishlist heart toggle logic (with animation). */
     private void setupFavoriteButton() {
         binding.btnFavorite.setOnClickListener(v ->
                 AnimationUtils.animateButton(v, () -> {
@@ -127,9 +126,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         );
     }
 
-    /**
-     * Toggles the wishlist status: adds if not wishlisted, removes if already wishlisted.
-     */
+    /** Adds/removes product from wishlist and updates heart icon. */
     private void toggleWishlist(String uid, String pid) {
         if (!isWishlisted) {
             firestoreRepository.addProductToWishlist(uid, currentProduct, new FirestoreRepository.WishlistOperationCallback() {
@@ -174,7 +171,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         }
     }
 
-    /** Updates the wishlist icon based on whether the current product is wishlisted. */
+    /** Checks and sets heart icon based on current wishlist state. */
     private void updateWishlistIcon() {
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null || currentProduct == null) {
@@ -198,7 +195,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                 });
     }
 
-    /** Sets up the "Add to Cart" button listener with animation and repository call. */
+    /** Adds product to cart in Firestore. */
     private void setupAddToCartButton() {
         binding.btnAddToCart.setOnClickListener(v ->
                 AnimationUtils.animateButton(v, () -> {
@@ -229,10 +226,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         );
     }
 
-    /**
-     * Loads product details from Firestore, populates UI, sets up image slider,
-     * initializes recommendations, and updates wishlist icon.
-     */
+    /** Loads product info from Firestore and hooks up everything. */
     private void loadProductDetails() {
         firestoreRepository.getProductById(productId, new FirestoreRepository.ProductDetailCallback() {
             @Override
@@ -268,14 +262,12 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         });
     }
 
-    /** Increments the view count for this product in Firestore. */
+    /** Logs a view count increase in Firestore. */
     private void incrementViews(String pid) {
         firestoreRepository.incrementProductViews(pid);
     }
 
-    /**
-     * Populates UI fields: title, description, price, and category.
-     */
+    /** Sets text fields: name, desc, price, and category. */
     private void bindProductInfo(TableTennisProduct product) {
         binding.textTitle.setText(product.getName());
         binding.textDesc.setText(product.getDescription());
@@ -288,9 +280,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         binding.textCategory.setText(category);
     }
 
-    /**
-     * Configures the ViewPager2 image slider and its previous/next buttons.
-     */
+    /** Sets up the image slider (ViewPager2) and nav buttons. */
     private void setupImageSlider(List<String> imageUrls) {
         ImageSliderAdapter sliderAdapter = new ImageSliderAdapter(imageUrls);
         binding.viewPagerImages.setAdapter(sliderAdapter);
@@ -310,10 +300,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         });
     }
 
-    /**
-     * Fetches other products in the same category, filters out the current product,
-     * and displays them in a horizontal RecyclerView.
-     */
+    /** Loads other products in the same category (except current one). */
     private void setupRecommendations(String categoryId) {
         firestoreRepository.getProductsByCategory(categoryId, new FirestoreRepository.ProductsCallback() {
             @Override
