@@ -17,28 +17,35 @@
         android:paddingHorizontal="16dp"
         android:paddingBottom="24dp"/>
 
-    <include
-        android:id="@+id/loggedOutWishlist"
-        layout="@layout/layout_wishlist_logged_out"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone"/>
+        android:layout_weight="1">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewWishlist"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="16dp"
-        android:visibility="gone" />
+        <include
+            android:id="@+id/loggedOutWishlist"
+            layout="@layout/layout_wishlist_logged_out"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
 
-    <include
-        android:id="@+id/emptyWishlist"
-        layout="@layout/layout_empty_wishlist"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewWishlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="16dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="false"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/emptyWishlist"
+            layout="@layout/layout_empty_wishlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+    </FrameLayout>
 
 </LinearLayout>
