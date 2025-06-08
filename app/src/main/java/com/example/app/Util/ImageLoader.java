@@ -11,11 +11,11 @@ public class ImageLoader {
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Glide.with(context)
                     .load(imageUrl)
-                    .placeholder(R.drawable.ic_launcher_foreground)
-                    .error(R.drawable.ic_launcher_background)
+                    .placeholder(R.drawable.loading)
+                    .error(R.drawable.loading)
                     .into(imageView);
         } else {
-            imageView.setImageResource(R.drawable.ic_launcher_background);
+            imageView.setImageResource(R.drawable.loading);
         }
     }
 
