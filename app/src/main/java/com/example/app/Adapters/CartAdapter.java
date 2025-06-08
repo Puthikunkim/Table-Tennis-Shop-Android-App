@@ -165,7 +165,7 @@ public class CartAdapter extends BaseAdapter {
                 notifyDataSetChanged();
                 onCartChanged.run();
                 if (position == 0) {
-                    ToastUtils.showCustomToast(context, "Item removed from cart");
+                    ToastUtils.showCustomToast(context, "Item removed from cart.");
                 }
             }
 

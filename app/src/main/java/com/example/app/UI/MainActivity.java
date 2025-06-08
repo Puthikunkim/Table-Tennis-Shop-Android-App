@@ -76,7 +76,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     /** Navigates to ListActivity with the selected category ID. */
     private void openListActivity(String categoryID) {
         if (categoryID == null || categoryID.isEmpty()) {
-            ToastUtils.showCustomToast(this, "Invalid category selected");
+            ToastUtils.showCustomToast(this, "Invalid category selected.");
             return;
         }
         NavigationUtils.navigateToActivity(
@@ -207,7 +207,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private void performSearchFromEditText(EditText searchEditText) {
         String query = searchEditText.getText().toString().trim();
         if (query.isEmpty()) {
-            ToastUtils.showCustomToast(this, "Please enter a search term");
+            ToastUtils.showCustomToast(this, "Please enter a search term.");
             return;
         }
         NavigationUtils.navigateToActivity(
