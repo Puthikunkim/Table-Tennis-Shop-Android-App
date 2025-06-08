@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
+import android.widget.LinearLayout;
 
 import com.example.app.Auth.AuthManager;
 import com.example.app.Model.TableTennisProduct;
@@ -34,6 +35,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
     private AuthManager authManager;
     private FirestoreRepository firestoreRepository;
+    private LinearLayout profileContentContainer;
+    private LinearLayout profileRootContainer;
 
     @Override
     protected ActivityProfileBinding inflateContentBinding() {
@@ -51,6 +54,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
         authManager = AuthManager.getInstance(this);
         firestoreRepository = FirestoreRepository.getInstance();
+        profileContentContainer = findViewById(R.id.profileContentContainer);
+        profileRootContainer = findViewById(R.id.profileRootContainer);
 
         setupButtonListeners();     // Auth + form actions
         setupCartButtons();         // View / Clear Cart
@@ -79,7 +84,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     /** Shows the sign-in form and hides other sections */
     private void showSignInForm() {
         UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
+                profileRootContainer,
                 binding.signInForm
         );
     }
@@ -87,7 +92,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     /** Shows the create account form and hides others */
     private void showCreateForm() {
         UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
+                profileRootContainer,
                 binding.createAccountForm
         );
     }
@@ -95,7 +100,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     /** Returns to main logged-out screen from sign-in */
     private void returnToLoggedOutFromSignIn() {
         UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
+                profileRootContainer,
                 binding.mainContentLoggedOut
         );
         clearSignInForm();
@@ -104,7 +109,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     /** Returns to main logged-out screen from create-account */
     private void returnToLoggedOutFromCreate() {
         UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
+                profileRootContainer,
                 binding.mainContentLoggedOut
         );
         clearCreateAccountForm();
@@ -113,8 +118,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     /** Shows the logged-in view and pulls cart/wishlist data */
     private void showLoggedInState(FirebaseUser user) {
         UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
-                binding.mainContentLoggedIn
+                profileRootContainer,
+                profileContentContainer
         );
 
         String displayName = (user.getDisplayName() != null) ? user.getDisplayName() : "User";
@@ -128,7 +133,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     /** Shows the guest view for signed-out users */
     private void showLoggedOutState() {
         UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
+                profileRootContainer,
                 binding.mainContentLoggedOut
         );
     }

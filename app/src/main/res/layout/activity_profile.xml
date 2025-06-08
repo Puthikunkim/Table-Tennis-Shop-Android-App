@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,30 +7,42 @@
     android:background="@color/background_dark"
     android:paddingHorizontal="24dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Your Profile"
-            android:textColor="@color/text_primary"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="24dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <!-- User not logged in welcome screen -->
         <LinearLayout
-            android:id="@+id/mainContentLoggedOut"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:orientation="vertical"
             android:gravity="center"
-            android:padding="24dp"
-            android:background="@drawable/rounded_card_background"
-            android:backgroundTint="@color/card_background"
-            android:elevation="4dp"
-            android:visibility="visible">
+            android:id="@+id/profileRootContainer">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Your Profile"
+                android:textColor="@color/text_primary"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="24dp"/>
+
+            <!-- User not logged in welcome screen -->
+            <LinearLayout
+                android:id="@+id/mainContentLoggedOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="24dp"
+                android:background="@drawable/rounded_card_background"
+                android:backgroundTint="@color/card_background"
+                android:elevation="4dp"
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/textPrompt"
@@ -63,22 +74,20 @@
                     app:strokeColor="@color/text_secondary"
                     app:cornerRadius="16dp"
                     android:layout_marginBottom="12dp"/>
+            </LinearLayout>
 
-        </LinearLayout>
-
-        <!-- User logged in welcome screen -->
-        <LinearLayout
-            android:id="@+id/mainContentLoggedIn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="24dp"
-            android:background="@drawable/rounded_card_background"
-            android:backgroundTint="@color/card_background"
-            android:elevation="4dp"
-            android:visibility="gone">
+            <!-- User logged in welcome screen -->
+            <LinearLayout
+                android:id="@+id/profileContentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="24dp"
+                android:background="@drawable/rounded_card_background"
+                android:backgroundTint="@color/card_background"
+                android:elevation="4dp"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/textWelcome"
@@ -98,6 +107,7 @@
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:layout_marginBottom="24dp" />
+
                 <!-- Cart Card Section -->
                 <LinearLayout
                     android:id="@+id/cartCard"
@@ -112,65 +122,63 @@
                     android:backgroundTint="#2A2A2A"
                     android:layout_marginHorizontal="0dp">
 
-                        <!-- Top row: title and clear button -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                    <!-- Top row: title and clear button -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:src="@drawable/ic_cart"
-                                    android:tint="@color/text_primary" />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_cart"
+                            android:tint="@color/text_primary" />
 
-                                <TextView
-                                    android:id="@+id/cartTitle"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Cart"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/text_primary"
-                                    android:paddingStart="8dp"
-                                    android:textSize="16sp" />
-
-                                <Button
-                                    android:id="@+id/btnClearCart"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Clear Cart"
-                                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                                    android:textColor="@android:color/white"
-                                    app:strokeColor="@color/profile_red"
-                                    app:cornerRadius="16dp"
-                                    android:textSize="12sp"/>
-
-                        </LinearLayout>
-
-                        <!-- Item count -->
                         <TextView
-                            android:id="@+id/cartItemCount"
+                            android:id="@+id/cartTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cart"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
+                            android:paddingStart="8dp"
+                            android:textSize="16sp" />
+
+                        <Button
+                            android:id="@+id/btnClearCart"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="You have 0 items in your cart."
-                            android:textColor="@color/text_secondary"
-                            android:textSize="14sp"
-                            android:layout_marginTop="12dp" />
-
-                        <!-- View Cart button -->
-                        <Button
-                            android:id="@+id/btnViewCart"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Go to Cart"
+                            android:text="Clear Cart"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:textColor="@color/text_primary"
-                            app:strokeColor="@color/text_secondary"
+                            android:textColor="@android:color/white"
+                            app:strokeColor="@color/profile_red"
                             app:cornerRadius="16dp"
-                            android:layout_marginTop="12dp"/>
+                            android:textSize="12sp"/>
+                    </LinearLayout>
 
+                    <!-- Item count -->
+                    <TextView
+                        android:id="@+id/cartItemCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="You have 0 items in your cart."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp"
+                        android:layout_marginTop="12dp" />
+
+                    <!-- View Cart button -->
+                    <Button
+                        android:id="@+id/btnViewCart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Go to Cart"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:textColor="@color/text_primary"
+                        app:strokeColor="@color/text_secondary"
+                        app:cornerRadius="16dp"
+                        android:layout_marginTop="12dp"/>
                 </LinearLayout>
 
                 <!-- Wishlist Card Section -->
@@ -187,65 +195,63 @@
                     android:backgroundTint="#2A2A2A"
                     android:layout_marginHorizontal="0dp">
 
-                        <!-- Top row: title and clear button -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                    <!-- Top row: title and clear button -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:src="@drawable/ic_wishlist_filled"
-                                    app:tint="@color/text_primary" />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_wishlist_filled"
+                            android:tint="@color/text_primary" />
 
-                                <TextView
-                                    android:id="@+id/wishlistTitle"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Wishlist"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/text_primary"
-                                    android:paddingStart="8dp"
-                                    android:textSize="16sp" />
-
-                                <Button
-                                    android:id="@+id/btnClearWishlist"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Clear Wishlist"
-                                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                                    android:textColor="@android:color/white"
-                                    app:strokeColor="@color/profile_red"
-                                    app:cornerRadius="16dp"
-                                    android:textSize="12sp"/>
-
-                        </LinearLayout>
-
-                        <!-- Item count -->
                         <TextView
-                            android:id="@+id/wishlistItemCount"
+                            android:id="@+id/wishlistTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Wishlist"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
+                            android:paddingStart="8dp"
+                            android:textSize="16sp" />
+
+                        <Button
+                            android:id="@+id/btnClearWishlist"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="You have 0 items in your wishlist."
-                            android:textColor="@color/text_secondary"
-                            android:textSize="14sp"
-                            android:layout_marginTop="12dp" />
-
-                        <!-- View Wishlist button -->
-                        <Button
-                            android:id="@+id/btnViewWishlist"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Go to Wishlist"
+                            android:text="Clear Wishlist"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:textColor="@color/text_primary"
-                            app:strokeColor="@color/text_secondary"
+                            android:textColor="@android:color/white"
+                            app:strokeColor="@color/profile_red"
                             app:cornerRadius="16dp"
-                            android:layout_marginTop="12dp"/>
+                            android:textSize="12sp"/>
+                    </LinearLayout>
 
+                    <!-- Item count -->
+                    <TextView
+                        android:id="@+id/wishlistItemCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="You have 0 items in your wishlist."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp"
+                        android:layout_marginTop="12dp" />
+
+                    <!-- View Wishlist button -->
+                    <Button
+                        android:id="@+id/btnViewWishlist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Go to Wishlist"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:textColor="@color/text_primary"
+                        app:strokeColor="@color/text_secondary"
+                        app:cornerRadius="16dp"
+                        android:layout_marginTop="12dp"/>
                 </LinearLayout>
 
                 <Button
@@ -257,21 +263,20 @@
                     android:textColor="@android:color/white"
                     app:strokeColor="@color/profile_red"
                     app:cornerRadius="16dp"/>
+            </LinearLayout>
 
-        </LinearLayout>
-
-        <!-- Sign in screen -->
-        <LinearLayout
-            android:id="@+id/signInForm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:padding="24dp"
-            android:background="@drawable/rounded_card_background"
-            android:backgroundTint="@color/card_background"
-            android:elevation="8dp">
+            <!-- Sign in screen -->
+            <LinearLayout
+                android:id="@+id/signInForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:padding="24dp"
+                android:background="@drawable/rounded_card_background"
+                android:backgroundTint="@color/card_background"
+                android:elevation="8dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -328,7 +333,6 @@
                     app:cornerRadius="16dp"
                     android:layout_marginTop="8dp"/>
 
-
                 <Button
                     android:id="@+id/closeSignIn"
                     android:layout_width="match_parent"
@@ -339,21 +343,20 @@
                     app:strokeColor="@color/profile_red"
                     app:cornerRadius="16dp"
                     android:layout_marginTop="4dp"/>
+            </LinearLayout>
 
-        </LinearLayout>
-
-        <!-- Create account screen -->
-        <LinearLayout
-            android:id="@+id/createAccountForm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:padding="24dp"
-            android:background="@drawable/rounded_card_background"
-            android:backgroundTint="@color/card_background"
-            android:elevation="8dp">
+            <!-- Create account screen -->
+            <LinearLayout
+                android:id="@+id/createAccountForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:padding="24dp"
+                android:background="@drawable/rounded_card_background"
+                android:backgroundTint="@color/card_background"
+                android:elevation="8dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -428,7 +431,6 @@
                     app:cornerRadius="16dp"
                     android:layout_marginTop="8dp"/>
 
-
                 <Button
                     android:id="@+id/closeCreate"
                     android:layout_width="match_parent"
@@ -439,6 +441,7 @@
                     app:strokeColor="@color/profile_red"
                     app:cornerRadius="16dp"
                     android:layout_marginTop="4dp"/>
-
+            </LinearLayout>
         </LinearLayout>
+    </ScrollView>
 </FrameLayout>

@@ -16,6 +16,7 @@ import com.example.app.R;
 import com.example.app.UI.ProfileActivity;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Util.ToastUtils;
+import com.example.app.Util.AnimationUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -111,8 +112,9 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
      * Handles when a user taps the heart icon (with animation).
      * If logged out, they are prompted to sign in.
      */
+
     private void handleWishlistClick(View view, TableTennisProduct product) {
-        animateWishlistButton(view, () -> {
+        AnimationUtils.animateButton(view, () -> {
             if (user == null) {
                 promptUserToSignIn();
                 return;
@@ -125,23 +127,6 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
         });
     }
 
-    /**
-     * Quick scale animation for visual feedback when tapping the heart icon.
-     */
-    private void animateWishlistButton(View view, Runnable onAnimationComplete) {
-        view.animate()
-                .scaleX(1.4f)
-                .scaleY(1.4f)
-                .setDuration(120)
-                .withEndAction(() -> {
-                    view.animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .setDuration(120)
-                            .withEndAction(onAnimationComplete)
-                            .start();
-                }).start();
-    }
 
     /**
      * Redirects the user to the profile screen to sign in if they're not authenticated.
