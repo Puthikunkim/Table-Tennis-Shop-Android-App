@@ -15,6 +15,7 @@ import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.UI.ProfileActivity;
 import com.example.app.Data.FirestoreRepository;
+import com.example.app.Util.ToastUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -146,7 +147,7 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
      * Redirects the user to the profile screen to sign in if they're not authenticated.
      */
     private void promptUserToSignIn() {
-        showCustomToast("Please sign in to add items to your wishlist");
+        ToastUtils.showCustomToast(context, "Please sign in to add items to your wishlist");
         Intent signInIntent = new Intent(context, ProfileActivity.class);
         context.startActivity(signInIntent);
     }
