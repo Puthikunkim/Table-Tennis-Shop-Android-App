@@ -2,14 +2,11 @@ package com.example.app.UI;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -22,6 +19,7 @@ import com.example.app.Util.AnimationUtils;
 import com.example.app.Util.ErrorHandler;
 import com.example.app.Util.NavigationUtils;
 import com.example.app.Util.UIStateManager;
+import com.example.app.Util.ToastUtils;
 import com.example.app.databinding.ActivityCartBinding;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -118,7 +116,7 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
 
             @Override
             public void onError(Exception e) {
-                showCustomToast("Error loading cart: " + e.getMessage());
+                ToastUtils.showCustomToast(CartActivity.this, "Error loading cart: " + e.getMessage());
                 Log.e(TAG, "Error loading cart", e);
                 cartItems.clear();
                 if (adapter != null) adapter.notifyDataSetChanged();
@@ -161,7 +159,7 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
 
         if (cartItems.isEmpty()) {
             showEmptyState();
-            showCustomToast("Cart is empty");
+            ToastUtils.showCustomToast(this, "Cart is empty");
         } else {
             showCartState();
         }
@@ -174,12 +172,12 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
     private void handleCheckout() {
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null) {
-            showCustomToast("Please sign in to checkout");
+            ToastUtils.showCustomToast(this, "Please sign in to checkout");
             return;
         }
 
         if (cartItems.isEmpty()) {
-            showCustomToast("Your cart is empty");
+            ToastUtils.showCustomToast(this, "Your cart is empty");
             return;
         }
 
@@ -191,12 +189,12 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
                         cartItems.clear();
                         if (adapter != null) adapter.notifyDataSetChanged();
                         updateCartUI();
-                        showCustomToast("Cart checked out successfully");
+                        ToastUtils.showCustomToast(CartActivity.this, "Cart checked out successfully");
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        showCustomToast("Failed to checkout: " + e.getMessage());
+                        ToastUtils.showCustomToast(CartActivity.this, "Failed to checkout: " + e.getMessage());
                         Log.e(TAG, "Error during checkout", e);
                     }
                 }
@@ -248,18 +246,5 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
         binding.emptyCart.getRoot().setVisibility(View.GONE);
         binding.cartListView.setVisibility(View.GONE);
         binding.checkoutTotal.getRoot().setVisibility(View.GONE);
-    }
-
-    private void showCustomToast(String message) {
-        View layout = getLayoutInflater().inflate(R.layout.custom_toast, null);
-        
-        TextView text = layout.findViewById(R.id.toast_text);
-        text.setText(message);
-        
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
     }
 }

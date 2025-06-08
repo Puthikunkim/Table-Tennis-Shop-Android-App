@@ -6,9 +6,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
-import android.widget.Toast;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +17,7 @@ import com.example.app.Adapters.ProductAdapter;
 import com.example.app.databinding.ActivityListBinding;
 import com.example.app.Util.ErrorHandler;
 import com.example.app.Util.NavigationUtils;
+import com.example.app.Util.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -147,21 +145,8 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
         popup.show();
     }
 
-    private void showCustomToast(String message) {
-        View layout = getLayoutInflater().inflate(R.layout.custom_toast, null);
-        
-        TextView text = layout.findViewById(R.id.toast_text);
-        text.setText(message);
-        
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
-    }
-
     private void showToast(String message) {
-        showCustomToast(message);
+        ToastUtils.showCustomToast(this, message);
     }
 
     /**

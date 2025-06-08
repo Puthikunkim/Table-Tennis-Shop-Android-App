@@ -20,8 +20,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.view.Gravity;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +30,7 @@ import com.example.app.Adapters.ProductAdapter;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.databinding.ActivitySearchBinding;
 import com.example.app.Data.FirestoreRepository;
+import com.example.app.Util.ToastUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -79,7 +78,6 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
     private View noResultsContainer;
     private ImageView imgNoResults;
     private TextView textNoResultsTitle, textNoResultsDesc;
-
 
     @Override
     protected ActivitySearchBinding inflateContentBinding() {
@@ -153,7 +151,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
                 intent.putExtra("productId", productId);
                 startActivity(intent);
             } else {
-                showCustomToast("Error: Product ID is missing");
+                ToastUtils.showCustomToast(SearchActivity.this, "Error: Product ID is missing");
             }
         });
 
@@ -255,19 +253,6 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         saveRecentSearches(new ArrayList<>());
     }
 
-    private void showCustomToast(String message) {
-        View layout = getLayoutInflater().inflate(R.layout.custom_toast, null);
-        
-        TextView text = layout.findViewById(R.id.toast_text);
-        text.setText(message);
-        
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
-    }
-
     private void searchProducts(String query) {
         FirestoreRepository.getInstance().searchProducts(query, new FirestoreRepository.ProductsCallback() {
             @Override
@@ -288,7 +273,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
             public void onError(Exception e) {
                 android.util.Log.e(TAG, "Error searching products", e);
                 // Show custom toast for search errors
-                showCustomToast("Error searching products. Please try again.");
+                ToastUtils.showCustomToast(SearchActivity.this, "Error searching products. Please try again.");
             }
         });
     }
@@ -424,5 +409,4 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         searchResultsRecyclerView.setVisibility(View.GONE);
         noResultsContainer.setVisibility(View.VISIBLE);
     }
-
 }

@@ -15,6 +15,7 @@ import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.UI.ProfileActivity;
 import com.example.app.Data.FirestoreRepository;
+import com.example.app.Util.ToastUtils;
 import com.example.app.Util.AnimationUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -131,7 +132,7 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
      * Redirects the user to the profile screen to sign in if they're not authenticated.
      */
     private void promptUserToSignIn() {
-        showCustomToast("Please sign in to add items to your wishlist");
+        ToastUtils.showCustomToast(context, "Please sign in to add items to your wishlist");
         Intent signInIntent = new Intent(context, ProfileActivity.class);
         context.startActivity(signInIntent);
     }
@@ -156,11 +157,12 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
             public void onSuccess() {
                 wishlistIds.add(product.getId());
                 notifyDataSetChanged(); // Update heart icon
+                ToastUtils.showCustomToast(context, product.getName() + " added to wishlist!");
             }
 
             @Override
             public void onError(Exception e) {
-                // Silent fail – state will remain unchanged
+                ToastUtils.showCustomToast(context, "Failed to add to wishlist: " + e.getMessage());
             }
         });
     }
@@ -174,14 +176,17 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
             public void onSuccess() {
                 wishlistIds.remove(product.getId());
                 notifyDataSetChanged(); // Update heart icon
+                ToastUtils.showCustomToast(context, product.getName() + " removed from wishlist.");
             }
 
             @Override
             public void onError(Exception e) {
-                // Silent fail – state will remain unchanged
+                ToastUtils.showCustomToast(context, "Failed to remove from wishlist: " + e.getMessage());
             }
         });
     }
+
+
 
     /**
      * Replaces the current product list with a new one and refreshes the adapter.

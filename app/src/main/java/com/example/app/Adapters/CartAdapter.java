@@ -15,6 +15,7 @@ import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.UI.DetailsActivity;
 import com.example.app.Util.ImageLoader;
+import com.example.app.Util.ToastUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -153,19 +154,6 @@ public class CartAdapter extends BaseAdapter {
         });
     }
 
-    private void showCustomToast(String message) {
-        View layout = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
-        
-        TextView text = layout.findViewById(R.id.toast_text);
-        text.setText(message);
-        
-        Toast toast = new Toast(context.getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
-    }
-
     /**
      * Remove the item from the cart both in Firestore and the local list.
      */
@@ -177,13 +165,13 @@ public class CartAdapter extends BaseAdapter {
                 notifyDataSetChanged();
                 onCartChanged.run();
                 if (position == 0) {
-                    showCustomToast("Item removed from cart");
+                    ToastUtils.showCustomToast(context, "Item removed from cart");
                 }
             }
 
             @Override
             public void onError(Exception e) {
-                showCustomToast("Failed to remove item: " + e.getMessage());
+                ToastUtils.showCustomToast(context, "Failed to remove item: " + e.getMessage());
             }
         });
     }
