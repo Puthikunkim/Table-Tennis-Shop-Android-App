@@ -59,7 +59,7 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
 
                 @Override
                 public void onError(Exception e) {
-                    // Fail silently – show default state
+                    // Fail silently and show default state
                 }
             });
         }

@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Adapter for displaying a list of recent search queries below a search bar.
- * Includes functionality to re-run or delete past searches, and caps the list at 10 items.
+ * Includes functionality to rerun or delete past searches, and caps the list at 10 items.
  */
 public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapter.ViewHolder> {
     private final List<String> searches; // The list of recent search terms
@@ -53,10 +53,10 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
         String search = searches.get(position);
         holder.searchText.setText(search);
 
-        // When user taps on a search, notify listener to re-run it
+        // When user taps on a search, notify listener to rerun it
         holder.itemView.setOnClickListener(v -> listener.onSearchClick(search));
 
-        // When user taps the 'X' icon, remove that search
+        // When user taps the X icon, remove that search
         holder.removeButton.setOnClickListener(v -> {
             int adapterPosition = holder.getAdapterPosition();
             if (adapterPosition != RecyclerView.NO_POSITION) {

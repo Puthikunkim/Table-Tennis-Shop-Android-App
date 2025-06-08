@@ -25,10 +25,10 @@ import java.util.Map;
 
 /**
  * Profile screen handles:
- * - Logged-in/logged-out UI states
- * - Sign in / Sign up / Sign out flows
- * - Showing cart and wishlist summaries
- * - Navigation to Cart and Wishlist screens
+ * Logged-in/logged-out UI states
+ * Sign in / Sign up / Sign out flows
+ * Showing cart and wishlist summaries
+ * Navigation to Cart and Wishlist screens
  */
 public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     private static final String TAG = "ProfileActivity";
@@ -57,9 +57,9 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         profileContentContainer = findViewById(R.id.profileContentContainer);
         profileRootContainer = findViewById(R.id.profileRootContainer);
 
-        setupButtonListeners();     // Auth + form actions
-        setupCartButtons();         // View / Clear Cart
-        setupWishlistButtons();     // View / Clear Wishlist
+        setupButtonListeners(); // Auth + form actions
+        setupCartButtons(); // View / Clear Cart
+        setupWishlistButtons(); // View / Clear Wishlist
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         updateUI(authManager.getCurrentUser());  // Reflect logged-in state
     }
 
-    // === UI Setup Methods ===
+    // UI Setup Methods
 
     /** All main button listeners for auth and form transitions */
     private void setupButtonListeners() {
@@ -147,7 +147,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         }
     }
 
-    // === Auth Handlers ===
+    // Auth Handlers
 
     /** Attempts sign-in and shows result */
     private void handleSignIn() {
@@ -248,7 +248,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.inputCreatePassword.setText("");
     }
 
-    // === Cart/Wishlist Button Logic ===
+    // Cart/Wishlist Button Logic
 
     /** Hooks up cart-related button listeners */
     private void setupCartButtons() {
@@ -308,7 +308,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         });
     }
 
-    // === Data Fetchers ===
+    // Data Fetchers
 
     /** Shows cart item count summary (e.g. "You have 3 items in your cart.") */
     private void fetchCartSummary(String userId) {

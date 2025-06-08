@@ -93,7 +93,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         });
     }
 
-    /** Quantity selector buttons (+ / -). */
+    /** Quantity selector buttons. */
     private void setupQuantityControls() {
         binding.textQuantity.setText(String.valueOf(quantity));
         binding.btnIncrease.setOnClickListener(v -> changeQuantity(1));

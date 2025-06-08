@@ -9,6 +9,12 @@ import android.widget.Toast;
 
 import com.example.app.R;
 
+/**
+ * Utility class to display custom styled Toast messages.
+ * This class provides a method to show a Toast with a custom layout,
+ * allowing for more control over the appearance of the notification compared
+ * to the default Android Toast.
+ */
 public class ToastUtils {
     public static void showCustomToast(Context context, String message) {
         View layout = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);

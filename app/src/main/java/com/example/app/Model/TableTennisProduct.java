@@ -30,10 +30,10 @@ public class TableTennisProduct {
     // URLs to product images
     private List<String> imageUrls;
 
-    // Required no-argument constructor for Firestore deserialization
+    // Required no-argument constructor for Firestore deserialisation
     public TableTennisProduct() {}
 
-    // Full constructor (optional, used for manual creation or testing)
+    // Full constructor
     public TableTennisProduct(String id,
                               String name,
                               String description,
@@ -54,7 +54,7 @@ public class TableTennisProduct {
         this.imageUrls = imageUrls;
     }
 
-    // Getters and setters – used by Firestore and UI binding logic
+    // Getters and setters, used by Firestore and UI binding logic
     public String getId() {
         return id;
     }
@@ -118,7 +118,7 @@ public class TableTennisProduct {
         this.imageUrls = imageUrls;
     }
 
-    // For debugging/logging – prints out all the fields of the product
+    // For debugging/logging, prints out all the fields of the product
     @NonNull
     @Override
     public String toString() {

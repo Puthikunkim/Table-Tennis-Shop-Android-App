@@ -40,6 +40,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Activity responsible for handling product searches, displaying search results,
+ * managing recent searches, and providing filtering and sorting capabilities.
+ */
 public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         implements RecentSearchAdapter.OnSearchClickListener {
 
@@ -262,7 +266,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
                 binding.sortFilterContainer.setVisibility(View.VISIBLE);
 
                 if (products.isEmpty()) {
-                    // No results → show empty view
+                    // No results = show empty view
                     showNoResultsView();
                 } else {
                     applyFilterAndSort();
