@@ -3,14 +3,11 @@ package com.example.app.UI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -22,6 +19,7 @@ import com.example.app.Util.AnimationUtils;
 import com.example.app.Util.ErrorHandler;
 import com.example.app.Util.NavigationUtils;
 import com.example.app.Util.UIStateManager;
+import com.example.app.Util.ToastUtils;
 import com.example.app.databinding.ActivityCartBinding;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -116,7 +114,8 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
             }
             @Override
             public void onError(Exception e) {
-                Log.d("CartDebug", "onError: " + e.getMessage());
+                ToastUtils.showCustomToast(CartActivity.this, "Error loading cart: " + e.getMessage());
+                Log.e(TAG, "Error loading cart", e);
                 cartItems.clear();
                 showCartItems();
                 showEmptyState();
@@ -142,7 +141,7 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
 
         if (cartItems.isEmpty()) {
             showEmptyState();
-            showCustomToast("Cart is empty");
+            ToastUtils.showCustomToast(this, "Cart is empty");
         } else {
             showCartState();
         }
@@ -155,12 +154,12 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
     private void handleCheckout() {
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null) {
-            showCustomToast("Please sign in to checkout");
+            ToastUtils.showCustomToast(this, "Please sign in to checkout");
             return;
         }
 
         if (cartItems.isEmpty()) {
-            showCustomToast("Your cart is empty");
+            ToastUtils.showCustomToast(this, "Your cart is empty");
             return;
         }
 
@@ -171,12 +170,12 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
                     public void onSuccess() {
                         cartItems.clear();
                         updateCartUI();
-                        showCustomToast("Cart checked out successfully");
+                        ToastUtils.showCustomToast(CartActivity.this, "Cart checked out successfully");
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        showCustomToast("Failed to checkout: " + e.getMessage());
+                        ToastUtils.showCustomToast(CartActivity.this, "Failed to checkout: " + e.getMessage());
                         Log.e(TAG, "Error during checkout", e);
                     }
                 }
