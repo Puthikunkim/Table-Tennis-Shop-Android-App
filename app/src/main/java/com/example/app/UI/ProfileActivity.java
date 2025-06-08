@@ -2,12 +2,9 @@ package com.example.app.UI;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.example.app.Auth.AuthManager;
@@ -16,6 +13,7 @@ import com.example.app.R;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Util.ErrorHandler;
 import com.example.app.Util.NavigationUtils;
+import com.example.app.Util.ToastUtils;
 import com.example.app.Util.UIStateManager;
 import com.example.app.databinding.ActivityProfileBinding;
 import com.google.firebase.auth.FirebaseUser;
@@ -152,7 +150,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         String password = binding.inputSignInPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
-            showCustomToast("Please enter both email and password");
+            ToastUtils.showCustomToast(this, "Please enter both email and password");
             return;
         }
 
@@ -160,13 +158,13 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
             @Override
             public void onSuccess(FirebaseUser user) {
                 updateUI(user);
-                showCustomToast("Signed in as: " + (user != null ? user.getEmail() : ""));
+                ToastUtils.showCustomToast(ProfileActivity.this, "Signed in as: " + (user != null ? user.getEmail() : ""));
                 clearSignInForm();
             }
 
             @Override
             public void onError(Exception e) {
-                showCustomToast("Authentication failed: " + e.getMessage());
+                ToastUtils.showCustomToast(ProfileActivity.this, "Authentication failed: " + e.getMessage());
                 Log.e(TAG, "Sign in error", e);
                 updateUI(null);
             }
@@ -180,12 +178,12 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         String name = binding.inputName.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
-            showCustomToast("Please fill in all fields");
+            ToastUtils.showCustomToast(this, "Please fill in all fields");
             return;
         }
 
         if (password.length() < 6) {
-            showCustomToast("Password must be at least 6 characters");
+            ToastUtils.showCustomToast(this, "Password must be at least 6 characters");
             return;
         }
 
@@ -202,14 +200,14 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
                         @Override
                         public void onSuccess() {
                             Log.d(TAG, "User profile created in Firestore");
-                            showCustomToast("Account created and signed in as: " + name);
+                            ToastUtils.showCustomToast(ProfileActivity.this, "Account created and signed in as: " + name);
                             clearCreateAccountForm();
                             updateUI(user);
                         }
 
                         @Override
                         public void onError(Exception e) {
-                            showCustomToast("Failed to save profile: " + e.getMessage());
+                            ToastUtils.showCustomToast(ProfileActivity.this, "Failed to save profile: " + e.getMessage());
                             Log.e(TAG, "Error saving profile", e);
                             clearCreateAccountForm();
                             updateUI(user);
@@ -220,7 +218,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             @Override
             public void onError(Exception e) {
-                showCustomToast("Registration failed: " + e.getMessage());
+                ToastUtils.showCustomToast(ProfileActivity.this, "Registration failed: " + e.getMessage());
                 Log.e(TAG, "Registration error", e);
                 updateUI(null);
             }
@@ -231,7 +229,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
     private void handleSignOut() {
         authManager.signOut();
         updateUI(null);
-        showCustomToast("Signed out successfully");
+        ToastUtils.showCustomToast(this, "Signed out successfully");
     }
 
     private void clearSignInForm() {
@@ -256,20 +254,20 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.btnClearCart.setOnClickListener(v -> {
             FirebaseUser user = authManager.getCurrentUser();
             if (user == null) {
-                showCustomToast("Please sign in to manage cart");
+                ToastUtils.showCustomToast(this, "Please sign in to manage cart");
                 return;
             }
 
             firestoreRepository.clearCart(user.getUid(), new FirestoreRepository.OperationCallback() {
                 @Override
                 public void onSuccess() {
-                    showCustomToast("Cart cleared");
+                    ToastUtils.showCustomToast(ProfileActivity.this, "Cart cleared");
                     binding.cartItemCount.setText("You have 0 items in your cart.");
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    showCustomToast("Failed to clear cart: " + e.getMessage());
+                    ToastUtils.showCustomToast(ProfileActivity.this, "Failed to clear cart: " + e.getMessage());
                     Log.e(TAG, "Error clearing cart", e);
                 }
             });
@@ -285,20 +283,20 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.btnClearWishlist.setOnClickListener(v -> {
             FirebaseUser user = authManager.getCurrentUser();
             if (user == null) {
-                showCustomToast("Please sign in to manage wishlist");
+                ToastUtils.showCustomToast(this, "Please sign in to manage wishlist");
                 return;
             }
 
             firestoreRepository.clearWishlist(user.getUid(), new FirestoreRepository.OperationCallback() {
                 @Override
                 public void onSuccess() {
-                    showCustomToast("Wishlist cleared");
+                    ToastUtils.showCustomToast(ProfileActivity.this, "Wishlist cleared");
                     binding.wishlistItemCount.setText("You have 0 items in your wishlist.");
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    showCustomToast("Failed to clear wishlist: " + e.getMessage());
+                    ToastUtils.showCustomToast(ProfileActivity.this, "Failed to clear wishlist: " + e.getMessage());
                     Log.e(TAG, "Error clearing wishlist", e);
                 }
             });
@@ -326,7 +324,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             @Override
             public void onError(Exception e) {
-                showCustomToast("Failed to load cart summary");
+                ToastUtils.showCustomToast(ProfileActivity.this, "Failed to load cart summary");
                 Log.e(TAG, "Error loading cart summary", e);
                 binding.cartItemCount.setText("Failed to load cart.");
             }
@@ -348,23 +346,10 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             @Override
             public void onError(Exception e) {
-                showCustomToast("Failed to load wishlist summary");
+                ToastUtils.showCustomToast(ProfileActivity.this, "Failed to load wishlist summary");
                 Log.e(TAG, "Error loading wishlist summary", e);
                 binding.wishlistItemCount.setText("Failed to load wishlist.");
             }
         });
-    }
-
-    private void showCustomToast(String message) {
-        View layout = getLayoutInflater().inflate(R.layout.custom_toast, null);
-        
-        TextView text = layout.findViewById(R.id.toast_text);
-        text.setText(message);
-        
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
     }
 }

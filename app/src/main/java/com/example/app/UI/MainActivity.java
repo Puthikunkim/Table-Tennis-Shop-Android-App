@@ -7,10 +7,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -20,6 +17,7 @@ import com.example.app.Adapters.RecommendationsAdapter;
 import com.example.app.Util.AnimationUtils;
 import com.example.app.Util.ErrorHandler;
 import com.example.app.Util.NavigationUtils;
+import com.example.app.Util.ToastUtils;
 import com.example.app.databinding.ActivityMainBinding;
 import com.example.app.Data.FirestoreRepository;
 
@@ -78,7 +76,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     /** Navigates to ListActivity with the selected category ID. */
     private void openListActivity(String categoryID) {
         if (categoryID == null || categoryID.isEmpty()) {
-            showCustomToast("Invalid category selected");
+            ToastUtils.showCustomToast(this, "Invalid category selected");
             return;
         }
         NavigationUtils.navigateToActivity(
@@ -129,7 +127,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
                     @Override
                     public void onError(Exception e) {
-                        showCustomToast("Failed to load top picks: " + e.getMessage());
+                        ToastUtils.showCustomToast(MainActivity.this, "Failed to load top picks: " + e.getMessage());
                         Log.e(TAG, "Error loading top picks", e);
                     }
                 });
@@ -146,7 +144,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             @Override
             public void onSuccess(TableTennisProduct product) {
                 if (product == null) {
-                    showCustomToast("No featured products available");
+                    ToastUtils.showCustomToast(MainActivity.this, "No featured products available");
                     return;
                 }
                 cachedFeaturedProduct = product;
@@ -155,7 +153,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
             @Override
             public void onError(Exception e) {
-                showCustomToast("Failed to load featured product: " + e.getMessage());
+                ToastUtils.showCustomToast(MainActivity.this, "Failed to load featured product: " + e.getMessage());
                 Log.e(TAG, "Error loading featured product", e);
             }
         });
@@ -209,7 +207,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private void performSearchFromEditText(EditText searchEditText) {
         String query = searchEditText.getText().toString().trim();
         if (query.isEmpty()) {
-            showCustomToast("Please enter a search term");
+            ToastUtils.showCustomToast(this, "Please enter a search term");
             return;
         }
         NavigationUtils.navigateToActivity(
@@ -232,18 +230,5 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         cardView.setOnClickListener(v ->
                 AnimationUtils.animateButton(v, onClickAction)
         );
-    }
-
-    private void showCustomToast(String message) {
-        View layout = getLayoutInflater().inflate(R.layout.custom_toast, null);
-        
-        TextView text = layout.findViewById(R.id.toast_text);
-        text.setText(message);
-        
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
     }
 }
