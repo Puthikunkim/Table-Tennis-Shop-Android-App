@@ -133,6 +133,7 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             ToastUtils.showCustomToast(context, "Please sign in to add to your wishlist.");
+            redirectToSignIn();
             return;
         }
 
@@ -186,6 +187,15 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
         if (wishlistListener != null) {
             wishlistListener.onWishlistChanged(product, added);
         }
+    }
+
+    private void redirectToSignIn() {
+        if (!(context instanceof android.app.Activity)) return;
+
+        android.app.Activity activity = (android.app.Activity) context;
+        android.content.Intent intent = new android.content.Intent(context, com.example.app.UI.ProfileActivity.class); // Replace with actual login activity class
+        context.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left); // 🎞️ Smooth transition animation
     }
 
     /**
