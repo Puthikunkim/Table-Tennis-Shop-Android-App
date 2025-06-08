@@ -3,6 +3,7 @@ package com.example.app.UI;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -120,25 +121,22 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
     /** UI state switchers for logged-out, empty, or populated wishlist */
 
     private void showLoggedOutState() {
-        UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
-                binding.loggedOutWishlist.getRoot()
-        );
+        binding.loggedOutWishlist.getRoot().setVisibility(View.VISIBLE);
+        binding.recyclerViewWishlist.setVisibility(View.GONE);
+        binding.emptyWishlist.getRoot().setVisibility(View.GONE);
         Log.d(TAG, "User not signed in. Showing logged-out message.");
     }
 
     private void showWishlistState() {
-        UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
-                binding.recyclerViewWishlist
-        );
+        binding.loggedOutWishlist.getRoot().setVisibility(View.GONE);
+        binding.recyclerViewWishlist.setVisibility(View.VISIBLE);
+        binding.emptyWishlist.getRoot().setVisibility(View.GONE);
     }
 
     private void showEmptyState() {
-        UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
-                binding.emptyWishlist.getRoot()
-        );
+        binding.loggedOutWishlist.getRoot().setVisibility(View.GONE);
+        binding.recyclerViewWishlist.setVisibility(View.GONE);
+        binding.emptyWishlist.getRoot().setVisibility(View.VISIBLE);
     }
 
     // Refresh UI based on current item count
