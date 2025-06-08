@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
+import com.example.app.Util.AnimationUtils;
 import com.example.app.Util.ImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -77,17 +78,13 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
     // Sets up product item click animation and callback
     protected void setupProductClick(View itemView, TableTennisProduct product) {
         itemView.setOnClickListener(v -> {
-            v.animate()
-                    .scaleX(0.95f)
-                    .scaleY(0.95f)
-                    .setDuration(100)
-                    .withEndAction(() -> {
-                        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
-                        if (clickListener != null) {
-                            clickListener.onProductClick(product);
-                        }
-                    }).start();
+            AnimationUtils.animateButton(v, () -> {
+                if (clickListener != null) {
+                    clickListener.onProductClick(product);
+                }
+            });
         });
+
     }
 
     /**
@@ -117,21 +114,9 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
         });
 
         heartIcon.setOnClickListener(v -> {
-            v.animate()
-                    .scaleX(1.3f)
-                    .scaleY(1.3f)
-                    .setDuration(150)
-                    .withEndAction(() -> {
-                        v.animate()
-                                .scaleX(1f)
-                                .scaleY(1f)
-                                .setDuration(150)
-                                .start();
-
-                        handleWishlistClick((ImageView) v, product); // same toggle logic
-                    })
-                    .start();
+            AnimationUtils.animateButton(v, () -> handleWishlistClick((ImageView) v, product));
         });
+
 
     }
 
