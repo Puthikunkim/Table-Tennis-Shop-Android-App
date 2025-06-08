@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,6 +76,11 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
     private String sortField = "name";
     private boolean sortAscending = true;
 
+    private View noResultsContainer;
+    private ImageView imgNoResults;
+    private TextView textNoResultsTitle, textNoResultsDesc;
+
+
     @Override
     protected ActivitySearchBinding inflateContentBinding() {
         return ActivitySearchBinding.inflate(getLayoutInflater());
@@ -122,6 +128,12 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         clearHistoryButton = binding.clearHistoryButton;
         searchResultsRecyclerView = binding.searchResultsRecyclerView;
         prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+        // No search results
+        noResultsContainer = binding.noResultsContainer;
+        imgNoResults = binding.imgNoResults;
+        textNoResultsTitle = binding.textNoResultsTitle;
+        textNoResultsDesc = binding.textNoResultsDesc;
     }
 
     // Recent search UI setup
@@ -262,12 +274,13 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
             public void onSuccess(List<TableTennisProduct> products) {
                 fullResults.clear();
                 fullResults.addAll(products);
-                applyFilterAndSort();
                 binding.sortFilterContainer.setVisibility(View.VISIBLE);
-                
-                // Add custom toast when no results are found
+
                 if (products.isEmpty()) {
-                    showCustomToast("No items found matching '" + query + "'");
+                    // No results → show empty view
+                    showNoResultsView();
+                } else {
+                    applyFilterAndSort();
                 }
             }
 
@@ -281,11 +294,6 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
     }
 
     private void applyFilterAndSort() {
-        if (fullResults.isEmpty()) {
-            hideSearchResults();
-            return;
-        }
-
         filteredResults.clear();
         for (TableTennisProduct product : fullResults) {
             String cat = product.getCategoryID();
@@ -294,6 +302,15 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
                 filteredResults.add(product);
             }
         }
+
+        if (filteredResults.isEmpty()) {
+            hideSearchResults();
+            noResultsContainer.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        noResultsContainer.setVisibility(View.GONE);
+        showSearchResults();
 
         Comparator<TableTennisProduct> comparator = ("price".equals(sortField))
                 ? Comparator.comparingDouble(TableTennisProduct::getPrice)
@@ -305,7 +322,6 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
 
         filteredResults.sort(comparator);
         searchResultAdapter.notifyDataSetChanged();
-        showSearchResults();
     }
 
     private void sortList(String field, boolean ascending) {
@@ -400,4 +416,13 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding>
         super.onDestroy();
         handler.removeCallbacks(pendingAction);
     }
+
+    private void showNoResultsView() {
+        filteredResults.clear();
+        searchResultAdapter.notifyDataSetChanged();
+
+        searchResultsRecyclerView.setVisibility(View.GONE);
+        noResultsContainer.setVisibility(View.VISIBLE);
+    }
+
 }

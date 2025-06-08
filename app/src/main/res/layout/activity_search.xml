@@ -139,12 +139,57 @@
     </LinearLayout>
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/searchResultsRecyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="8dp"
-        android:visibility="gone"/>
+        android:layout_weight="1">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchResultsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="8dp"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/noResultsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp"
+            android:visibility="gone"
+            android:background="@color/background_dark">
+
+            <ImageView
+                android:id="@+id/imgNoResults"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/emptywishlist4"
+                android:alpha="0.7"
+                android:contentDescription="No search results" />
+
+            <TextView
+                android:id="@+id/textNoResultsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Results Found"
+                android:textColor="@color/text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/textNoResultsDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Try searching for something else."
+                android:textColor="@color/text_secondary"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
+                android:gravity="center" />
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>
+
