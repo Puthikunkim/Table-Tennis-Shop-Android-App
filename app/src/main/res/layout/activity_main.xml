@@ -127,8 +127,10 @@
                             android:layout_marginEnd="12dp"
                             android:paddingStart="24dp"
                             android:paddingEnd="24dp"
-                            android:textColor="@color/black"
-                            android:backgroundTint="@color/profile_grey" />
+                            android:textColor="@color/text_primary"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            app:strokeColor="@color/text_secondary"
+                            app:cornerRadius="16dp"/>
 
                         <Button
                             android:id="@+id/btnViewAll"
@@ -137,9 +139,11 @@
                             android:text="View All"
                             android:paddingStart="24dp"
                             android:paddingEnd="24dp"
-                            style="?attr/materialButtonOutlinedStyle"
                             android:textColor="@color/text_primary"
-                            app:strokeColor="@color/text_primary" />
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            app:strokeColor="@color/text_primary"
+                            app:cornerRadius="16dp"/>
+
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
