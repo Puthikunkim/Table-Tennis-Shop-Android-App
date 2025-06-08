@@ -1,9 +1,11 @@
 package com.example.app.Util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.app.R;
 import com.example.app.UI.BaseActivity;
 
 /**
@@ -66,4 +68,31 @@ public class NavigationUtils {
             ((BaseActivity<?>) context).overridePendingTransition(0, 0);
         }
     }
+
+    /**
+     * Navigates to an activity with left-to-right slide transition
+     */
+    public static void navigateWithSlide(Context context, Class<?> targetActivity) {
+        Intent intent = new Intent(context, targetActivity);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        context.startActivity(intent);
+        if (context instanceof BaseActivity) {
+            ((BaseActivity<?>) context).overridePendingTransition(
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
+            );
+        }
+    }
+
+    /**
+     * Applies slide-out animation when going back
+     */
+    public static void slideOutOnBack(Activity activity) {
+        activity.overridePendingTransition(
+                R.anim.slide_in_left,
+                R.anim.slide_out_right
+        );
+    }
+
+
 } 
