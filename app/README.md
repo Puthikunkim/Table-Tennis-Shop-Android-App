@@ -13,9 +13,6 @@ A modern Android application for browsing, searching, and purchasing table tenni
 - **Firestore Integration**: All product, cart, wishlist, and user data is managed via Firebase Firestore.
 - **Responsive UI**: Built with Material Design and ViewBinding for a smooth experience.
 
-## Screenshots
-*Add screenshots here if available*
-
 ## Project Structure
 
 ```
@@ -75,14 +72,6 @@ All dependencies are managed in `build.gradle.kts`.
 - To add new product categories, update Firestore and UI category cards.
 - To change branding, update resources in `res/` and app icons.
 
-## ProGuard
-- Default ProGuard rules are provided. No special configuration is required unless you add custom serialization or reflection-heavy libraries.
-
-## License
-*Specify your license here (e.g., MIT, Apache 2.0, etc.)*
-
 ## Authors
 - Team 11, COMPSYS 302, 2025
 
----
-*For any issues or contributions, please open an issue or submit a pull request.* 
