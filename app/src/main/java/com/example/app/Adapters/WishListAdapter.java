@@ -34,6 +34,8 @@ public class WishListAdapter extends BaseProductAdapter<WishListAdapter.Wishlist
     public WishListAdapter(Context context, List<TableTennisProduct> productList, OnWishlistItemActionListener listener) {
         super(context, productList);
         this.listener = listener;
+
+        setOnProductClickListener(listener::onProductClick);
     }
 
     /**
