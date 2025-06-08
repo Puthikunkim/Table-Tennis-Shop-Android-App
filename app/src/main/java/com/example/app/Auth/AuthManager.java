@@ -15,12 +15,17 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Manages Firebase Authentication operations such as user sign-in, account creation,
+ * and sign-out.
+ */
 public class AuthManager {
     private static final String TAG = "AuthManager";
     private static AuthManager instance;
     private final FirebaseAuth mAuth;
     private final Context context;
 
+    // Constructor
     private AuthManager(Context context) {
         this.context = context.getApplicationContext();
         this.mAuth = FirebaseAuth.getInstance();

@@ -52,11 +52,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setupCategoryCards();        // Category buttons (bats, balls, tables)
-        setupTopPicks();            // Horizontal top picks section
-        loadTopPicks();             // Pull top picks from Firestore
-        loadFeaturedProduct();      // Pull random featured product
-        setupSearchBar();           // Wire up search input + icon
+        setupCategoryCards(); // Category buttons (bats, balls, tables)
+        setupTopPicks(); // Horizontal top picks section
+        loadTopPicks();  // Pull top picks from Firestore
+        loadFeaturedProduct(); // Pull random featured product
+        setupSearchBar(); // Wire up search input + icon
         setupCategoryCardAnimations(); // Add click animation for category cards
     }
 

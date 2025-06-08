@@ -22,7 +22,7 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
     // List of image URLs to load into the slider
     private final List<String> imageUrls;
 
-    // Optional listener for handling image click events
+    // Listener for handling image click events
     private OnImageClickListener listener;
 
     // Interface to allow external classes to respond to image clicks
@@ -30,7 +30,7 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
         void onImageClick(int position);
     }
 
-    // Basic constructor – takes in the list of image URLs to display
+    // Basic constructor takes in the list of image URLs to display
     public ImageSliderAdapter(List<String> imageUrls) {
         this.imageUrls = imageUrls;
     }
@@ -44,13 +44,13 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
     @NonNull
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the layout for each image – usually just a full-size ImageView
+        // Inflate the layout for each image, usually just a full-size ImageView
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_image_slider, parent, false);
         return new ImageViewHolder(view);
     }
 
-    // Binds the image URL to the ImageView using our ImageLoader utility
+    // Binds the image URL to the ImageView using the ImageLoader utility
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         String url = imageUrls.get(position);

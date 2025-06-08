@@ -69,7 +69,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Dot indicators INSIDE image block -->
+            <!-- Dot indicators inside image block -->
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayoutDots"
                 android:layout_width="wrap_content"

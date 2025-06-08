@@ -210,9 +210,9 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
 
     /**
      * Move a product from wishlist to cart:
-     * 1. Add to Firestore cart
-     * 2. Remove from Firestore wishlist
-     * 3. Update UI
+     * Add to Firestore cart,
+     * Remove from Firestore wishlist,
+     * Update UI
      */
     private void addToCartFromWishlist(TableTennisProduct product) {
         FirebaseUser currentUser = authManager.getCurrentUser();
@@ -231,7 +231,7 @@ public class WishListActivity extends BaseActivity<ActivityWishListBinding> {
                     public void onSuccess() {
                         Log.d(TAG, "Added to cart: " + product.getName());
 
-                        // Chain: remove from wishlist after adding to cart
+                        // Remove from wishlist after adding to cart
                         firestoreRepository.removeProductFromWishlist(
                                 userId,
                                 product.getId(),

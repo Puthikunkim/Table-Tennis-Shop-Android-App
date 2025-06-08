@@ -6,6 +6,11 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.app.R;
 
+/**
+ * Utility class for loading images into ImageView components using the Glide library.
+ * This class provides a centralised way to handle image loading, including placeholders
+ * and error drawables.
+ */
 public class ImageLoader {
     public static void loadImage(Context context, ImageView imageView, String imageUrl) {
         if (imageUrl != null && !imageUrl.isEmpty()) {
