@@ -13,12 +13,12 @@ import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
 import com.example.app.Util.ImageLoader;
+import com.example.app.Util.ToastUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
-import android.view.Gravity;
 import android.view.LayoutInflater;
 
 /**
@@ -145,7 +145,7 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
     private void handleWishlistClick(ImageView heartIcon, TableTennisProduct product) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Toast.makeText(context, "Please log in to add items to your wishlist", Toast.LENGTH_SHORT).show();
+            ToastUtils.showCustomToast(context, "Please log in to add items to your wishlist");
             return;
         }
 
@@ -167,12 +167,12 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
             public void onSuccess() {
                 updateWishlistButtonState(heartIcon, true);
                 notifyWishlistChanged(product, true);
-                Toast.makeText(context, product.getName() + " added to wishlist!", Toast.LENGTH_SHORT).show();
+                ToastUtils.showCustomToast(context, product.getName() + " added to wishlist!");
             }
 
             @Override
             public void onError(Exception e) {
-                Toast.makeText(context, "Failed to add to wishlist: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                ToastUtils.showCustomToast(context, "Failed to add to wishlist: " + e.getMessage());
             }
         });
     }
@@ -184,12 +184,12 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
             public void onSuccess() {
                 updateWishlistButtonState(heartIcon, false);
                 notifyWishlistChanged(product, false);
-                showCustomToast(product.getName() + " removed from wishlist");
+                ToastUtils.showCustomToast(context, product.getName() + " removed from wishlist");
             }
 
             @Override
             public void onError(Exception e) {
-                showCustomToast("Failed to remove from wishlist: " + e.getMessage());
+                ToastUtils.showCustomToast(context, "Failed to remove from wishlist: " + e.getMessage());
             }
         });
     }
@@ -199,19 +199,6 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
         if (wishlistListener != null) {
             wishlistListener.onWishlistChanged(product, added);
         }
-    }
-
-    protected void showCustomToast(String message) {
-        View layout = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
-        
-        TextView text = layout.findViewById(R.id.toast_text);
-        text.setText(message);
-        
-        Toast toast = new Toast(context.getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
     }
 
     /**
