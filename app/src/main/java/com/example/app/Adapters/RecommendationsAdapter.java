@@ -16,11 +16,12 @@ import java.util.List;
 
 /**
  * Adapter for displaying recommended products, such as in a "Top Picks" or "You might also like" section.
- * Shows the product image, name, view count, and a heart icon for wishlist interaction.
+ * Shows the product image, name, price, view count, and a heart icon for wishlist interaction.
  */
 public class RecommendationsAdapter extends BaseProductAdapter<RecommendationsAdapter.ViewHolder> {
 
     private static final String VIEWS_FORMAT = "%d views"; // Format string for view count
+    private static final String PRICE_FORMAT = "$%.2f"; // Format string for price
 
     public RecommendationsAdapter(Context context, List<TableTennisProduct> products) {
         super(context, products);
@@ -51,6 +52,7 @@ public class RecommendationsAdapter extends BaseProductAdapter<RecommendationsAd
      */
     private void bindProductData(ViewHolder holder, TableTennisProduct product) {
         holder.name.setText(product.getName());
+        holder.price.setText(String.format(PRICE_FORMAT, product.getPrice()));
         holder.views.setText(String.format(VIEWS_FORMAT, product.getViews()));
 
         // Load the product's image
@@ -69,6 +71,7 @@ public class RecommendationsAdapter extends BaseProductAdapter<RecommendationsAd
     static class ViewHolder extends BaseViewHolder {
         final ImageView image;      // Product image
         final TextView name;        // Product name
+        final TextView price;       // Product price
         final TextView views;       // View count
         final ImageView heartIcon;  // Wishlist toggle icon
 
@@ -76,6 +79,7 @@ public class RecommendationsAdapter extends BaseProductAdapter<RecommendationsAd
             super(itemView);
             image = itemView.findViewById(R.id.topPickImage);
             name = itemView.findViewById(R.id.topPickName);
+            price = itemView.findViewById(R.id.topPickPrice);
             views = itemView.findViewById(R.id.topPickViews);
             heartIcon = itemView.findViewById(R.id.heartIcon);
         }
