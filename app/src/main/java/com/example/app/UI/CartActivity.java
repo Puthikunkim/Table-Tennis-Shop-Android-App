@@ -3,6 +3,8 @@ package com.example.app.UI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -280,25 +282,12 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
                 cartItems.remove(position);
                 showCartItems();
                 updateCartUI();
-                showCustomToast("Item removed from cart");
+                ToastUtils.showCustomToast(CartActivity.this, "Item removed from cart");
             }
             @Override
             public void onError(Exception e) {
-                showCustomToast("Failed to remove item: " + e.getMessage());
+                ToastUtils.showCustomToast(CartActivity.this, "Failed to remove item: " + e.getMessage());
             }
         });
-    }
-
-    private void showCustomToast(String message) {
-        View layout = getLayoutInflater().inflate(R.layout.custom_toast, null);
-        
-        TextView text = layout.findViewById(R.id.toast_text);
-        text.setText(message);
-        
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
     }
 }
