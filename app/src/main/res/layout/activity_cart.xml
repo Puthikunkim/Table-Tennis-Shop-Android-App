@@ -1,59 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:fillViewport="true"
     android:background="@color/background_dark">
 
-    <!-- Title bar -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Your Cart"
-        android:textColor="@color/text_primary"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="24dp"/>
+        android:orientation="vertical">
 
-    <!-- The ListView for cart items (gone when user is logged out or when cart is empty) -->
-    <ListView
-        android:id="@+id/cartListView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:dividerHeight="15dp"
-        android:divider="@android:color/transparent"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="16dp"
-        android:visibility="gone"/>
+        <!-- Title bar -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Your Cart"
+            android:textColor="@color/text_primary"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="24dp"/>
 
-    <!-- NEW: Include the “logged‐out” cart layout -->
-    <include
-        android:id="@+id/loggedOutCart"
-        layout="@layout/layout_cart_logged_out"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone" />
+        <!-- Cart items container (replaces ListView) -->
+        <LinearLayout
+            android:id="@+id/cartItemsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:visibility="gone"/>
 
-    <!-- “Empty Cart” placeholder (shown if user is signed in but cartItems.isEmpty()) -->
-    <include
-        android:id="@+id/emptyCart"
-        layout="@layout/layout_empty_cart"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone" />
+        <!-- Logged out cart layout -->
+        <include
+            android:id="@+id/loggedOutCart"
+            layout="@layout/layout_cart_logged_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
-    <!-- Checkout total / button bar (shown if user signed in AND cartItems not empty) -->
-    <include
-        android:id="@+id/checkoutTotal"
-        layout="@layout/layout_checkout_total"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
-</LinearLayout>
+        <!-- Empty Cart placeholder -->
+        <include
+            android:id="@+id/emptyCart"
+            layout="@layout/layout_empty_cart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <!-- Checkout total / button bar -->
+        <include
+            android:id="@+id/checkoutTotal"
+            layout="@layout/layout_checkout_total"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+    </LinearLayout>
+</ScrollView>

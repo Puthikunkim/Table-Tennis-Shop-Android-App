@@ -1,11 +1,12 @@
 package com.example.app.UI;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -14,7 +15,6 @@ import com.example.app.Auth.AuthManager;
 import com.example.app.Data.FirestoreRepository;
 import com.example.app.Model.TableTennisProduct;
 import com.example.app.R;
-import com.example.app.Adapters.CartAdapter;
 import com.example.app.Util.AnimationUtils;
 import com.example.app.Util.ErrorHandler;
 import com.example.app.Util.NavigationUtils;
@@ -35,8 +35,8 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
     private static final String TAG = "CartActivity";
 
     private AuthManager authManager;
-    private CartAdapter adapter;
     private final List<TableTennisProduct> cartItems = new ArrayList<>();
+    private String userId;
 
     @Override
     protected ActivityCartBinding inflateContentBinding() {
@@ -86,7 +86,8 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
             showLoggedOutState();
         } else {
             hideAllStates();
-            loadCartForUser(user.getUid());
+            userId = user.getUid();
+            loadCartForUser(userId);
         }
     }
 
@@ -95,50 +96,31 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
      */
     private void loadCartForUser(String userId) {
         hideAllStates();
-
         FirestoreRepository.getInstance().getCartItems(userId, new FirestoreRepository.ProductsCallback() {
             @Override
             public void onSuccess(List<TableTennisProduct> products) {
                 cartItems.clear();
                 cartItems.addAll(products);
-
+                Log.d("CartDebug", "onSuccess: products.size() = " + products.size());
                 if (cartItems.isEmpty()) {
+                    Log.d("CartDebug", "Cart is empty, showing empty state");
                     showEmptyState();
                 } else {
+                    Log.d("CartDebug", "Cart has items, showing cart state");
                     showCartState();
-                    ensureAdapterExists(userId);
-                    adapter.notifyDataSetChanged();
+                    showCartItems();
                     updateCartUI();
                 }
-
-                Log.d(TAG, "Cart loaded: " + products.size() + " items.");
             }
-
             @Override
             public void onError(Exception e) {
                 ToastUtils.showCustomToast(CartActivity.this, "Error loading cart: " + e.getMessage());
                 Log.e(TAG, "Error loading cart", e);
                 cartItems.clear();
-                if (adapter != null) adapter.notifyDataSetChanged();
+                showCartItems();
                 showEmptyState();
             }
         });
-    }
-
-    /**
-     * Initializes the list adapter if not already created.
-     */
-    private void ensureAdapterExists(String userId) {
-        if (adapter == null) {
-            ListView cartListView = binding.cartListView;
-            adapter = new CartAdapter(
-                    CartActivity.this,
-                    cartItems,
-                    userId,
-                    CartActivity.this::updateCartUI // Callback to recalculate totals
-            );
-            cartListView.setAdapter(adapter);
-        }
     }
 
     /**
@@ -187,7 +169,6 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
                     @Override
                     public void onSuccess() {
                         cartItems.clear();
-                        if (adapter != null) adapter.notifyDataSetChanged();
                         updateCartUI();
                         ToastUtils.showCustomToast(CartActivity.this, "Cart checked out successfully");
                     }
@@ -216,35 +197,108 @@ public class CartActivity extends BaseActivity<ActivityCartBinding> {
 
     /** Shows the UI for logged-out users (placeholder screen). */
     private void showLoggedOutState() {
-        UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
-                binding.loggedOutCart.getRoot()
-        );
+        binding.cartItemsContainer.setVisibility(View.GONE);
+        binding.emptyCart.getRoot().setVisibility(View.GONE);
+        binding.loggedOutCart.getRoot().setVisibility(View.VISIBLE);
+        binding.checkoutTotal.getRoot().setVisibility(View.GONE);
         Log.d(TAG, "User not signed in. Showing logged‐out cart placeholder.");
     }
 
     /** Shows the "empty cart" state when user is signed in but has no items. */
     private void showEmptyState() {
-        UIStateManager.showViewAndHideOthers(
-                (ViewGroup) binding.getRoot(),
-                binding.emptyCart.getRoot()
-        );
+        binding.cartItemsContainer.setVisibility(View.GONE);
+        binding.loggedOutCart.getRoot().setVisibility(View.GONE);
+        binding.emptyCart.getRoot().setVisibility(View.VISIBLE);
+        binding.checkoutTotal.getRoot().setVisibility(View.GONE);
     }
 
     /** Shows the list of cart items + checkout area. */
     private void showCartState() {
-        UIStateManager.showViewsAndHideOthers(
-                (ViewGroup) binding.getRoot(),
-                binding.cartListView,
-                binding.checkoutTotal.getRoot()
-        );
+        binding.cartItemsContainer.setVisibility(View.VISIBLE);
+        binding.loggedOutCart.getRoot().setVisibility(View.GONE);
+        binding.emptyCart.getRoot().setVisibility(View.GONE);
+        binding.checkoutTotal.getRoot().setVisibility(View.VISIBLE);
     }
 
     /** Hides all possible cart states to prep for a new one. */
     private void hideAllStates() {
         binding.loggedOutCart.getRoot().setVisibility(View.GONE);
         binding.emptyCart.getRoot().setVisibility(View.GONE);
-        binding.cartListView.setVisibility(View.GONE);
+        binding.cartItemsContainer.setVisibility(View.GONE);
         binding.checkoutTotal.getRoot().setVisibility(View.GONE);
+    }
+
+    private void showCartItems() {
+        binding.cartItemsContainer.removeAllViews();
+        LayoutInflater inflater = LayoutInflater.from(this);
+        for (int i = 0; i < cartItems.size(); i++) {
+            TableTennisProduct product = cartItems.get(i);
+            final int position = i;
+            View itemView = inflater.inflate(R.layout.item_cart_product, binding.cartItemsContainer, false);
+            ((TextView) itemView.findViewById(R.id.productName)).setText(product.getName());
+            ((TextView) itemView.findViewById(R.id.productPrice)).setText(String.format("$%.2f", product.getPrice()));
+            ((TextView) itemView.findViewById(R.id.quantityText)).setText(String.valueOf(product.getCartQuantity()));
+            ((TextView) itemView.findViewById(R.id.totalPrice)).setText(String.format("$%.2f", product.getCartQuantity() * product.getPrice()));
+            // Load image if available
+            ImageView productImage = itemView.findViewById(R.id.productImage);
+            if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
+                com.example.app.Util.ImageLoader.loadProductImage(this, productImage, product.getImageUrls().get(0));
+            } else {
+                productImage.setImageResource(R.drawable.ic_launcher_background);
+            }
+            itemView.findViewById(R.id.incrementButton).setOnClickListener(v -> {
+                product.setCartQuantity(product.getCartQuantity() + 1);
+                FirestoreRepository.getInstance().addToCart(userId, product, 1, null);
+                showCartItems();
+                updateCartUI();
+            });
+            itemView.findViewById(R.id.decrementButton).setOnClickListener(v -> {
+                if (product.getCartQuantity() > 1) {
+                    product.setCartQuantity(product.getCartQuantity() - 1);
+                    FirestoreRepository.getInstance().addToCart(userId, product, -1, null);
+                    showCartItems();
+                    updateCartUI();
+                } else {
+                    removeFromCart(product, position);
+                }
+            });
+            itemView.findViewById(R.id.deleteButton).setOnClickListener(v -> removeFromCart(product, position));
+            itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(this, DetailsActivity.class);
+                intent.putExtra("productId", product.getId());
+                startActivity(intent);
+            });
+            binding.cartItemsContainer.addView(itemView);
+        }
+        binding.cartItemsContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void removeFromCart(TableTennisProduct product, int position) {
+        FirestoreRepository.getInstance().removeFromCart(userId, product.getId(), new FirestoreRepository.OperationCallback() {
+            @Override
+            public void onSuccess() {
+                cartItems.remove(position);
+                showCartItems();
+                updateCartUI();
+                showCustomToast("Item removed from cart");
+            }
+            @Override
+            public void onError(Exception e) {
+                showCustomToast("Failed to remove item: " + e.getMessage());
+            }
+        });
+    }
+
+    private void showCustomToast(String message) {
+        View layout = getLayoutInflater().inflate(R.layout.custom_toast, null);
+        
+        TextView text = layout.findViewById(R.id.toast_text);
+        text.setText(message);
+        
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(layout);
+        toast.show();
     }
 }
