@@ -73,7 +73,11 @@ public class ListActivity extends BaseActivity<ActivityListBinding> {
 
         String displayName = rawCategory.substring(0, 1).toUpperCase() + rawCategory.substring(1);
         binding.customListTitle.setText(displayName);
-        binding.customListBackButton.setOnClickListener(v -> finish());
+        binding.customListBackButton.setOnClickListener(v -> {
+            finish();
+            NavigationUtils.slideOutOnBack(this);
+        });
+
         return true;
     }
 
