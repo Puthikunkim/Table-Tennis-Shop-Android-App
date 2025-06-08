@@ -33,10 +33,11 @@
             android:id="@+id/btnSort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sort"
-            android:textColor="@color/black"
+            android:text="SORT"
+            android:textColor="@color/text_primary"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             app:cornerRadius="16dp"
-            app:backgroundTint="@color/profile_grey"
+            app:strokeColor="@color/text_secondary"
             android:layout_alignParentEnd="true" />
 
         <!-- Title -->
