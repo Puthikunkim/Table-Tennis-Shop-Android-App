@@ -22,5 +22,8 @@
     <color name="profile_red">#f26666</color>
     <color name="profile_grey">#c2bebe</color>
 
+    <color name="wishlist_heart_grey">#d5d2d2</color>
+
+
     <color name="purple_accent">#5200FF</color>
 </resources>
