@@ -89,8 +89,12 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
 
     /** Goes back to previous screen. */
     private void setupBackButton() {
-        binding.customDetailsBackButton.setOnClickListener(v -> finish());
+        binding.customDetailsBackButton.setOnClickListener(v -> {
+            finish();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        });
     }
+
 
     /** Quantity selector buttons (+ / -). */
     private void setupQuantityControls() {
@@ -338,6 +342,7 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
                     Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
                     intent.putExtra("productId", clickedProduct.getId());
                     startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 });
 
                 binding.rvRecommendations.setAdapter(recommendationsAdapter);

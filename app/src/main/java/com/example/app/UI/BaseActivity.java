@@ -17,6 +17,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public abstract class BaseActivity<ContentBinding extends ViewBinding>
         extends AppCompatActivity {
 
+    private static final int[] TAB_ORDER = {
+            R.id.home, R.id.search, R.id.wish_list, R.id.cart, R.id.profile
+    };
+
+    private static int lastSelectedTab = R.id.home;
+
+
     private ActivityBaseBinding baseBinding; // base layout with nav + toolbar
     protected ContentBinding binding;        // the screen-specific binding we inflate below
 
@@ -56,37 +63,54 @@ public abstract class BaseActivity<ContentBinding extends ViewBinding>
      * Avoids multiple instances of the same screen using FLAG_ACTIVITY_SINGLE_TOP.
      */
     private void setupBottomNavigation(BottomNavigationView bottomNav) {
-        bottomNav.setSelectedItemId(getSelectedMenuItemId()); // highlight the current tab
+        bottomNav.setSelectedItemId(getSelectedMenuItemId());
 
         bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
+            int newTabId = item.getItemId();
             Class<?> targetActivity = null;
 
-            // Decide which activity to launch based on nav item clicked
-            if (id == R.id.home) {
+            if (newTabId == R.id.home) {
                 targetActivity = MainActivity.class;
-            } else if (id == R.id.cart) {
+            } else if (newTabId == R.id.cart) {
                 targetActivity = CartActivity.class;
-            } else if (id == R.id.search) {
+            } else if (newTabId == R.id.search) {
                 targetActivity = SearchActivity.class;
-            } else if (id == R.id.profile) {
+            } else if (newTabId == R.id.profile) {
                 targetActivity = ProfileActivity.class;
-            } else if (id == R.id.wish_list) {
+            } else if (newTabId == R.id.wish_list) {
                 targetActivity = WishListActivity.class;
             }
 
-            // Launch the selected screen if it's different
-            if (targetActivity != null) {
+            if (targetActivity != null && !this.getClass().equals(targetActivity)) {
                 Intent intent = new Intent(this, targetActivity);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                overridePendingTransition(0, 0); // no animation between tabs
-                finish(); // close the current activity
+
+                // Determine direction
+                int lastIndex = getTabIndex(lastSelectedTab);
+                int newIndex = getTabIndex(newTabId);
+                if (newIndex > lastIndex) {
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left); // forward
+                } else {
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right); // backward
+                }
+
+                lastSelectedTab = newTabId;
+                finish();
                 return true;
             }
+
             return false;
         });
     }
+
+    private int getTabIndex(int tabId) {
+        for (int i = 0; i < TAB_ORDER.length; i++) {
+            if (TAB_ORDER[i] == tabId) return i;
+        }
+        return -1;
+    }
+
 
     /**
      * Clicking the logo in the toolbar brings you back to the homepage.
