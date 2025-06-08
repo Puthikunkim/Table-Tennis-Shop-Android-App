@@ -9,14 +9,14 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Your Wishlist"
+        android:text="Wishlist"
         android:textColor="@color/text_primary"
-        android:textSize="32sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         android:gravity="center"
+        android:paddingTop="10dp"
         android:paddingHorizontal="16dp"
-        android:paddingBottom="24dp"/>
-
+        android:paddingBottom="8dp"/>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -27,7 +27,7 @@
             layout="@layout/layout_wishlist_logged_out"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewWishlist"
@@ -39,13 +39,16 @@
             android:fadeScrollbars="false"
             android:visibility="gone" />
 
-        <include
-            android:id="@+id/emptyWishlist"
-            layout="@layout/layout_empty_wishlist"
+        <!-- Wrap the include in a FrameLayout with centered gravity -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:gravity="center">
 
+            <include
+                android:id="@+id/emptyWishlist"
+                layout="@layout/layout_empty_wishlist"
+                android:visibility="gone" />
+        </FrameLayout>
     </FrameLayout>
-
 </LinearLayout>
