@@ -15,7 +15,7 @@ public class ToastUtils {
         TextView text = layout.findViewById(R.id.toast_text);
         text.setText(message);
         Toast toast = new Toast(context.getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
+        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 270); // moved higher
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(layout);
         toast.show();
