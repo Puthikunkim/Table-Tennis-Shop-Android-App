@@ -37,9 +37,20 @@
                 android:textStyle="bold"
                 android:layout_marginTop="12dp"
                 android:textColor="@color/black"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:ellipsize="end"
                 android:gravity="center" />
+
+            <TextView
+                android:id="@+id/topPickPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="$0.00"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/black"
+                android:gravity="center"/>
 
             <TextView
                 android:id="@+id/topPickViews"
