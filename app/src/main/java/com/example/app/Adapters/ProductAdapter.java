@@ -157,11 +157,12 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
             public void onSuccess() {
                 wishlistIds.add(product.getId());
                 notifyDataSetChanged(); // Update heart icon
+                ToastUtils.showCustomToast(context, product.getName() + " added to wishlist!");
             }
 
             @Override
             public void onError(Exception e) {
-                // Silent fail – state will remain unchanged
+                ToastUtils.showCustomToast(context, "Failed to add to wishlist: " + e.getMessage());
             }
         });
     }
@@ -175,14 +176,17 @@ public class ProductAdapter extends BaseProductAdapter<ProductAdapter.ViewHolder
             public void onSuccess() {
                 wishlistIds.remove(product.getId());
                 notifyDataSetChanged(); // Update heart icon
+                ToastUtils.showCustomToast(context, product.getName() + " removed from wishlist.");
             }
 
             @Override
             public void onError(Exception e) {
-                // Silent fail – state will remain unchanged
+                ToastUtils.showCustomToast(context, "Failed to remove from wishlist: " + e.getMessage());
             }
         });
     }
+
+
 
     /**
      * Replaces the current product list with a new one and refreshes the adapter.
