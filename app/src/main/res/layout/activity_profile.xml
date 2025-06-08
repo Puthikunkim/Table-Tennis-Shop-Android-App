@@ -13,14 +13,12 @@
         android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/profileContentContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:padding="24dp">
+            android:id="@+id/profileRootContainer">
 
-            <!-- Header -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -80,10 +78,9 @@
 
             <!-- User logged in welcome screen -->
             <LinearLayout
-                android:id="@+id/mainContentLoggedIn"
+                android:id="@+id/profileContentContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:padding="24dp"
@@ -119,11 +116,13 @@
                     android:orientation="vertical"
                     android:background="@drawable/rounded_card_background"
                     android:padding="16dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="24dp"
+                    android:layout_marginTop="8dp"
                     android:elevation="2dp"
-                    android:backgroundTint="#2A2A2A">
+                    android:backgroundTint="#2A2A2A"
+                    android:layout_marginHorizontal="0dp">
 
+                    <!-- Top row: title and clear button -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -159,6 +158,7 @@
                             android:textSize="12sp"/>
                     </LinearLayout>
 
+                    <!-- Item count -->
                     <TextView
                         android:id="@+id/cartItemCount"
                         android:layout_width="wrap_content"
@@ -168,6 +168,7 @@
                         android:textSize="14sp"
                         android:layout_marginTop="12dp" />
 
+                    <!-- View Cart button -->
                     <Button
                         android:id="@+id/btnViewCart"
                         android:layout_width="match_parent"
@@ -188,11 +189,13 @@
                     android:orientation="vertical"
                     android:background="@drawable/rounded_card_background"
                     android:padding="16dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="24dp"
+                    android:layout_marginTop="8dp"
                     android:elevation="2dp"
-                    android:backgroundTint="#2A2A2A">
+                    android:backgroundTint="#2A2A2A"
+                    android:layout_marginHorizontal="0dp">
 
+                    <!-- Top row: title and clear button -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -228,6 +231,7 @@
                             android:textSize="12sp"/>
                     </LinearLayout>
 
+                    <!-- Item count -->
                     <TextView
                         android:id="@+id/wishlistItemCount"
                         android:layout_width="wrap_content"
@@ -237,6 +241,7 @@
                         android:textSize="14sp"
                         android:layout_marginTop="12dp" />
 
+                    <!-- View Wishlist button -->
                     <Button
                         android:id="@+id/btnViewWishlist"
                         android:layout_width="match_parent"
@@ -258,7 +263,6 @@
                     android:textColor="@android:color/white"
                     app:strokeColor="@color/profile_red"
                     app:cornerRadius="16dp"/>
-
             </LinearLayout>
 
             <!-- Sign in screen -->
@@ -324,7 +328,7 @@
                     android:layout_height="wrap_content"
                     android:text="Submit"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:textColor="@color;text_primary"
+                    android:textColor="@color/text_primary"
                     app:strokeColor="@color/text_secondary"
                     app:cornerRadius="16dp"
                     android:layout_marginTop="8dp"/>
@@ -438,6 +442,6 @@
                     app:cornerRadius="16dp"
                     android:layout_marginTop="4dp"/>
             </LinearLayout>
-
-        </ScrollView>
+        </LinearLayout>
+    </ScrollView>
 </FrameLayout>
