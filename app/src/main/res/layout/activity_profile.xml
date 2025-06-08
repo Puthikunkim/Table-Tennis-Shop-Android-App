@@ -8,406 +8,422 @@
     android:background="@color/background_dark"
     android:paddingHorizontal="24dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Your Profile"
-            android:textColor="@color/text_primary"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="24dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <!-- User not logged in welcome screen -->
         <LinearLayout
-            android:id="@+id/mainContentLoggedOut"
+            android:id="@+id/profileContentContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center"
-            android:padding="24dp"
-            android:background="@drawable/rounded_card_background"
-            android:backgroundTint="@color/card_background"
-            android:elevation="4dp"
-            android:visibility="visible">
+            android:gravity="center">
 
-                <TextView
-                    android:id="@+id/textPrompt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sign in to view your profile"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="24dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Your Profile"
+                android:textColor="@color/text_primary"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="24dp"/>
 
-                <Button
-                    android:id="@+id/buttonSignIn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Sign In"
-                    android:layout_marginBottom="12dp"
-                    android:textColor="@color/black"
-                    android:backgroundTint="@color/profile_grey"/>
+            <!-- User not logged in welcome screen -->
+            <LinearLayout
+                android:id="@+id/mainContentLoggedOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="24dp"
+                android:background="@drawable/rounded_card_background"
+                android:backgroundTint="@color/card_background"
+                android:elevation="4dp"
+                android:visibility="visible">
 
-                <Button
-                    android:id="@+id/buttonCreateAccount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Create Account"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:textColor="@color/text_primary"
-                    app:strokeColor="@color/text_primary"
-                    android:layout_marginBottom="12dp" />
+                    <TextView
+                        android:id="@+id/textPrompt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sign in to view your profile"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="24dp" />
+
+                    <Button
+                        android:id="@+id/buttonSignIn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sign In"
+                        android:layout_marginBottom="12dp"
+                        android:textColor="@color/black"
+                        android:backgroundTint="@color/profile_grey"/>
+
+                    <Button
+                        android:id="@+id/buttonCreateAccount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Create Account"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:textColor="@color/text_primary"
+                        app:strokeColor="@color/text_primary"
+                        android:layout_marginBottom="12dp" />
+            </LinearLayout>
+
+            <!-- User logged in welcome screen -->
+            <LinearLayout
+                android:id="@+id/mainContentLoggedIn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="24dp"
+                android:background="@drawable/rounded_card_background"
+                android:backgroundTint="@color/card_background"
+                android:elevation="4dp"
+                android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/textWelcome"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Welcome, User!"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                    <TextView
+                        android:id="@+id/textEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email: "
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="24dp" />
+                    <!-- Cart Card Section -->
+                    <LinearLayout
+                        android:id="@+id/cartCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/rounded_card_background"
+                        android:padding="16dp"
+                        android:layout_marginBottom="24dp"
+                        android:layout_marginTop="8dp"
+                        android:elevation="2dp"
+                        android:backgroundTint="#2A2A2A"
+                        android:layout_marginHorizontal="0dp">
+
+                            <!-- Top row: title and clear button -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                    <ImageView
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:src="@drawable/ic_cart"
+                                        android:tint="@color/text_primary" />
+
+                                    <TextView
+                                        android:id="@+id/cartTitle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Cart"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/text_primary"
+                                        android:paddingStart="8dp"
+                                        android:textSize="16sp" />
+
+                                    <Button
+                                        android:id="@+id/btnClearCart"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Clear Cart"
+                                        android:textColor="@android:color/white"
+                                        android:backgroundTint="@color/profile_red"
+                                        android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <!-- Item count -->
+                            <TextView
+                                android:id="@+id/cartItemCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="You have 0 items in your cart."
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp"
+                                android:layout_marginTop="12dp" />
+
+                            <!-- View Cart button -->
+                            <Button
+                                android:id="@+id/btnViewCart"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Go to Cart"
+                                android:textColor="@color/black"
+                                android:backgroundTint="@color/profile_grey"
+                                android:layout_marginTop="12dp" />
+                    </LinearLayout>
+
+                    <!-- Wishlist Card Section -->
+                    <LinearLayout
+                        android:id="@+id/wishlistCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/rounded_card_background"
+                        android:padding="16dp"
+                        android:layout_marginBottom="24dp"
+                        android:layout_marginTop="8dp"
+                        android:elevation="2dp"
+                        android:backgroundTint="#2A2A2A"
+                        android:layout_marginHorizontal="0dp">
+
+                            <!-- Top row: title and clear button -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                    <ImageView
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:src="@drawable/ic_wishlist_filled"
+                                        android:tint="@color/text_primary" />
+
+                                    <TextView
+                                        android:id="@+id/wishlistTitle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Wishlist"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/text_primary"
+                                        android:paddingStart="8dp"
+                                        android:textSize="16sp" />
+
+                                    <Button
+                                        android:id="@+id/btnClearWishlist"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Clear Wishlist"
+                                        android:textColor="@android:color/white"
+                                        android:backgroundTint="@color/profile_red"
+                                        android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <!-- Item count -->
+                            <TextView
+                                android:id="@+id/wishlistItemCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="You have 0 items in your wishlist."
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp"
+                                android:layout_marginTop="12dp" />
+
+                            <!-- View Wishlist button -->
+                            <Button
+                                android:id="@+id/btnViewWishlist"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Go to Wishlist"
+                                android:textColor="@color/black"
+                                android:backgroundTint="@color/profile_grey"
+                                android:layout_marginTop="12dp" />
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/buttonSignOut"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sign Out"
+                        android:backgroundTint="@color/profile_red"
+                        android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <!-- Sign in screen -->
+            <LinearLayout
+                android:id="@+id/signInForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:padding="24dp"
+                android:background="@drawable/rounded_card_background"
+                android:backgroundTint="@color/card_background"
+                android:elevation="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sign In"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginBottom="16dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/inputSignInEmail"
+                        android:hint="Enter your email"
+                        android:inputType="textEmailAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#FFFFFF"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#CCCCCC" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Password"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/inputSignInPassword"
+                        android:hint="Enter your password"
+                        android:inputType="textPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#FFFFFF"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#CCCCCC" />
+
+                    <Button
+                        android:id="@+id/submitSignIn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Submit"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/black"
+                        android:backgroundTint="@color/profile_grey"/>
+
+                    <Button
+                        android:id="@+id/closeSignIn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cancel"
+                        android:layout_marginTop="4dp"
+                        android:backgroundTint="@color/profile_red"
+                        android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <!-- Create account screen -->
+            <LinearLayout
+                android:id="@+id/createAccountForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:padding="24dp"
+                android:background="@drawable/rounded_card_background"
+                android:backgroundTint="@color/card_background"
+                android:elevation="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Create Account"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginBottom="16dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/inputName"
+                        android:hint="Enter your name"
+                        android:inputType="textPersonName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#FFFFFF"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#CCCCCC"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/inputEmail"
+                        android:hint="Enter your email"
+                        android:inputType="textEmailAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#FFFFFF"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#CCCCCC" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Password"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/inputCreatePassword"
+                        android:hint="Enter your password"
+                        android:inputType="textPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#FFFFFF"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#CCCCCC" />
+
+                    <Button
+                        android:id="@+id/submitCreate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Submit"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/black"
+                        android:backgroundTint="@color/profile_grey"/>
+
+                    <Button
+                        android:id="@+id/closeCreate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cancel"
+                        android:layout_marginTop="4dp"
+                        android:backgroundTint="@color/profile_red"
+                        android:textColor="#FFFFFF" />
+            </LinearLayout>
+
         </LinearLayout>
+    </ScrollView>
 
-        <!-- User logged in welcome screen -->
-        <LinearLayout
-            android:id="@+id/mainContentLoggedIn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="24dp"
-            android:background="@drawable/rounded_card_background"
-            android:backgroundTint="@color/card_background"
-            android:elevation="4dp"
-            android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/textWelcome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Welcome, User!"
-                    android:textColor="#FFFFFF"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:id="@+id/textEmail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Email: "
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="24dp" />
-                <!-- Cart Card Section -->
-                <LinearLayout
-                    android:id="@+id/cartCard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/rounded_card_background"
-                    android:padding="16dp"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginTop="8dp"
-                    android:elevation="2dp"
-                    android:backgroundTint="#2A2A2A"
-                    android:layout_marginHorizontal="0dp">
-
-                        <!-- Top row: title and clear button -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:src="@drawable/ic_cart"
-                                    android:tint="@color/text_primary" />
-
-                                <TextView
-                                    android:id="@+id/cartTitle"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Cart"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/text_primary"
-                                    android:paddingStart="8dp"
-                                    android:textSize="16sp" />
-
-                                <Button
-                                    android:id="@+id/btnClearCart"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Clear Cart"
-                                    android:textColor="@android:color/white"
-                                    android:backgroundTint="@color/profile_red"
-                                    android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <!-- Item count -->
-                        <TextView
-                            android:id="@+id/cartItemCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="You have 0 items in your cart."
-                            android:textColor="@color/text_secondary"
-                            android:textSize="14sp"
-                            android:layout_marginTop="12dp" />
-
-                        <!-- View Cart button -->
-                        <Button
-                            android:id="@+id/btnViewCart"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Go to Cart"
-                            android:textColor="@color/black"
-                            android:backgroundTint="@color/profile_grey"
-                            android:layout_marginTop="12dp" />
-                </LinearLayout>
-
-                <!-- Wishlist Card Section -->
-                <LinearLayout
-                    android:id="@+id/wishlistCard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/rounded_card_background"
-                    android:padding="16dp"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginTop="8dp"
-                    android:elevation="2dp"
-                    android:backgroundTint="#2A2A2A"
-                    android:layout_marginHorizontal="0dp">
-
-                        <!-- Top row: title and clear button -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:src="@drawable/ic_wishlist_filled"
-                                    android:tint="@color/text_primary" />
-
-                                <TextView
-                                    android:id="@+id/wishlistTitle"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Wishlist"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/text_primary"
-                                    android:paddingStart="8dp"
-                                    android:textSize="16sp" />
-
-                                <Button
-                                    android:id="@+id/btnClearWishlist"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Clear Wishlist"
-                                    android:textColor="@android:color/white"
-                                    android:backgroundTint="@color/profile_red"
-                                    android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <!-- Item count -->
-                        <TextView
-                            android:id="@+id/wishlistItemCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="You have 0 items in your wishlist."
-                            android:textColor="@color/text_secondary"
-                            android:textSize="14sp"
-                            android:layout_marginTop="12dp" />
-
-                        <!-- View Wishlist button -->
-                        <Button
-                            android:id="@+id/btnViewWishlist"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Go to Wishlist"
-                            android:textColor="@color/black"
-                            android:backgroundTint="@color/profile_grey"
-                            android:layout_marginTop="12dp" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/buttonSignOut"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Sign Out"
-                    android:backgroundTint="@color/profile_red"
-                    android:textColor="#FFFFFF" />
-        </LinearLayout>
-
-        <!-- Sign in screen -->
-        <LinearLayout
-            android:id="@+id/signInForm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:padding="24dp"
-            android:background="@drawable/rounded_card_background"
-            android:backgroundTint="@color/card_background"
-            android:elevation="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sign In"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Email"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginBottom="4dp" />
-
-                <EditText
-                    android:id="@+id/inputSignInEmail"
-                    android:hint="Enter your email"
-                    android:inputType="textEmailAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#FFFFFF"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#CCCCCC" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Password"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="4dp" />
-
-                <EditText
-                    android:id="@+id/inputSignInPassword"
-                    android:hint="Enter your password"
-                    android:inputType="textPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#FFFFFF"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#CCCCCC" />
-
-                <Button
-                    android:id="@+id/submitSignIn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Submit"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/black"
-                    android:backgroundTint="@color/profile_grey"/>
-
-                <Button
-                    android:id="@+id/closeSignIn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Cancel"
-                    android:layout_marginTop="4dp"
-                    android:backgroundTint="@color/profile_red"
-                    android:textColor="#FFFFFF" />
-        </LinearLayout>
-
-        <!-- Create account screen -->
-        <LinearLayout
-            android:id="@+id/createAccountForm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:padding="24dp"
-            android:background="@drawable/rounded_card_background"
-            android:backgroundTint="@color/card_background"
-            android:elevation="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Create Account"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Name"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginBottom="4dp" />
-
-                <EditText
-                    android:id="@+id/inputName"
-                    android:hint="Enter your name"
-                    android:inputType="textPersonName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#FFFFFF"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#CCCCCC"
-                    android:layout_marginBottom="8dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Email"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginBottom="4dp" />
-
-                <EditText
-                    android:id="@+id/inputEmail"
-                    android:hint="Enter your email"
-                    android:inputType="textEmailAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#FFFFFF"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#CCCCCC" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Password"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="4dp" />
-
-                <EditText
-                    android:id="@+id/inputCreatePassword"
-                    android:hint="Enter your password"
-                    android:inputType="textPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#FFFFFF"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#CCCCCC" />
-
-                <Button
-                    android:id="@+id/submitCreate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Submit"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/black"
-                    android:backgroundTint="@color/profile_grey"/>
-
-                <Button
-                    android:id="@+id/closeCreate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Cancel"
-                    android:layout_marginTop="4dp"
-                    android:backgroundTint="@color/profile_red"
-                    android:textColor="#FFFFFF" />
-        </LinearLayout>
 </FrameLayout>
