@@ -95,30 +95,32 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
      */
     protected void setupWishlistButton(ImageView heartIcon, TableTennisProduct product) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
         if (currentUser == null) {
             updateWishlistButtonState(heartIcon, false);
-            return;
+        } else {
+            String uid = currentUser.getUid();
+            firestoreRepository.checkIfProductInWishlist(uid, product.getId(), new FirestoreRepository.WishlistOperationCallback() {
+                @Override
+                public void onSuccess() {
+                    updateWishlistButtonState(heartIcon, true);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    updateWishlistButtonState(heartIcon, false);
+                }
+            });
         }
-
-        String uid = currentUser.getUid();
-        firestoreRepository.checkIfProductInWishlist(uid, product.getId(), new FirestoreRepository.WishlistOperationCallback() {
-            @Override
-            public void onSuccess() {
-                updateWishlistButtonState(heartIcon, true);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                updateWishlistButtonState(heartIcon, false);
-            }
-        });
-
         heartIcon.setOnClickListener(v -> {
             AnimationUtils.animateButton(v, () -> handleWishlistClick((ImageView) v, product));
         });
-
-
     }
+
+
+
+
+
 
     // Updates the visual heart icon and stores new state as tag
     private void updateWishlistButtonState(ImageView heartIcon, boolean isWishlisted) {
@@ -130,7 +132,7 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
     private void handleWishlistClick(ImageView heartIcon, TableTennisProduct product) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            ToastUtils.showCustomToast(context, "Please log in to add items to your wishlist");
+            ToastUtils.showCustomToast(context, "Please sign in to add to your wishlist.");
             return;
         }
 

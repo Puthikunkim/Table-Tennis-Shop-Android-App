@@ -194,19 +194,19 @@ public class DetailsActivity extends BaseActivity<ActivityDetailsBinding> {
         binding.btnAddToCart.setOnClickListener(v ->
                 AnimationUtils.animateButton(v, () -> {
                     if (currentProduct == null) {
-                        ToastUtils.showCustomToast(this, "Product not loaded yet");
+                        ToastUtils.showCustomToast(this, "Product not loaded yet.");
                         return;
                     }
                     FirebaseUser user = authManager.getCurrentUser();
                     if (user == null) {
-                        ToastUtils.showCustomToast(this, "Please sign in to add to cart");
+                        ToastUtils.showCustomToast(this, "Please sign in to add to cart.");
                         return;
                     }
                     firestoreRepository.addToCart(user.getUid(), currentProduct, quantity,
                             new FirestoreRepository.OperationCallback() {
                                 @Override
                                 public void onSuccess() {
-                                    ToastUtils.showCustomToast(DetailsActivity.this, "Added to cart");
+                                    ToastUtils.showCustomToast(DetailsActivity.this, "Added to cart.");
                                 }
 
                                 @Override

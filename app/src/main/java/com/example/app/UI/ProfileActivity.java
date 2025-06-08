@@ -288,14 +288,14 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
         binding.btnClearWishlist.setOnClickListener(v -> {
             FirebaseUser user = authManager.getCurrentUser();
             if (user == null) {
-                ToastUtils.showCustomToast(this, "Please sign in to manage wishlist");
+                ToastUtils.showCustomToast(this, "Please sign in to manage wishlist.");
                 return;
             }
 
             firestoreRepository.clearWishlist(user.getUid(), new FirestoreRepository.OperationCallback() {
                 @Override
                 public void onSuccess() {
-                    ToastUtils.showCustomToast(ProfileActivity.this, "Wishlist cleared");
+                    ToastUtils.showCustomToast(ProfileActivity.this, "Wishlist cleared.");
                     binding.wishlistItemCount.setText("You have 0 items in your wishlist.");
                 }
 
@@ -329,7 +329,7 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             @Override
             public void onError(Exception e) {
-                ToastUtils.showCustomToast(ProfileActivity.this, "Failed to load cart summary");
+                ToastUtils.showCustomToast(ProfileActivity.this, "Failed to load cart summary.");
                 Log.e(TAG, "Error loading cart summary", e);
                 binding.cartItemCount.setText("Failed to load cart.");
             }
@@ -351,8 +351,8 @@ public class ProfileActivity extends BaseActivity<ActivityProfileBinding> {
 
             @Override
             public void onError(Exception e) {
-                ToastUtils.showCustomToast(ProfileActivity.this, "Failed to load wishlist summary");
-                Log.e(TAG, "Error loading wishlist summary", e);
+                ToastUtils.showCustomToast(ProfileActivity.this, "Failed to load wishlist summary.");
+                Log.e(TAG, "Error loading wishlist summary.", e);
                 binding.wishlistItemCount.setText("Failed to load wishlist.");
             }
         });
