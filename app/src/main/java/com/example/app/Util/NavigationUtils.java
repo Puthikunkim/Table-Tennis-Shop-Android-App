@@ -20,8 +20,14 @@ public class NavigationUtils {
         Intent intent = new Intent(context, targetActivity);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(intent);
+
+        if (context instanceof BaseActivity) {
+            ((BaseActivity<?>) context).overridePendingTransition(
+                    R.anim.slide_in_right, R.anim.slide_out_left);
+        }
     }
-    
+
+
     /**
      * Navigates to an activity with extras
      */
@@ -30,8 +36,14 @@ public class NavigationUtils {
         intent.putExtras(extras);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(intent);
+
+        if (context instanceof BaseActivity) {
+            ((BaseActivity<?>) context).overridePendingTransition(
+                    R.anim.slide_in_right, R.anim.slide_out_left);
+        }
     }
-    
+
+
     /**
      * Navigates to an activity with a single extra
      */
@@ -40,8 +52,14 @@ public class NavigationUtils {
         intent.putExtra(key, value);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(intent);
+
+        if (context instanceof BaseActivity) {
+            ((BaseActivity<?>) context).overridePendingTransition(
+                    R.anim.slide_in_right, R.anim.slide_out_left);
+        }
     }
-    
+
+
     /**
      * Navigates to an activity with fade transition
      */
