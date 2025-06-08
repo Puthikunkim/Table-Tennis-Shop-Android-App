@@ -1,45 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
-    android:minHeight="400dp"
-    android:background="@color/background_dark">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/emptywishlist4"/>
-
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign In to View Your Wishlist"
-        android:textColor="@color/text_primary"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:gravity="center" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Your personalized wishlist is only available when you're signed in."
-        android:textColor="@color/text_secondary"
-        android:textSize="16sp"
+        android:orientation="vertical"
         android:gravity="center"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="24dp" />
+        android:padding="24dp"
+        android:minHeight="400dp"
+        android:background="@color/background_dark">
 
-    <Button
-        android:id="@+id/signInButtonWishlist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign In Now"
-        android:paddingHorizontal="32dp"
-        android:paddingVertical="12dp"
-        android:textColor="@color/black"
-        android:backgroundTint="@color/profile_grey"/>
-</LinearLayout>
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/emptywishlist4"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign In to View Your Wishlist"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your personalized wishlist is only available when you're signed in."
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/signInButtonWishlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign In Now"
+            android:paddingHorizontal="32dp"
+            android:paddingVertical="12dp"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/profile_grey"/>
+    </LinearLayout>
+</ScrollView>
