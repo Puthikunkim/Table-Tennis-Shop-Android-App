@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="background_dark">#2A2A2A</color>
+    <color name="checkout_layout_background_dark">#ff242424</color>
     <color name="card_background">#333333</color>
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#CCCCCC</color>
@@ -21,6 +22,9 @@
     <color name="text_on_pill">#FFFFFF</color>
     <color name="profile_red">#f26666</color>
     <color name="profile_grey">#c2bebe</color>
+
+    <color name="wishlist_heart_grey">#d5d2d2</color>
+
 
     <color name="purple_accent">#5200FF</color>
 </resources>
