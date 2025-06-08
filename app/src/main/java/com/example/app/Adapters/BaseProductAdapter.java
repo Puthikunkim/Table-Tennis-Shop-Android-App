@@ -116,7 +116,23 @@ public abstract class BaseProductAdapter<T extends BaseProductAdapter.BaseViewHo
             }
         });
 
-        heartIcon.setOnClickListener(v -> handleWishlistClick(heartIcon, product));
+        heartIcon.setOnClickListener(v -> {
+            v.animate()
+                    .scaleX(1.3f)
+                    .scaleY(1.3f)
+                    .setDuration(150)
+                    .withEndAction(() -> {
+                        v.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setDuration(150)
+                                .start();
+
+                        handleWishlistClick((ImageView) v, product); // same toggle logic
+                    })
+                    .start();
+        });
+
     }
 
     // Updates the visual heart icon and stores new state as tag
