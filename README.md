@@ -106,5 +106,7 @@ All dependencies are managed in `build.gradle.kts`.
 - To change branding, update resources in `res/` and app icons.
 
 ## Authors
-- Team 11, COMPSYS 302, 2025
+- Rhett Murdoch
+- Josh Shiu
+- Jerry Kim
 
